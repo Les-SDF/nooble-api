@@ -1,0 +1,7 @@
+#Route pour rafraîchir notre JWT (déjà definie par défaut)
+api_refresh_token:
+  path: /api/token/refresh
+
+#Route pour invalider notre token de rafraîchissement (le supprimer). Utile pour se "déconnecter" réellement.
+api_token_invalidate:
+  path: /api/token/invalidate

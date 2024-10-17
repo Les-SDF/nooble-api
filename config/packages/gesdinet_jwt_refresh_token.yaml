@@ -1,0 +1,8 @@
+#config/packages/gesdinet_jwt_refresh_token.yaml
+gesdinet_jwt_refresh_token:
+  #Classe du token de rafraichissement
+  refresh_token_class: App\Entity\RefreshToken
+  #Pour que la durée de vie du token de rafraichissement soit réinitialisée (à son max) après chaque utilisation
+  ttl_update: true
+  #Le firewall (section définie dans security.yaml) paramétrant notre système de déconnexion / d'invalidation de token.
+  logout_firewall: main
