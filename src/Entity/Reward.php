@@ -5,6 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Enum\RewardType;
 use App\Repository\RewardRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,6 +27,17 @@ class Reward
 
     #[ORM\Column(enumType: RewardType::class)]
     private ?RewardType $rewardType = null;
+
+    /**
+     * @var Collection<int, PrizePack>
+     */
+    #[ORM\ManyToMany(targetEntity: PrizePack::class, mappedBy: 'rewards')]
+    private Collection $prizePacks;
+
+    public function __construct()
+    {
+        $this->prizePacks = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -63,6 +76,45 @@ class Reward
     public function setRewardType(RewardType $rewardType): static
     {
         $this->rewardType = $rewardType;
+
+        return $this;
+    }
+
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): static
+    {
+        $this->event = $event;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PrizePack>
+     */
+    public function getPrizePacks(): Collection
+    {
+        return $this->prizePacks;
+    }
+
+    public function addPrizePack(PrizePack $prizePack): static
+    {
+        if (!$this->prizePacks->contains($prizePack)) {
+            $this->prizePacks->add($prizePack);
+            $prizePack->addReward($this);
+        }
+
+        return $this;
+    }
+
+    public function removePrizePack(PrizePack $prizePack): static
+    {
+        if ($this->prizePacks->removeElement($prizePack)) {
+            $prizePack->removeReward($this);
+        }
 
         return $this;
     }

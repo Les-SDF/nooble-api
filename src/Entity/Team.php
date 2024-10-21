@@ -27,12 +27,6 @@ class Team
     private Collection $members;
 
     /**
-     * @var Collection<int, Encounter>
-     */
-    #[ORM\ManyToMany(targetEntity: Encounter::class, mappedBy: 'teams')]
-    private Collection $encounters;
-
-    /**
      * @var Collection<int, Sponsor>
      */
     #[ORM\ManyToMany(targetEntity: Sponsor::class, mappedBy: 'teams')]
@@ -44,12 +38,26 @@ class Team
     #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'team', orphanRemoval: true)]
     private Collection $participations;
 
+    /**
+     * @var Collection<int, Encounter>
+     */
+    #[ORM\ManyToMany(targetEntity: Encounter::class, mappedBy: 'teams')]
+    private Collection $encounters;
+
+    /**
+     * @var Collection<int, EventReward>
+     */
+    #[ORM\ManyToMany(targetEntity: EventReward::class, mappedBy: 'recipients')]
+    private Collection $eventRewards;
+
     public function __construct()
     {
         $this->members = new ArrayCollection();
         $this->encounters = new ArrayCollection();
         $this->sponsors = new ArrayCollection();
         $this->participations = new ArrayCollection();
+        $this->prizePacks = new ArrayCollection();
+        $this->eventRewards = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -172,6 +180,33 @@ class Team
             if ($participation->getTeam() === $this) {
                 $participation->setTeam(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EventReward>
+     */
+    public function getEventRewards(): Collection
+    {
+        return $this->eventRewards;
+    }
+
+    public function addEventReward(EventReward $eventReward): static
+    {
+        if (!$this->eventRewards->contains($eventReward)) {
+            $this->eventRewards->add($eventReward);
+            $eventReward->addRecipient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventReward(EventReward $eventReward): static
+    {
+        if ($this->eventRewards->removeElement($eventReward)) {
+            $eventReward->removeRecipient($this);
         }
 
         return $this;

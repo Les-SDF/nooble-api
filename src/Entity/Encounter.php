@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EncounterRepository::class)]
-#[ApiResource()]
+#[ApiResource]
 class Encounter
 {
     #[ORM\Id]
@@ -23,9 +23,11 @@ class Encounter
     #[ORM\ManyToMany(targetEntity: Team::class, inversedBy: 'encounters')]
     private Collection $teams;
 
-    #[ORM\ManyToOne(inversedBy: 'encounters')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Event $event = null;
+    #[ORM\Column(nullable: true)]
+    private ?int $ranking = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $score = null;
 
     public function __construct()
     {
@@ -61,14 +63,26 @@ class Encounter
         return $this;
     }
 
-    public function getEvent(): ?Event
+    public function getRanking(): ?int
     {
-        return $this->event;
+        return $this->ranking;
     }
 
-    public function setEvent(?Event $event): static
+    public function setRanking(?int $ranking): static
     {
-        $this->event = $event;
+        $this->ranking = $ranking;
+
+        return $this;
+    }
+
+    public function getScore(): ?int
+    {
+        return $this->score;
+    }
+
+    public function setScore(?int $score): static
+    {
+        $this->score = $score;
 
         return $this;
     }

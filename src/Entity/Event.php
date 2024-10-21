@@ -58,10 +58,24 @@ class Event
     #[ORM\ManyToMany(targetEntity: Sponsor::class, mappedBy: 'events')]
     private Collection $sponsors;
 
+    /**
+     * @var Collection<int, Reward>
+     */
+    #[ORM\OneToMany(targetEntity: Reward::class, mappedBy: 'event', orphanRemoval: true)]
+    private Collection $rewards;
+
+    /**
+     * @var Collection<int, EventReward>
+     */
+    #[ORM\OneToMany(targetEntity: EventReward::class, mappedBy: 'event', orphanRemoval: true)]
+    private Collection $eventRewards;
+
     public function __construct()
     {
         $this->encounters = new ArrayCollection();
         $this->sponsors = new ArrayCollection();
+        $this->rewards = new ArrayCollection();
+        $this->eventRewards = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -229,6 +243,66 @@ class Event
     {
         if ($this->sponsors->removeElement($sponsor)) {
             $sponsor->removeEvent($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reward>
+     */
+    public function getRewards(): Collection
+    {
+        return $this->rewards;
+    }
+
+    public function addReward(Reward $reward): static
+    {
+        if (!$this->rewards->contains($reward)) {
+            $this->rewards->add($reward);
+            $reward->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReward(Reward $reward): static
+    {
+        if ($this->rewards->removeElement($reward)) {
+            // set the owning side to null (unless already changed)
+            if ($reward->getEvent() === $this) {
+                $reward->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EventReward>
+     */
+    public function getEventRewards(): Collection
+    {
+        return $this->eventRewards;
+    }
+
+    public function addEventReward(EventReward $eventReward): static
+    {
+        if (!$this->eventRewards->contains($eventReward)) {
+            $this->eventRewards->add($eventReward);
+            $eventReward->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventReward(EventReward $eventReward): static
+    {
+        if ($this->eventRewards->removeElement($eventReward)) {
+            // set the owning side to null (unless already changed)
+            if ($eventReward->getEvent() === $this) {
+                $eventReward->setEvent(null);
+            }
         }
 
         return $this;
