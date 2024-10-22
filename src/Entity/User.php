@@ -35,13 +35,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
             validationContext: ["groups" => ["Default", "user:update"]],
             processor: UserProcessor::class
         )
-    ]
+    ],
+    normalizationContext: ["groups" => ["user:read"]]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["utilisateur:read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
