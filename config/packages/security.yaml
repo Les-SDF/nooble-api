@@ -22,8 +22,12 @@ security:
             form_login:
                 login_path: login
                 check_path: login
-            logout:
-                path: logout
+
+#            entry_point: jwt
+#            refresh_jwt:
+#                check_path: api_refresh_token
+#            logout:
+#                path: api_token_invalidate
 
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
