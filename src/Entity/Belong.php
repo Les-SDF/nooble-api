@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\BelongRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BelongRepository::class)]
@@ -21,6 +22,7 @@ class Belong
 
     #[ORM\ManyToOne(inversedBy: 'belongs')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["user:read"])]
     private ?Team $team = null;
 
     public function getId(): ?int

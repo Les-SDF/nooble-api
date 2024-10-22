@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\EventRewardRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EventRewardRepository::class)]
@@ -24,6 +25,7 @@ class EventReward
      * @var Collection<int, PrizePack>
      */
     #[ORM\OneToMany(targetEntity: PrizePack::class, mappedBy: 'eventReward', orphanRemoval: true)]
+    #[Groups(["event:read"])]
     private Collection $prizePacks;
 
     /**

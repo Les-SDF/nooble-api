@@ -8,10 +8,13 @@ use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
-#[ApiResource()]
+#[ApiResource(
+    normalizationContext: ["groups" => ["event:read"]]
+)]
 class Event
 {
     #[ORM\Id]
@@ -20,29 +23,37 @@ class Event
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["event:read"])]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[Groups(["event:read"])]
     private ?\DateTimeImmutable $startDate = null;
 
     #[ORM\Column]
+    #[Groups(["event:read"])]
     private ?\DateTimeImmutable $endDate = null;
 
+    #[Groups(["event:read"])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[Groups(["event:read"])]
     #[ORM\Column]
     private ?bool $official = null;
 
+    #[Groups(["event:read"])]
     #[ORM\Column]
     private ?bool $charity = null;
 
     #[ORM\Column]
     private ?bool $private = null;
 
+    #[Groups(["event:read"])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
+    #[Groups(["event:read"])]
     #[ORM\Column(enumType: Status::class)]
     private ?Status $status = null;
 
@@ -51,15 +62,18 @@ class Event
      * @var Collection<int, EventReward>
      */
     #[ORM\OneToMany(targetEntity: EventReward::class, mappedBy: 'event', orphanRemoval: true)]
+    #[Groups(["event:read"])]
     private Collection $eventRewards;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(["event:read"])]
     private ?int $maxParticipants = null;
 
     /**
      * @var Collection<int, EventSponsor>
      */
     #[ORM\OneToMany(targetEntity: EventSponsor::class, mappedBy: 'event', orphanRemoval: true)]
+    #[Groups(["event:read"])]
     private Collection $eventSponsors;
 
     public function __construct()

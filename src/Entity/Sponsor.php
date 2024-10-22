@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\SponsorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SponsorRepository::class)]
@@ -18,6 +19,7 @@ class Sponsor
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["event:read"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]

@@ -43,7 +43,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["utilisateur:read"])]
+    #[Groups(["user:read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
@@ -70,6 +70,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Belong>
      */
     #[ORM\OneToMany(targetEntity: Belong::class, mappedBy: 'user', orphanRemoval: true)]
+    #[Groups(["user:read"])]
     private Collection $belongs;
 
     public function __construct()

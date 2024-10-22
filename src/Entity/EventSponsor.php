@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\EventSponsorRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EventSponsorRepository::class)]
@@ -21,6 +22,7 @@ class EventSponsor
 
     #[ORM\ManyToOne(inversedBy: 'eventSponsors')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["event:read"])]
     private ?Sponsor $sponsor = null;
 
     public function getId(): ?int

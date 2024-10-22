@@ -7,6 +7,7 @@ use App\Enum\RewardType;
 use App\Repository\RewardRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -20,12 +21,15 @@ class Reward
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["event:read"])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(["event:read"])]
     private ?string $description = null;
 
     #[ORM\Column(enumType: RewardType::class)]
+    #[Groups(["event:read"])]
     private ?RewardType $rewardType = null;
 
     /**
