@@ -19,9 +19,19 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            form_login:
-                login_path: login
-                check_path: login
+            #L'application est sans état (pas de session)
+            stateless: true
+            json_login:
+                #Le nom de la route d'authentification
+                check_path: /api/auth
+                #La propriété correspondant au login dans notre entité
+                username_path: email
+                #La propriété correspondant au mot de passe (haché) dans notre entité
+                password_path: password
+                #Les services qui gèrent le succès ou l'échec d'authentification
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            jwt: ~
 
 #            entry_point: jwt
 #            refresh_jwt:

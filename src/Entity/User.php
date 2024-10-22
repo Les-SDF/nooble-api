@@ -42,6 +42,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Team::class, mappedBy: 'members')]
     private Collection $teams;
 
+    private ?string $plainPassword = null;
+
     public function __construct()
     {
         $this->teams = new ArrayCollection();
@@ -113,13 +115,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): void
+    {
+        $this->plainPassword = $plainPassword;
+    }
+
     /**
      * @see UserInterface
      */
     public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->plainPassword = null;
     }
 
     /**
