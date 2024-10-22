@@ -36,17 +36,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    /**
-     * @var Collection<int, Team>
-     */
-    #[ORM\ManyToMany(targetEntity: Team::class, mappedBy: 'members')]
-    private Collection $teams;
-
     private ?string $plainPassword = null;
+
+    /**
+     * @var Collection<int, Belong>
+     */
+    #[ORM\OneToMany(targetEntity: Belong::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $belongs;
 
     public function __construct()
     {
-        $this->teams = new ArrayCollection();
+        $this->belongs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -136,27 +136,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Team>
+     * @return Collection<int, Belong>
      */
-    public function getTeams(): Collection
+    public function getBelongs(): Collection
     {
-        return $this->teams;
+        return $this->belongs;
     }
 
-    public function addTeam(Team $team): static
+    public function addBelong(Belong $belong): static
     {
-        if (!$this->teams->contains($team)) {
-            $this->teams->add($team);
-            $team->addMember($this);
+        if (!$this->belongs->contains($belong)) {
+            $this->belongs->add($belong);
+            $belong->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeTeam(Team $team): static
+    public function removeBelong(Belong $belong): static
     {
-        if ($this->teams->removeElement($team)) {
-            $team->removeMember($this);
+        if ($this->belongs->removeElement($belong)) {
+            // set the owning side to null (unless already changed)
+            if ($belong->getUser() === $this) {
+                $belong->setUser(null);
+            }
         }
 
         return $this;

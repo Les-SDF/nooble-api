@@ -17,50 +17,21 @@ class Encounter
     #[ORM\Column]
     private ?int $id = null;
 
-    /**
-     * @var Collection<int, Team>
-     */
-    #[ORM\ManyToMany(targetEntity: Team::class, inversedBy: 'encounters')]
-    private Collection $teams;
-
     #[ORM\Column(nullable: true)]
     private ?int $ranking = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $score = null;
 
-    public function __construct()
-    {
-        $this->teams = new ArrayCollection();
-    }
+    #[ORM\ManyToOne(inversedBy: 'encounters')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Participation $participation = null;
+
+    public function __construct() {}
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    /**
-     * @return Collection<int, Team>
-     */
-    public function getTeams(): Collection
-    {
-        return $this->teams;
-    }
-
-    public function addTeam(Team $team): static
-    {
-        if (!$this->teams->contains($team)) {
-            $this->teams->add($team);
-        }
-
-        return $this;
-    }
-
-    public function removeTeam(Team $team): static
-    {
-        $this->teams->removeElement($team);
-
-        return $this;
     }
 
     public function getRanking(): ?int
@@ -83,6 +54,18 @@ class Encounter
     public function setScore(?int $score): static
     {
         $this->score = $score;
+
+        return $this;
+    }
+
+    public function getParticipation(): ?Participation
+    {
+        return $this->participation;
+    }
+
+    public function setParticipation(?Participation $participation): static
+    {
+        $this->participation = $participation;
 
         return $this;
     }

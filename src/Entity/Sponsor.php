@@ -24,21 +24,21 @@ class Sponsor
     private ?string $imageUrl = null;
 
     /**
-     * @var Collection<int, Event>
+     * @var Collection<int, EventSponsor>
      */
-    #[ORM\ManyToMany(targetEntity: Event::class, inversedBy: 'sponsors')]
-    private Collection $events;
+    #[ORM\OneToMany(targetEntity: EventSponsor::class, mappedBy: 'sponsor', orphanRemoval: true)]
+    private Collection $eventSponsors;
 
     /**
-     * @var Collection<int, Team>
+     * @var Collection<int, TeamSponsor>
      */
-    #[ORM\ManyToMany(targetEntity: Team::class, inversedBy: 'sponsors')]
-    private Collection $teams;
+    #[ORM\OneToMany(targetEntity: TeamSponsor::class, mappedBy: 'sponsor', orphanRemoval: true)]
+    private Collection $teamSponsors;
 
     public function __construct()
     {
-        $this->events = new ArrayCollection();
-        $this->teams = new ArrayCollection();
+        $this->eventSponsors = new ArrayCollection();
+        $this->teamSponsors = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -71,49 +71,61 @@ class Sponsor
     }
 
     /**
-     * @return Collection<int, Event>
+     * @return Collection<int, EventSponsor>
      */
-    public function getEvents(): Collection
+    public function getEventSponsors(): Collection
     {
-        return $this->events;
+        return $this->eventSponsors;
     }
 
-    public function addEvent(Event $event): static
+    public function addEventSponsor(EventSponsor $eventSponsor): static
     {
-        if (!$this->events->contains($event)) {
-            $this->events->add($event);
+        if (!$this->eventSponsors->contains($eventSponsor)) {
+            $this->eventSponsors->add($eventSponsor);
+            $eventSponsor->setSponsor($this);
         }
 
         return $this;
     }
 
-    public function removeEvent(Event $event): static
+    public function removeEventSponsor(EventSponsor $eventSponsor): static
     {
-        $this->events->removeElement($event);
+        if ($this->eventSponsors->removeElement($eventSponsor)) {
+            // set the owning side to null (unless already changed)
+            if ($eventSponsor->getSponsor() === $this) {
+                $eventSponsor->setSponsor(null);
+            }
+        }
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Team>
+     * @return Collection<int, TeamSponsor>
      */
-    public function getTeams(): Collection
+    public function getTeamSponsors(): Collection
     {
-        return $this->teams;
+        return $this->teamSponsors;
     }
 
-    public function addTeam(Team $team): static
+    public function addTeamSponsor(TeamSponsor $teamSponsor): static
     {
-        if (!$this->teams->contains($team)) {
-            $this->teams->add($team);
+        if (!$this->teamSponsors->contains($teamSponsor)) {
+            $this->teamSponsors->add($teamSponsor);
+            $teamSponsor->setSponsor($this);
         }
 
         return $this;
     }
 
-    public function removeTeam(Team $team): static
+    public function removeTeamSponsor(TeamSponsor $teamSponsor): static
     {
-        $this->teams->removeElement($team);
+        if ($this->teamSponsors->removeElement($teamSponsor)) {
+            // set the owning side to null (unless already changed)
+            if ($teamSponsor->getSponsor() === $this) {
+                $teamSponsor->setSponsor(null);
+            }
+        }
 
         return $this;
     }

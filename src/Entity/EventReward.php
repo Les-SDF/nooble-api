@@ -15,21 +15,22 @@ class EventReward
     #[ORM\Column]
     private ?int $id = null;
 
-    /**
-     * @var Collection<int, PrizePack>
-     */
-    #[ORM\ManyToMany(targetEntity: PrizePack::class, mappedBy: 'eventRewards')]
-    private Collection $prizePacks;
-
-    /**
-     * @var Collection<int, Team>
-     */
-    #[ORM\ManyToMany(targetEntity: Team::class, inversedBy: 'eventRewards')]
-    private Collection $recipients;
 
     #[ORM\ManyToOne(inversedBy: 'eventRewards')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Event $event = null;
+
+    /**
+     * @var Collection<int, PrizePack>
+     */
+    #[ORM\OneToMany(targetEntity: PrizePack::class, mappedBy: 'eventReward', orphanRemoval: true)]
+    private Collection $prizePacks;
+
+    /**
+     * @var Collection<int, Recipient>
+     */
+    #[ORM\OneToMany(targetEntity: Recipient::class, mappedBy: 'eventReward', orphanRemoval: true)]
+    private Collection $recipients;
 
     public function __construct()
     {
@@ -40,6 +41,18 @@ class EventReward
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): static
+    {
+        $this->event = $event;
+
+        return $this;
     }
 
     /**
@@ -54,7 +67,7 @@ class EventReward
     {
         if (!$this->prizePacks->contains($prizePack)) {
             $this->prizePacks->add($prizePack);
-            $prizePack->addEventReward($this);
+            $prizePack->setEventReward($this);
         }
 
         return $this;
@@ -63,44 +76,41 @@ class EventReward
     public function removePrizePack(PrizePack $prizePack): static
     {
         if ($this->prizePacks->removeElement($prizePack)) {
-            $prizePack->removeEventReward($this);
+            // set the owning side to null (unless already changed)
+            if ($prizePack->getEventReward() === $this) {
+                $prizePack->setEventReward(null);
+            }
         }
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Team>
+     * @return Collection<int, Recipient>
      */
     public function getRecipients(): Collection
     {
         return $this->recipients;
     }
 
-    public function addRecipient(Team $recipient): static
+    public function addRecipient(Recipient $recipient): static
     {
         if (!$this->recipients->contains($recipient)) {
             $this->recipients->add($recipient);
+            $recipient->setEventReward($this);
         }
 
         return $this;
     }
 
-    public function removeRecipient(Team $recipient): static
+    public function removeRecipient(Recipient $recipient): static
     {
-        $this->recipients->removeElement($recipient);
-
-        return $this;
-    }
-
-    public function getEvent(): ?Event
-    {
-        return $this->event;
-    }
-
-    public function setEvent(?Event $event): static
-    {
-        $this->event = $event;
+        if ($this->recipients->removeElement($recipient)) {
+            // set the owning side to null (unless already changed)
+            if ($recipient->getEventReward() === $this) {
+                $recipient->setEventReward(null);
+            }
+        }
 
         return $this;
     }

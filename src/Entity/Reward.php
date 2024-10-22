@@ -31,8 +31,9 @@ class Reward
     /**
      * @var Collection<int, PrizePack>
      */
-    #[ORM\ManyToMany(targetEntity: PrizePack::class, mappedBy: 'rewards')]
+    #[ORM\OneToMany(targetEntity: PrizePack::class, mappedBy: 'reward', orphanRemoval: true)]
     private Collection $prizePacks;
+
 
     public function __construct()
     {
@@ -80,18 +81,6 @@ class Reward
         return $this;
     }
 
-    public function getEvent(): ?Event
-    {
-        return $this->event;
-    }
-
-    public function setEvent(?Event $event): static
-    {
-        $this->event = $event;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, PrizePack>
      */
@@ -104,7 +93,7 @@ class Reward
     {
         if (!$this->prizePacks->contains($prizePack)) {
             $this->prizePacks->add($prizePack);
-            $prizePack->addReward($this);
+            $prizePack->setReward($this);
         }
 
         return $this;
@@ -113,7 +102,10 @@ class Reward
     public function removePrizePack(PrizePack $prizePack): static
     {
         if ($this->prizePacks->removeElement($prizePack)) {
-            $prizePack->removeReward($this);
+            // set the owning side to null (unless already changed)
+            if ($prizePack->getReward() === $this) {
+                $prizePack->setReward(null);
+            }
         }
 
         return $this;

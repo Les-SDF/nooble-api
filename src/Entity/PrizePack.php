@@ -20,23 +20,15 @@ class PrizePack
     #[ORM\Column]
     private ?int $quantity = null;
 
-    /**
-     * @var Collection<int, Reward>
-     */
-    #[ORM\ManyToMany(targetEntity: Reward::class, inversedBy: 'prizePacks')]
-    private Collection $rewards;
+    #[ORM\ManyToOne(inversedBy: 'prizePacks')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Reward $reward = null;
 
-    /**
-     * @var Collection<int, EventReward>
-     */
-    #[ORM\ManyToMany(targetEntity: EventReward::class, inversedBy: 'prizePacks')]
-    private Collection $eventRewards;
+    #[ORM\ManyToOne(inversedBy: 'prizePacks')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?EventReward $eventReward = null;
 
-    public function __construct()
-    {
-        $this->rewards = new ArrayCollection();
-        $this->eventRewards = new ArrayCollection();
-    }
+    public function __construct() {}
 
     public function getId(): ?int
     {
@@ -55,50 +47,26 @@ class PrizePack
         return $this;
     }
 
-    /**
-     * @return Collection<int, Reward>
-     */
-    public function getRewards(): Collection
+    public function getReward(): ?Reward
     {
-        return $this->rewards;
+        return $this->reward;
     }
 
-    public function addReward(Reward $reward): static
+    public function setReward(?Reward $reward): static
     {
-        if (!$this->rewards->contains($reward)) {
-            $this->rewards->add($reward);
-        }
+        $this->reward = $reward;
 
         return $this;
     }
 
-    public function removeReward(Reward $reward): static
+    public function getEventReward(): ?EventReward
     {
-        $this->rewards->removeElement($reward);
-
-        return $this;
+        return $this->eventReward;
     }
 
-    /**
-     * @return Collection<int, EventReward>
-     */
-    public function getEventRewards(): Collection
+    public function setEventReward(?EventReward $eventReward): static
     {
-        return $this->eventRewards;
-    }
-
-    public function addEventReward(EventReward $eventReward): static
-    {
-        if (!$this->eventRewards->contains($eventReward)) {
-            $this->eventRewards->add($eventReward);
-        }
-
-        return $this;
-    }
-
-    public function removeEventReward(EventReward $eventReward): static
-    {
-        $this->eventRewards->removeElement($eventReward);
+        $this->eventReward = $eventReward;
 
         return $this;
     }

@@ -46,23 +46,6 @@ class Event
     #[ORM\Column(enumType: Status::class)]
     private ?Status $status = null;
 
-    /**
-     * @var Collection<int, Encounter>
-     */
-    #[ORM\OneToMany(targetEntity: Encounter::class, mappedBy: 'event', orphanRemoval: true)]
-    private Collection $encounters;
-
-    /**
-     * @var Collection<int, Sponsor>
-     */
-    #[ORM\ManyToMany(targetEntity: Sponsor::class, mappedBy: 'events')]
-    private Collection $sponsors;
-
-    /**
-     * @var Collection<int, Reward>
-     */
-    #[ORM\OneToMany(targetEntity: Reward::class, mappedBy: 'event', orphanRemoval: true)]
-    private Collection $rewards;
 
     /**
      * @var Collection<int, EventReward>
@@ -70,12 +53,19 @@ class Event
     #[ORM\OneToMany(targetEntity: EventReward::class, mappedBy: 'event', orphanRemoval: true)]
     private Collection $eventRewards;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $maxParticipants = null;
+
+    /**
+     * @var Collection<int, EventSponsor>
+     */
+    #[ORM\OneToMany(targetEntity: EventSponsor::class, mappedBy: 'event', orphanRemoval: true)]
+    private Collection $eventSponsors;
+
     public function __construct()
     {
-        $this->encounters = new ArrayCollection();
-        $this->sponsors = new ArrayCollection();
-        $this->rewards = new ArrayCollection();
         $this->eventRewards = new ArrayCollection();
+        $this->eventSponsors = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -192,93 +182,6 @@ class Event
     }
 
     /**
-     * @return Collection<int, Encounter>
-     */
-    public function getEncounters(): Collection
-    {
-        return $this->encounters;
-    }
-
-    public function addEncounter(Encounter $encounter): static
-    {
-        if (!$this->encounters->contains($encounter)) {
-            $this->encounters->add($encounter);
-            $encounter->setEvent($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEncounter(Encounter $encounter): static
-    {
-        if ($this->encounters->removeElement($encounter)) {
-            // set the owning side to null (unless already changed)
-            if ($encounter->getEvent() === $this) {
-                $encounter->setEvent(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Sponsor>
-     */
-    public function getSponsors(): Collection
-    {
-        return $this->sponsors;
-    }
-
-    public function addSponsor(Sponsor $sponsor): static
-    {
-        if (!$this->sponsors->contains($sponsor)) {
-            $this->sponsors->add($sponsor);
-            $sponsor->addEvent($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSponsor(Sponsor $sponsor): static
-    {
-        if ($this->sponsors->removeElement($sponsor)) {
-            $sponsor->removeEvent($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Reward>
-     */
-    public function getRewards(): Collection
-    {
-        return $this->rewards;
-    }
-
-    public function addReward(Reward $reward): static
-    {
-        if (!$this->rewards->contains($reward)) {
-            $this->rewards->add($reward);
-            $reward->setEvent($this);
-        }
-
-        return $this;
-    }
-
-    public function removeReward(Reward $reward): static
-    {
-        if ($this->rewards->removeElement($reward)) {
-            // set the owning side to null (unless already changed)
-            if ($reward->getEvent() === $this) {
-                $reward->setEvent(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, EventReward>
      */
     public function getEventRewards(): Collection
@@ -302,6 +205,48 @@ class Event
             // set the owning side to null (unless already changed)
             if ($eventReward->getEvent() === $this) {
                 $eventReward->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getMaxParticipants(): ?int
+    {
+        return $this->maxParticipants;
+    }
+
+    public function setMaxParticipants(?int $maxParticipants): static
+    {
+        $this->maxParticipants = $maxParticipants;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EventSponsor>
+     */
+    public function getEventSponsors(): Collection
+    {
+        return $this->eventSponsors;
+    }
+
+    public function addEventSponsor(EventSponsor $eventSponsor): static
+    {
+        if (!$this->eventSponsors->contains($eventSponsor)) {
+            $this->eventSponsors->add($eventSponsor);
+            $eventSponsor->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventSponsor(EventSponsor $eventSponsor): static
+    {
+        if ($this->eventSponsors->removeElement($eventSponsor)) {
+            // set the owning side to null (unless already changed)
+            if ($eventSponsor->getEvent() === $this) {
+                $eventSponsor->setEvent(null);
             }
         }
 
