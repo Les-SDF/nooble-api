@@ -20,12 +20,12 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    jwt_created_listener:
+    acme_api.event.authentication_success_listener:
         # Classe prenant en charge l'événement
-        class: App\EventListener\JWTCreatedListener
-        # Précision de l'evenement à capter
+        class: App\EventListener\AuthenticationSuccessListener
+        # Précision de l’événement à capter
         tags:
-            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccessResponse }
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

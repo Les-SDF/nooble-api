@@ -1,10 +1,12 @@
 <?php
 
 namespace App\EventListener;
+
+
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 
-class JWTCreatedListener
+class AuthenticationSuccessListener
 {
     public function __construct(
         //Service permettant de décoder un JWT (entre autres)
@@ -15,7 +17,7 @@ class JWTCreatedListener
     /**
      * @param AuthenticationSuccessEvent $event
      */
-    public function onJWTCreated(AuthenticationSuccessEvent $event)
+    public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $event)
     {
         $data = $event->getData();
         $user = $event->getUser();
