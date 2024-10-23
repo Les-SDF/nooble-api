@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[ApiResource(
-    normalizationContext: ["groups" => ["event:read", "register:read", "participation:read"]]
+    normalizationContext: ["groups" => ["event:read", "register:read", "participations:read"]]
 )]
 class Event
 {
@@ -25,7 +25,7 @@ class Event
     #[ORM\Column(length: 255)]
     #[Groups(["event:read"])]
     #[Groups(["register:read"])]
-    #[Groups(["participation:read"])]
+    #[Groups(["participations:read"])]
     private ?string $name = null;
 
     #[ORM\Column]
@@ -93,7 +93,7 @@ class Event
      * @var Collection<int, Participation>
      */
     #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'event', orphanRemoval: true)]
-    #[Groups(["participation:read"])]
+    #[Groups(["participations:read"])]
     private Collection $participations;
 
     public function __construct()

@@ -49,6 +49,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180)]
     #[Groups(["user:create"])]
     #[Groups(["register:read"])]
+    #[Groups(["participations:read"])]
     #[Groups(["participation:read"])]
     private ?string $email = null;
 

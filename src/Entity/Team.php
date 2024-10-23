@@ -21,6 +21,7 @@ class Team
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["user:read"])]
     #[Groups(["register:read"])]
+    #[Groups(["participations:read"])]
     #[Groups(["participation:read"])]
     private ?string $name = null;
 
@@ -46,6 +47,7 @@ class Team
      * @var Collection<int, Belong>
      */
     #[ORM\OneToMany(targetEntity: Belong::class, mappedBy: 'team', orphanRemoval: true)]
+    #[Groups(["participations:read"])]
     #[Groups(["participation:read"])]
     private Collection $belongs;
 

@@ -10,7 +10,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 //TODO: RAJOUTER Game.
 #[ORM\Entity(repositoryClass: ParticipationRepository::class)]
-#[ApiResource()]
+#[ApiResource(
+    normalizationContext: ["groups" => ["participation:read"]]
+)]
 class Participation
 {
     #[ORM\Id]
@@ -22,10 +24,12 @@ class Participation
      * @var Collection<int, Encounter>
      */
     #[ORM\OneToMany(targetEntity: Encounter::class, mappedBy: 'participation', orphanRemoval: true)]
+    #[Groups(["participations:read"])]
     #[Groups(["participation:read"])]
     private Collection $encounters;
 
     #[ORM\Column]
+    #[Groups(["participations:read"])]
     #[Groups(["participation:read"])]
     private ?int $round = null;
 
@@ -35,6 +39,7 @@ class Participation
 
     #[ORM\ManyToOne(inversedBy: 'participations')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["participations:read"])]
     #[Groups(["participation:read"])]
     private ?Game $game = null;
 

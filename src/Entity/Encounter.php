@@ -19,10 +19,12 @@ class Encounter
     private ?int $id = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(["participations:read"])]
     #[Groups(["participation:read"])]
     private ?int $ranking = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(["participations:read"])]
     #[Groups(["participation:read"])]
     private ?int $score = null;
 
@@ -32,6 +34,7 @@ class Encounter
 
     #[ORM\ManyToOne(inversedBy: 'encounters')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["participations:read"])]
     #[Groups(["participation:read"])]
     private ?Team $team = null;
 
