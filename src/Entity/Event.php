@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[ApiResource(
-    normalizationContext: ["groups" => ["event:read"]]
+    normalizationContext: ["groups" => ["event:read", "register:read"]]
 )]
 class Event
 {
@@ -24,14 +24,17 @@ class Event
 
     #[ORM\Column(length: 255)]
     #[Groups(["event:read"])]
+    #[Groups(["register:read"])]
     private ?string $name = null;
 
     #[ORM\Column]
     #[Groups(["event:read"])]
+    #[Groups(["register:read"])]
     private ?\DateTimeImmutable $startDate = null;
 
     #[ORM\Column]
     #[Groups(["event:read"])]
+    #[Groups(["register:read"])]
     private ?\DateTimeImmutable $endDate = null;
 
     #[Groups(["event:read"])]
@@ -54,6 +57,7 @@ class Event
     private ?string $address = null;
 
     #[Groups(["event:read"])]
+    #[Groups(["register:read"])]
     #[ORM\Column(enumType: Status::class)]
     private ?Status $status = null;
 
@@ -67,6 +71,7 @@ class Event
 
     #[ORM\Column(nullable: true)]
     #[Groups(["event:read"])]
+    #[Groups(["register:read"])]
     private ?int $maxParticipants = null;
 
     /**
@@ -80,6 +85,7 @@ class Event
      * @var Collection<int, Register>
      */
     #[ORM\OneToMany(targetEntity: Register::class, mappedBy: 'event', orphanRemoval: true)]
+    #[Groups(["register:read"])]
     private Collection $registers;
 
     public function __construct()

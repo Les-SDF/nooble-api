@@ -20,6 +20,7 @@ class Team
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["user:read"])]
+    #[Groups(["register:read"])]
     private ?string $name = null;
 
     /**

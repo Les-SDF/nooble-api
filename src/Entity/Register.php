@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Enum\SaucisseType;
 use App\Repository\RegisterRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RegisterRepository::class)]
@@ -18,6 +19,7 @@ class Register
 
     #[ORM\ManyToOne(inversedBy: 'registers')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["register:read"])]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'registers')]
@@ -25,6 +27,7 @@ class Register
     private ?Event $event = null;
 
     #[ORM\Column(enumType: SaucisseType::class)]
+    #[Groups(["register:read"])]
     private ?SaucisseType $saucisse = null;
 
     public function getId(): ?int

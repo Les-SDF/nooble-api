@@ -23,6 +23,7 @@ class Belong
     #[ORM\ManyToOne(inversedBy: 'belongs')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(["user:read"])]
+    #[Groups(["register:read"])]
     private ?Team $team = null;
 
     public function getId(): ?int

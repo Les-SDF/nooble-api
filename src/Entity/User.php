@@ -48,6 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     #[Groups(["user:create"])]
+    #[Groups(["register:read"])]
     private ?string $email = null;
 
     /**
@@ -71,6 +72,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(targetEntity: Belong::class, mappedBy: 'user', orphanRemoval: true)]
     #[Groups(["user:read"])]
+    #[Groups(["register:read"])]
     private Collection $belongs;
 
     /**
