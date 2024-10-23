@@ -21,6 +21,7 @@ class Team
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["user:read"])]
     #[Groups(["register:read"])]
+    #[Groups(["participation:read"])]
     private ?string $name = null;
 
     /**
@@ -45,7 +46,14 @@ class Team
      * @var Collection<int, Belong>
      */
     #[ORM\OneToMany(targetEntity: Belong::class, mappedBy: 'team', orphanRemoval: true)]
+    #[Groups(["participation:read"])]
     private Collection $belongs;
+
+    /**
+     * @var Collection<int, Encounter>
+     */
+    #[ORM\OneToMany(targetEntity: Encounter::class, mappedBy: 'team', orphanRemoval: true)]
+    private Collection $encounters;
 
 
     public function __construct()
@@ -54,6 +62,7 @@ class Team
         $this->ecounters = new ArrayCollection();
         $this->teamSponsors = new ArrayCollection();
         $this->belongs = new ArrayCollection();
+        $this->encounters = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -187,6 +196,36 @@ class Team
             // set the owning side to null (unless already changed)
             if ($belong->getTeam() === $this) {
                 $belong->setTeam(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Encounter>
+     */
+    public function getEncounters(): Collection
+    {
+        return $this->encounters;
+    }
+
+    public function addEncounter(Encounter $encounter): static
+    {
+        if (!$this->encounters->contains($encounter)) {
+            $this->encounters->add($encounter);
+            $encounter->setTeam($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEncounter(Encounter $encounter): static
+    {
+        if ($this->encounters->removeElement($encounter)) {
+            // set the owning side to null (unless already changed)
+            if ($encounter->getTeam() === $this) {
+                $encounter->setTeam(null);
             }
         }
 

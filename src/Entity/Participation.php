@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ParticipationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 //TODO: RAJOUTER Game.
@@ -21,10 +22,21 @@ class Participation
      * @var Collection<int, Encounter>
      */
     #[ORM\OneToMany(targetEntity: Encounter::class, mappedBy: 'participation', orphanRemoval: true)]
+    #[Groups(["participation:read"])]
     private Collection $encounters;
 
     #[ORM\Column]
+    #[Groups(["participation:read"])]
     private ?int $round = null;
+
+    #[ORM\ManyToOne(inversedBy: 'participations')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Event $event = null;
+
+    #[ORM\ManyToOne(inversedBy: 'participations')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["participation:read"])]
+    private ?Game $game = null;
 
     public function __construct()
     {
@@ -75,6 +87,30 @@ class Participation
     public function setRound(int $round): static
     {
         $this->round = $round;
+
+        return $this;
+    }
+
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): static
+    {
+        $this->event = $event;
+
+        return $this;
+    }
+
+    public function getGame(): ?Game
+    {
+        return $this->game;
+    }
+
+    public function setGame(?Game $game): static
+    {
+        $this->game = $game;
 
         return $this;
     }

@@ -18,6 +18,7 @@ class Belong
 
     #[ORM\ManyToOne(inversedBy: 'belongs')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["participation:read"])]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'belongs')]

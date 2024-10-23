@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\EncounterRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EncounterRepository::class)]
@@ -18,14 +19,21 @@ class Encounter
     private ?int $id = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(["participation:read"])]
     private ?int $ranking = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(["participation:read"])]
     private ?int $score = null;
 
     #[ORM\ManyToOne(inversedBy: 'encounters')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Participation $participation = null;
+
+    #[ORM\ManyToOne(inversedBy: 'encounters')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["participation:read"])]
+    private ?Team $team = null;
 
     public function __construct() {}
 
@@ -66,6 +74,18 @@ class Encounter
     public function setParticipation(?Participation $participation): static
     {
         $this->participation = $participation;
+
+        return $this;
+    }
+
+    public function getTeam(): ?Team
+    {
+        return $this->team;
+    }
+
+    public function setTeam(?Team $team): static
+    {
+        $this->team = $team;
 
         return $this;
     }
