@@ -18,14 +18,12 @@ class Belong
 
     #[ORM\ManyToOne(inversedBy: 'belongs')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["participations:read"])]
-    #[Groups(["participation:read"])]
+    #[Groups(["participations:read", "participation:read"])]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'belongs')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["user:read"])]
-    #[Groups(["register:read"])]
+    #[Groups(["user:read", "register:read"])]
     private ?Team $team = null;
 
     public function getId(): ?int

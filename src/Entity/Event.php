@@ -23,19 +23,15 @@ class Event
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["event:read"])]
-    #[Groups(["register:read"])]
-    #[Groups(["participations:read"])]
+    #[Groups(["event:read", "register:read", "participations:read"])]
     private ?string $name = null;
 
     #[ORM\Column]
-    #[Groups(["event:read"])]
-    #[Groups(["register:read"])]
+    #[Groups(["event:read", "register:read"])]
     private ?\DateTimeImmutable $startDate = null;
 
     #[ORM\Column]
-    #[Groups(["event:read"])]
-    #[Groups(["register:read"])]
+    #[Groups(["event:read", "register:read"])]
     private ?\DateTimeImmutable $endDate = null;
 
     #[Groups(["event:read"])]
@@ -57,8 +53,7 @@ class Event
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
-    #[Groups(["event:read"])]
-    #[Groups(["register:read"])]
+    #[Groups(["event:read", "register:read"])]
     #[ORM\Column(enumType: Status::class)]
     private ?Status $status = null;
 
@@ -71,8 +66,7 @@ class Event
     private Collection $eventRewards;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["event:read"])]
-    #[Groups(["register:read"])]
+    #[Groups(["event:read", "register:read"])]
     private ?int $maxParticipants = null;
 
     /**

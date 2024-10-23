@@ -19,13 +19,11 @@ class Encounter
     private ?int $id = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["participations:read"])]
-    #[Groups(["participation:read"])]
+    #[Groups(["participations:read", "participation:read"])]
     private ?int $ranking = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["participations:read"])]
-    #[Groups(["participation:read"])]
+    #[Groups(["participations:read", "participation:read"])]
     private ?int $score = null;
 
     #[ORM\ManyToOne(inversedBy: 'encounters')]
@@ -34,8 +32,7 @@ class Encounter
 
     #[ORM\ManyToOne(inversedBy: 'encounters')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["participations:read"])]
-    #[Groups(["participation:read"])]
+    #[Groups(["participations:read", "participation:read"])]
     private ?Team $team = null;
 
     public function __construct() {}

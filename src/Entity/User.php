@@ -47,10 +47,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    #[Groups(["user:create"])]
-    #[Groups(["register:read"])]
-    #[Groups(["participations:read"])]
-    #[Groups(["participation:read"])]
+    #[Groups(["user:create", "register:read", "participations:read", "participation:read"])]
     private ?string $email = null;
 
     /**
@@ -73,8 +70,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Belong>
      */
     #[ORM\OneToMany(targetEntity: Belong::class, mappedBy: 'user', orphanRemoval: true)]
-    #[Groups(["user:read"])]
-    #[Groups(["register:read"])]
+    #[Groups(["user:read", "register:read"])]
     private Collection $belongs;
 
     /**

@@ -19,10 +19,7 @@ class Team
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["user:read"])]
-    #[Groups(["register:read"])]
-    #[Groups(["participations:read"])]
-    #[Groups(["participation:read"])]
+    #[Groups(["user:read", "register:read", "participations:read", "participation:read"])]
     private ?string $name = null;
 
     /**
@@ -47,8 +44,7 @@ class Team
      * @var Collection<int, Belong>
      */
     #[ORM\OneToMany(targetEntity: Belong::class, mappedBy: 'team', orphanRemoval: true)]
-    #[Groups(["participations:read"])]
-    #[Groups(["participation:read"])]
+    #[Groups(["participations:read", "participation:read"])]
     private Collection $belongs;
 
     /**

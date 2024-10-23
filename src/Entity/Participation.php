@@ -24,13 +24,11 @@ class Participation
      * @var Collection<int, Encounter>
      */
     #[ORM\OneToMany(targetEntity: Encounter::class, mappedBy: 'participation', orphanRemoval: true)]
-    #[Groups(["participations:read"])]
-    #[Groups(["participation:read"])]
+    #[Groups(["participations:read", "participation:read"])]
     private Collection $encounters;
 
     #[ORM\Column]
-    #[Groups(["participations:read"])]
-    #[Groups(["participation:read"])]
+    #[Groups(["participations:read", "participation:read"])]
     private ?int $round = null;
 
     #[ORM\ManyToOne(inversedBy: 'participations')]
@@ -39,8 +37,7 @@ class Participation
 
     #[ORM\ManyToOne(inversedBy: 'participations')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["participations:read"])]
-    #[Groups(["participation:read"])]
+    #[Groups(["participations:read", "participation:read"])]
     private ?Game $game = null;
 
     public function __construct()
