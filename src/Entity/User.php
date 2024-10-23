@@ -73,9 +73,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(["user:read"])]
     private Collection $belongs;
 
+    /**
+     * @var Collection<int, Register>
+     */
+    #[ORM\OneToMany(targetEntity: Register::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $registers;
+
     public function __construct()
     {
         $this->belongs = new ArrayCollection();
+        $this->registers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -188,6 +195,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($belong->getUser() === $this) {
                 $belong->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Register>
+     */
+    public function getRegisters(): Collection
+    {
+        return $this->registers;
+    }
+
+    public function addRegister(Register $register): static
+    {
+        if (!$this->registers->contains($register)) {
+            $this->registers->add($register);
+            $register->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRegister(Register $register): static
+    {
+        if ($this->registers->removeElement($register)) {
+            // set the owning side to null (unless already changed)
+            if ($register->getUser() === $this) {
+                $register->setUser(null);
             }
         }
 

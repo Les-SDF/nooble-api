@@ -76,10 +76,17 @@ class Event
     #[Groups(["event:read"])]
     private Collection $eventSponsors;
 
+    /**
+     * @var Collection<int, Register>
+     */
+    #[ORM\OneToMany(targetEntity: Register::class, mappedBy: 'event', orphanRemoval: true)]
+    private Collection $registers;
+
     public function __construct()
     {
         $this->eventRewards = new ArrayCollection();
         $this->eventSponsors = new ArrayCollection();
+        $this->registers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -261,6 +268,36 @@ class Event
             // set the owning side to null (unless already changed)
             if ($eventSponsor->getEvent() === $this) {
                 $eventSponsor->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Register>
+     */
+    public function getRegisters(): Collection
+    {
+        return $this->registers;
+    }
+
+    public function addRegister(Register $register): static
+    {
+        if (!$this->registers->contains($register)) {
+            $this->registers->add($register);
+            $register->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRegister(Register $register): static
+    {
+        if ($this->registers->removeElement($register)) {
+            // set the owning side to null (unless already changed)
+            if ($register->getEvent() === $this) {
+                $register->setEvent(null);
             }
         }
 
