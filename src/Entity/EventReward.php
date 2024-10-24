@@ -2,12 +2,29 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use App\Repository\EventRewardRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EventRewardRepository::class)]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: "/event/{id}/eventRewards",
+            uriVariables: [
+                "id" => new Link(
+                    fromProperty: "eventRewards",
+                    fromClass: Event::class
+                )
+            ]
+        ),
+    ]
+)]
 class EventReward
 {
     #[ORM\Id]
@@ -24,6 +41,7 @@ class EventReward
      * @var Collection<int, PrizePack>
      */
     #[ORM\OneToMany(targetEntity: PrizePack::class, mappedBy: 'eventReward', orphanRemoval: true)]
+    #[Groups(["event:read"])]
     private Collection $prizePacks;
 
     /**

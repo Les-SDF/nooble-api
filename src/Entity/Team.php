@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\TeamRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TeamRepository::class)]
@@ -18,6 +19,7 @@ class Team
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["user:read", "register:read", "participations:read", "participation:read"])]
     private ?string $name = null;
 
     /**
@@ -25,12 +27,6 @@ class Team
      */
     #[ORM\OneToMany(targetEntity: Recipient::class, mappedBy: 'team', orphanRemoval: true)]
     private Collection $recipients;
-
-    /**
-     * @var Collection<int, Ecounter>
-     */
-    #[ORM\OneToMany(targetEntity: Ecounter::class, mappedBy: 'team', orphanRemoval: true)]
-    private Collection $ecounters;
 
     /**
      * @var Collection<int, TeamSponsor>
@@ -42,15 +38,22 @@ class Team
      * @var Collection<int, Belong>
      */
     #[ORM\OneToMany(targetEntity: Belong::class, mappedBy: 'team', orphanRemoval: true)]
+    #[Groups(["participations:read", "participation:read"])]
     private Collection $belongs;
+
+    /**
+     * @var Collection<int, Encounter>
+     */
+    #[ORM\OneToMany(targetEntity: Encounter::class, mappedBy: 'team', orphanRemoval: true)]
+    private Collection $encounters;
 
 
     public function __construct()
     {
         $this->recipients = new ArrayCollection();
-        $this->ecounters = new ArrayCollection();
         $this->teamSponsors = new ArrayCollection();
         $this->belongs = new ArrayCollection();
+        $this->encounters = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -94,36 +97,6 @@ class Team
             // set the owning side to null (unless already changed)
             if ($recipient->getTeam() === $this) {
                 $recipient->setTeam(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Ecounter>
-     */
-    public function getEcounters(): Collection
-    {
-        return $this->ecounters;
-    }
-
-    public function addEcounter(Ecounter $ecounter): static
-    {
-        if (!$this->ecounters->contains($ecounter)) {
-            $this->ecounters->add($ecounter);
-            $ecounter->setTeam($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEcounter(Ecounter $ecounter): static
-    {
-        if ($this->ecounters->removeElement($ecounter)) {
-            // set the owning side to null (unless already changed)
-            if ($ecounter->getTeam() === $this) {
-                $ecounter->setTeam(null);
             }
         }
 
@@ -184,6 +157,36 @@ class Team
             // set the owning side to null (unless already changed)
             if ($belong->getTeam() === $this) {
                 $belong->setTeam(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Encounter>
+     */
+    public function getEncounters(): Collection
+    {
+        return $this->encounters;
+    }
+
+    public function addEncounter(Encounter $encounter): static
+    {
+        if (!$this->encounters->contains($encounter)) {
+            $this->encounters->add($encounter);
+            $encounter->setTeam($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEncounter(Encounter $encounter): static
+    {
+        if ($this->encounters->removeElement($encounter)) {
+            // set the owning side to null (unless already changed)
+            if ($encounter->getTeam() === $this) {
+                $encounter->setTeam(null);
             }
         }
 

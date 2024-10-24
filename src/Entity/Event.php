@@ -8,10 +8,13 @@ use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
-#[ApiResource()]
+#[ApiResource(
+    normalizationContext: ["groups" => ["event:read", "register:read", "participations:read"]]
+)]
 class Event
 {
     #[ORM\Id]
@@ -20,29 +23,37 @@ class Event
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["event:read", "register:read", "participations:read"])]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[Groups(["event:read", "register:read"])]
     private ?\DateTimeImmutable $startDate = null;
 
     #[ORM\Column]
+    #[Groups(["event:read", "register:read"])]
     private ?\DateTimeImmutable $endDate = null;
 
+    #[Groups(["event:read"])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[Groups(["event:read"])]
     #[ORM\Column]
     private ?bool $official = null;
 
+    #[Groups(["event:read"])]
     #[ORM\Column]
     private ?bool $charity = null;
 
     #[ORM\Column]
     private ?bool $private = null;
 
+    #[Groups(["event:read"])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
+    #[Groups(["event:read", "register:read"])]
     #[ORM\Column(enumType: Status::class)]
     private ?Status $status = null;
 
@@ -51,21 +62,40 @@ class Event
      * @var Collection<int, EventReward>
      */
     #[ORM\OneToMany(targetEntity: EventReward::class, mappedBy: 'event', orphanRemoval: true)]
+    #[Groups(["event:read"])]
     private Collection $eventRewards;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(["event:read", "register:read"])]
     private ?int $maxParticipants = null;
 
     /**
      * @var Collection<int, EventSponsor>
      */
     #[ORM\OneToMany(targetEntity: EventSponsor::class, mappedBy: 'event', orphanRemoval: true)]
+    #[Groups(["event:read"])]
     private Collection $eventSponsors;
+
+    /**
+     * @var Collection<int, Register>
+     */
+    #[ORM\OneToMany(targetEntity: Register::class, mappedBy: 'event', orphanRemoval: true)]
+    #[Groups(["register:read"])]
+    private Collection $registers;
+
+    /**
+     * @var Collection<int, Participation>
+     */
+    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'event', orphanRemoval: true)]
+    #[Groups(["participations:read"])]
+    private Collection $participations;
 
     public function __construct()
     {
         $this->eventRewards = new ArrayCollection();
         $this->eventSponsors = new ArrayCollection();
+        $this->registers = new ArrayCollection();
+        $this->participations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -247,6 +277,66 @@ class Event
             // set the owning side to null (unless already changed)
             if ($eventSponsor->getEvent() === $this) {
                 $eventSponsor->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Register>
+     */
+    public function getRegisters(): Collection
+    {
+        return $this->registers;
+    }
+
+    public function addRegister(Register $register): static
+    {
+        if (!$this->registers->contains($register)) {
+            $this->registers->add($register);
+            $register->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRegister(Register $register): static
+    {
+        if ($this->registers->removeElement($register)) {
+            // set the owning side to null (unless already changed)
+            if ($register->getEvent() === $this) {
+                $register->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Participation>
+     */
+    public function getParticipations(): Collection
+    {
+        return $this->participations;
+    }
+
+    public function addParticipation(Participation $participation): static
+    {
+        if (!$this->participations->contains($participation)) {
+            $this->participations->add($participation);
+            $participation->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipation(Participation $participation): static
+    {
+        if ($this->participations->removeElement($participation)) {
+            // set the owning side to null (unless already changed)
+            if ($participation->getEvent() === $this) {
+                $participation->setEvent(null);
             }
         }
 

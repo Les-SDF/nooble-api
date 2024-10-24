@@ -3,11 +3,41 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use App\Repository\EventSponsorRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EventSponsorRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: "/sponsor/{id}/eventSponsors",
+            uriVariables: [
+                "id" => new Link(
+                    fromProperty: "eventSponsors",
+                    fromClass: Sponsor::class
+                )
+            ]
+        ),
+        new GetCollection(
+            uriTemplate: "/event/{id}/eventSponsors",
+            uriVariables: [
+                "id" => new Link(
+                    fromProperty: "eventSponsors",
+                    fromClass: Event::class
+                )
+            ]
+        ),
+        new Get(),
+        new Post(),
+        new Delete()
+    ]
+)]
 class EventSponsor
 {
     #[ORM\Id]
@@ -21,6 +51,7 @@ class EventSponsor
 
     #[ORM\ManyToOne(inversedBy: 'eventSponsors')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["event:read"])]
     private ?Sponsor $sponsor = null;
 
     public function getId(): ?int
