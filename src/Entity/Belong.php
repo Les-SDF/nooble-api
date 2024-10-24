@@ -6,6 +6,9 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use App\Repository\BelongRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\Link;
 
@@ -29,7 +32,10 @@ use ApiPlatform\Metadata\Link;
                     fromClass: Team::class
                 )
             ]
-        )
+        ),
+        new Get(),
+        new Post(),
+        new Delete()
     ]
 )]
 class Belong

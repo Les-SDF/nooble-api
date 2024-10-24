@@ -9,6 +9,9 @@ use App\Repository\EncounterRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EncounterRepository::class)]
@@ -31,7 +34,10 @@ use Doctrine\ORM\Mapping as ORM;
                     fromClass: Participation::class
                 )
             ]
-        )
+        ),
+        new Get(),
+        new Post(),
+        new Delete()
     ]
 )]
 class Encounter

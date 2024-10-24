@@ -6,6 +6,9 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
 use App\Repository\RecipientRepository;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RecipientRepository::class)]
@@ -28,7 +31,10 @@ use Doctrine\ORM\Mapping as ORM;
                     fromClass: EventReward::class
                 )
             ]
-        )
+        ),
+        new Get(),
+        new Post(),
+        new Delete()
     ]
 )]
 class Recipient

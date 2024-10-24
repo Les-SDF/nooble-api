@@ -7,6 +7,9 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
 use App\Repository\EventSponsorRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EventSponsorRepository::class)]
@@ -29,7 +32,10 @@ use Doctrine\ORM\Mapping as ORM;
                     fromClass: Event::class
                 )
             ]
-        )
+        ),
+        new Get(),
+        new Post(),
+        new Delete()
     ]
 )]
 class EventSponsor

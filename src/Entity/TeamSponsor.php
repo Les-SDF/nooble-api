@@ -5,6 +5,9 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use App\Repository\TeamSponsorRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -29,6 +32,9 @@ use Doctrine\ORM\Mapping as ORM;
                 )
             ]
         ),
+        new Get(),
+        new Post(),
+        new Delete()
     ]
 )]
 class TeamSponsor
