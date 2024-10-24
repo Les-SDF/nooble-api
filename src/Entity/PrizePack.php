@@ -51,9 +51,9 @@ class PrizePack
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
+    #[ORM\Column(options: ["default" => 1])]
     #[Groups(["event:read", "prizepack:update"])]
-    private ?int $quantity = null;
+    private ?int $quantity = 1;
 
     #[ORM\ManyToOne(inversedBy: 'prizePacks')]
     #[ORM\JoinColumn(nullable: false)]

@@ -61,11 +61,11 @@ class Event
     private ?bool $official = null;
 
     #[Groups(["event:read"])]
-    #[ORM\Column]
-    private ?bool $charity = null;
+    #[ORM\Column(options: ["default" => false])]
+    private ?bool $charity = false;
 
-    #[ORM\Column]
-    private ?bool $private = null;
+    #[ORM\Column(options: ["default" => false])]
+    private ?bool $private = false;
 
     #[Groups(["event:read"])]
     #[ORM\Column(length: 255, nullable: true)]

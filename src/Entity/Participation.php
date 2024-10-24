@@ -63,10 +63,13 @@ class Participation
     #[ORM\JoinColumn(nullable: false)]
     private ?Event $event = null;
 
-    #[ORM\ManyToOne(inversedBy: 'participations')]
+    #[ORM\ManyToOne(cascade: ["persist"], inversedBy: 'participations')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(["participations:read", "participation:read", "participation:update"])]
     private ?Game $game = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $date = null;
 
     public function __construct()
     {
@@ -141,6 +144,18 @@ class Participation
     public function setGame(?Game $game): static
     {
         $this->game = $game;
+
+        return $this;
+    }
+
+    public function getDate(): ?\DateTimeImmutable
+    {
+        return $this->date;
+    }
+
+    public function setDate(?\DateTimeImmutable $date): static
+    {
+        $this->date = $date;
 
         return $this;
     }

@@ -348,4 +348,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    // TODO: Enlever cette méthode, elle règle un problème de sérialisation pour AppFixtures
+    public function __toString(): string
+    {
+        return 'User';
+    }
 }

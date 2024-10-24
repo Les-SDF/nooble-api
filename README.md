@@ -28,10 +28,8 @@ php bin/console doctrine:schema:update --force
 ```
 
 ```shell
-php bin/console doctrine:fixtures:load
+php bin/console doctrine:fixtures:load --append
 ```
-
-- **Entrer :** yes
 
 ```shell
 php bin/console lexik:jwt:generate-keypair
