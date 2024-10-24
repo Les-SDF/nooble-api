@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -47,6 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\Email(message: 'The email "{{ value }}" is not a valid email.')]
     #[Groups(["user:create", "register:read", "participations:read", "participation:read"])]
     private ?string $email = null;
 
@@ -62,7 +64,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-
+    #[Assert\NotBlank(message: "Le mot de passe actuel ne doit pas être vide", groups: ["user:create"])]
+    #[Assert\NotNull(message: "Le mot de passe actuel ne doit pas être null", groups: ["user:create"])]
+    #[Assert\Length(min: 8, max: 32, minMessage: "Le mot de passe actuel doit faire plus de 8 caractères", maxMessage: "Le mot de passe actuel doit faire moins de 32 caractères", groups: ["user:update"])]
+    #[Assert\Regex(
+        pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$/',
+        message: 'The password must be at least 5 characters long, with at least one lowercase, one uppercase letter and one special character.',
+        groups: ["user:create"]
+    )]
     #[Groups(["user:create"])]
     private ?string $plainPassword = null;
 
