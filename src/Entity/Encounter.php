@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use App\Repository\EncounterRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,7 +12,28 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EncounterRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: "/teams/{id}/encounters",
+            uriVariables: [
+                "id" => new Link(
+                    fromProperty: "encounters",
+                    fromClass: Team::class
+                )
+            ]
+        ),
+        new GetCollection(
+            uriTemplate: "/participations/{id}/encounters",
+            uriVariables: [
+                "id" => new Link(
+                    fromProperty: "encounters",
+                    fromClass: Participation::class
+                )
+            ]
+        )
+    ]
+)]
 class Encounter
 {
     #[ORM\Id]

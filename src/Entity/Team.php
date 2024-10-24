@@ -29,12 +29,6 @@ class Team
     private Collection $recipients;
 
     /**
-     * @var Collection<int, Ecounter>
-     */
-    #[ORM\OneToMany(targetEntity: Ecounter::class, mappedBy: 'team', orphanRemoval: true)]
-    private Collection $ecounters;
-
-    /**
      * @var Collection<int, TeamSponsor>
      */
     #[ORM\OneToMany(targetEntity: TeamSponsor::class, mappedBy: 'team', orphanRemoval: true)]
@@ -57,7 +51,6 @@ class Team
     public function __construct()
     {
         $this->recipients = new ArrayCollection();
-        $this->ecounters = new ArrayCollection();
         $this->teamSponsors = new ArrayCollection();
         $this->belongs = new ArrayCollection();
         $this->encounters = new ArrayCollection();
@@ -104,36 +97,6 @@ class Team
             // set the owning side to null (unless already changed)
             if ($recipient->getTeam() === $this) {
                 $recipient->setTeam(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Ecounter>
-     */
-    public function getEcounters(): Collection
-    {
-        return $this->ecounters;
-    }
-
-    public function addEcounter(Ecounter $ecounter): static
-    {
-        if (!$this->ecounters->contains($ecounter)) {
-            $this->ecounters->add($ecounter);
-            $ecounter->setTeam($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEcounter(Ecounter $ecounter): static
-    {
-        if ($this->ecounters->removeElement($ecounter)) {
-            // set the owning side to null (unless already changed)
-            if ($ecounter->getTeam() === $this) {
-                $ecounter->setTeam(null);
             }
         }
 

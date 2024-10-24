@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use App\Repository\ParticipationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -11,6 +13,26 @@ use Doctrine\ORM\Mapping as ORM;
 //TODO: RAJOUTER Game.
 #[ORM\Entity(repositoryClass: ParticipationRepository::class)]
 #[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: "/game/{id}/participations",
+            uriVariables: [
+                "id" => new Link(
+                    fromProperty: "participations",
+                    fromClass: Game::class
+                )
+            ]
+        ),
+        new GetCollection(
+            uriTemplate: "/event/{id}/participations",
+            uriVariables: [
+                "id" => new Link(
+                    fromProperty: "participations",
+                    fromClass: Event::class
+                )
+            ]
+        )
+    ],
     normalizationContext: ["groups" => ["participation:read"]]
 )]
 class Participation

@@ -3,12 +3,35 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\BelongRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\Link;
 
 #[ORM\Entity(repositoryClass: BelongRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: "/users/{id}/belong",
+            uriVariables: [
+                "id" => new Link(
+                    fromProperty: "belongs",
+                    fromClass: User::class
+                )
+            ]
+        ),
+        new GetCollection(
+            uriTemplate: "/teams/{id}/belong",
+            uriVariables: [
+                "id" => new Link(
+                    fromProperty: "belongs",
+                    fromClass: Team::class
+                )
+            ]
+        )
+    ]
+)]
 class Belong
 {
     #[ORM\Id]

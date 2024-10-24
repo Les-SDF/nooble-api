@@ -3,13 +3,36 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use App\Enum\SaucisseType;
 use App\Repository\RegisterRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RegisterRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: "/users/{id}/registers",
+            uriVariables: [
+                "id" => new Link(
+                    fromProperty: "registers",
+                    fromClass: User::class
+                )
+            ]
+        ),
+        new GetCollection(
+            uriTemplate: "/event/{id}/registers",
+            uriVariables: [
+                "id" => new Link(
+                    fromProperty: "registers",
+                    fromClass: Event::class
+                )
+            ]
+        )
+    ]
+)]
 class Register
 {
     #[ORM\Id]
