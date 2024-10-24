@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
@@ -35,8 +36,11 @@ use Doctrine\ORM\Mapping as ORM;
         ),
         new Patch(
             denormalizationContext: ["groups" => ["prizepack:update"]],
-            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
+            security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getEventReward().getEvent().getCreator() == user) or (is_granted('ROLE_USER') and object.getEventReward().getEvent().getManagers().contains(user))",
             validationContext: ["groups" => ["prizepack:update"]],
+        ),
+        new Delete(
+            security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getEventReward().getEvent().getCreator() == user) or (is_granted('ROLE_USER') and object.getEventReward().getEvent().getManagers().contains(user))",
         )
     ]
 )]

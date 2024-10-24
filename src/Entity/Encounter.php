@@ -36,8 +36,12 @@ use Doctrine\ORM\Mapping as ORM;
             ]
         ),
         new Get(),
-        new Post(),
-        new Delete()
+        new Post(
+            security: "(is_granted('ROLE_USER') and object.getParticipation().getEvent().getCreator() == user or is_granted('ROLE_USER') and object.getParticipation().getEvent().getManagers().contains(user))"
+        ),
+        new Delete(
+            security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getParticipation().getEvent().getCreator() == user or is_granted('ROLE_USER') and object.getParticipation().getEvent().getManagers().contains(user))"
+        )
     ]
 )]
 class Encounter

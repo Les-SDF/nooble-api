@@ -35,7 +35,7 @@ use Doctrine\ORM\Mapping as ORM;
         ),
         new Patch(
             denormalizationContext: ["groups" => ["participation:update"]],
-            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
+            security: "(is_granted('ROLE_USER') and object.getEvent().getCreator() == user or is_granted('ROLE_USER') and object.getEvent().getManagers().contains(user))",
             validationContext: ["groups" => ["participation:update"]],
         )
     ],
