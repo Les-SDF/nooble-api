@@ -106,11 +106,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Manager::class, mappedBy: 'users', orphanRemoval: true)]
     private Collection $managers;
 
+    /**
+     * @var Collection<int, Reward>
+     */
+    #[ORM\OneToMany(targetEntity: Reward::class, mappedBy: 'manager', orphanRemoval: true)]
+    private Collection $rewards;
+
     public function __construct()
     {
         $this->belongs = new ArrayCollection();
         $this->registers = new ArrayCollection();
         $this->managers = new ArrayCollection();
+        $this->rewards = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -306,6 +313,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($manager->getUsers() === $this) {
                 $manager->setUsers(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reward>
+     */
+    public function getRewards(): Collection
+    {
+        return $this->rewards;
+    }
+
+    public function addReward(Reward $reward): static
+    {
+        if (!$this->rewards->contains($reward)) {
+            $this->rewards->add($reward);
+            $reward->setManager($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReward(Reward $reward): static
+    {
+        if ($this->rewards->removeElement($reward)) {
+            // set the owning side to null (unless already changed)
+            if ($reward->getManager() === $this) {
+                $reward->setManager(null);
             }
         }
 

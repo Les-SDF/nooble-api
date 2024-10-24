@@ -25,10 +25,10 @@ use Doctrine\ORM\Mapping as ORM;
             // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
         ),
         new Patch(
-            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
+            security: "(is_granted('ROLE_USER') and object.getManager() == user)",
         ),
         new Delete(
-            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
+            security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getManager() == user)",
         ),
     ]
 )]
@@ -54,8 +54,12 @@ class Reward
     /**
      * @var Collection<int, PrizePack>
      */
-    #[ORM\OneToMany(targetEntity: PrizePack::class, mappedBy: 'reward', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: PrizePack::class, mappedBy: 'reward', orphanRemoval: false)]
     private Collection $prizePacks;
+
+    #[ORM\ManyToOne(inversedBy: 'rewards')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $manager = null;
 
 
     public function __construct()
@@ -130,6 +134,18 @@ class Reward
                 $prizePack->setReward(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getManager(): ?User
+    {
+        return $this->manager;
+    }
+
+    public function setManager(?User $manager): static
+    {
+        $this->manager = $manager;
 
         return $this;
     }
