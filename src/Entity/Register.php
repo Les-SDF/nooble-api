@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Patch;
 use App\Enum\SaucisseType;
 use App\Repository\RegisterRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -30,6 +31,11 @@ use Doctrine\ORM\Mapping as ORM;
                     fromClass: Event::class
                 )
             ]
+        ),
+        new Patch(
+            denormalizationContext: ["groups" => ["register:update"]],
+            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
+            validationContext: ["groups" => ["register:update"]],
         )
     ]
 )]
@@ -50,7 +56,7 @@ class Register
     private ?Event $event = null;
 
     #[ORM\Column(enumType: SaucisseType::class)]
-    #[Groups(["register:read"])]
+    #[Groups(["register:read", "register:update"])]
     private ?SaucisseType $saucisse = null;
 
     public function getId(): ?int

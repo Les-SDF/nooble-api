@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Patch;
 use App\Repository\PrizePackRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -31,6 +32,11 @@ use Doctrine\ORM\Mapping as ORM;
                     fromClass: EventReward::class
                 )
             ]
+        ),
+        new Patch(
+            denormalizationContext: ["groups" => ["prizepack:update"]],
+            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
+            validationContext: ["groups" => ["prizepack:update"]],
         )
     ]
 )]
@@ -42,16 +48,17 @@ class PrizePack
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups(["event:read"])]
+    #[Groups(["event:read", "prizepack:update"])]
     private ?int $quantity = null;
 
     #[ORM\ManyToOne(inversedBy: 'prizePacks')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["event:read"])]
+    #[Groups(["event:read", "prizepack:update"])]
     private ?Reward $reward = null;
 
     #[ORM\ManyToOne(inversedBy: 'prizePacks')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["prizepack:update"])]
     private ?EventReward $eventReward = null;
 
     public function __construct() {}

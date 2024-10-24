@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Patch;
 use App\Repository\ParticipationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -31,6 +32,11 @@ use Doctrine\ORM\Mapping as ORM;
                     fromClass: Event::class
                 )
             ]
+        ),
+        new Patch(
+            denormalizationContext: ["groups" => ["participation:update"]],
+            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
+            validationContext: ["groups" => ["participation:update"]],
         )
     ],
     normalizationContext: ["groups" => ["participation:read"]]
@@ -46,11 +52,11 @@ class Participation
      * @var Collection<int, Encounter>
      */
     #[ORM\OneToMany(targetEntity: Encounter::class, mappedBy: 'participation', orphanRemoval: true)]
-    #[Groups(["participations:read", "participation:read"])]
+    #[Groups(["participations:read", "participation:read", "participation:update"])]
     private Collection $encounters;
 
     #[ORM\Column]
-    #[Groups(["participations:read", "participation:read"])]
+    #[Groups(["participations:read", "participation:read", "participation:update"])]
     private ?int $round = null;
 
     #[ORM\ManyToOne(inversedBy: 'participations')]
@@ -59,7 +65,7 @@ class Participation
 
     #[ORM\ManyToOne(inversedBy: 'participations')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["participations:read", "participation:read"])]
+    #[Groups(["participations:read", "participation:read", "participation:update"])]
     private ?Game $game = null;
 
     public function __construct()

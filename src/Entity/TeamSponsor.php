@@ -33,7 +33,9 @@ use Doctrine\ORM\Mapping as ORM;
             ]
         ),
         new Get(),
-        new Post(),
+        new Post(
+            //security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
+        ),
         new Delete()
     ]
 )]

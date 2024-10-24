@@ -3,6 +3,10 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Repository\SponsorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,7 +14,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SponsorRepository::class)]
-#[ApiResource()]
+#[ApiResource(
+    new Get(
+        // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
+    ),
+    new Patch(
+        // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
+    ),
+    new Delete(
+        // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
+    ),
+    new Post(
+        // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
+    )
+)]
 class Sponsor
 {
     #[ORM\Id]
