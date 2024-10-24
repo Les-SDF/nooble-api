@@ -15,18 +15,20 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SponsorRepository::class)]
 #[ApiResource(
-    new Get(
-        // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
-    ),
-    new Patch(
-        // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
-    ),
-    new Delete(
-        // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
-    ),
-    new Post(
-        // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
-    )
+    operations: [
+        new Get(
+            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
+        ),
+        new Patch(
+            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
+        ),
+        new Delete(
+            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
+        ),
+        new Post(
+            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
+        )
+    ]
 )]
 class Sponsor
 {
