@@ -100,10 +100,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Register::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $registers;
 
+    /**
+     * @var Collection<int, Manager>
+     */
+    #[ORM\OneToMany(targetEntity: Manager::class, mappedBy: 'users', orphanRemoval: true)]
+    private Collection $managers;
+
     public function __construct()
     {
         $this->belongs = new ArrayCollection();
         $this->registers = new ArrayCollection();
+        $this->managers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -269,6 +276,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($register->getUser() === $this) {
                 $register->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Manager>
+     */
+    public function getManagers(): Collection
+    {
+        return $this->managers;
+    }
+
+    public function addManager(Manager $manager): static
+    {
+        if (!$this->managers->contains($manager)) {
+            $this->managers->add($manager);
+            $manager->setUsers($this);
+        }
+
+        return $this;
+    }
+
+    public function removeManager(Manager $manager): static
+    {
+        if ($this->managers->removeElement($manager)) {
+            // set the owning side to null (unless already changed)
+            if ($manager->getUsers() === $this) {
+                $manager->setUsers(null);
             }
         }
 

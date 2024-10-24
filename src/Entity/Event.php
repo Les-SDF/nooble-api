@@ -3,6 +3,10 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Enum\Status;
 use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,6 +17,20 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[ApiResource(
+    operations: [
+        new Get(),
+        new Post(
+            denormalizationContext: ["groups" => ["utilisateur:create"]],
+            security: "is_granted('ROLE_ORGANISATEUR') and (object == creator or organisators.contains(object)) ",
+            validationContext: ["groups" => ["utilisateur:create"]],
+        ),
+        new Patch(
+            denormalizationContext: ["groups" => ["utilisateur:update"]],
+            security: "is_granted('ROLE_ORGANISATEUR', object)",
+            validationContext: ["groups" => ["utilisateur:update"]],
+        ),
+        new Delete(security: "is_granted('ROLE_ORGANISATEUR') and (object == creator)")
+    ],
     normalizationContext: ["groups" => ["event:read", "register:read", "participations:read"]]
 )]
 class Event
@@ -57,6 +75,9 @@ class Event
     #[ORM\Column(enumType: Status::class)]
     private ?Status $status = null;
 
+    #[Groups(["event:read"])]
+    #[ORM\Column]
+    private ?User $creator = null;
 
     /**
      * @var Collection<int, EventReward>
@@ -90,12 +111,19 @@ class Event
     #[Groups(["participations:read"])]
     private Collection $participations;
 
+    /**
+     * @var Collection<int, Manager>
+     */
+    #[ORM\OneToMany(targetEntity: Manager::class, mappedBy: 'events', orphanRemoval: true)]
+    private Collection $managers;
+
     public function __construct()
     {
         $this->eventRewards = new ArrayCollection();
         $this->eventSponsors = new ArrayCollection();
         $this->registers = new ArrayCollection();
         $this->participations = new ArrayCollection();
+        $this->managers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -337,6 +365,36 @@ class Event
             // set the owning side to null (unless already changed)
             if ($participation->getEvent() === $this) {
                 $participation->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Manager>
+     */
+    public function getManagers(): Collection
+    {
+        return $this->managers;
+    }
+
+    public function addManager(Manager $manager): static
+    {
+        if (!$this->managers->contains($manager)) {
+            $this->managers->add($manager);
+            $manager->setEvents($this);
+        }
+
+        return $this;
+    }
+
+    public function removeManager(Manager $manager): static
+    {
+        if ($this->managers->removeElement($manager)) {
+            // set the owning side to null (unless already changed)
+            if ($manager->getEvents() === $this) {
+                $manager->setEvents(null);
             }
         }
 
