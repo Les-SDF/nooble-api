@@ -239,6 +239,16 @@ class Event
         return $this;
     }
 
+    public function getCreator(): ?User
+    {
+        return $this->creator;
+    }
+
+    public function setCreator(?User $creator): void
+    {
+        $this->creator = $creator;
+    }
+
     /**
      * @return Collection<int, EventReward>
      */
