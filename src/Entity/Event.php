@@ -21,7 +21,7 @@ use Doctrine\ORM\Mapping as ORM;
         new Get(),
         new Post(
             denormalizationContext: ["groups" => ["utilisateur:create"]],
-            security: "is_granted('ROLE_ORGANISATEUR') and (object == creator or organisators.contains(object)) ",
+            security: "is_granted('ROLE_ORGANISATEUR') and (object == creator or managers.contains(object)) ",
             validationContext: ["groups" => ["utilisateur:create"]],
         ),
         new Patch(
