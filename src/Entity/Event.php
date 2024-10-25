@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Enum\Status;
@@ -18,6 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[ApiResource(
     operations: [
+        new GetCollection(),
         new Get(),
         new Post(
             denormalizationContext: ["groups" => ["utilisateur:create"]],
@@ -75,10 +77,6 @@ class Event
     #[ORM\Column(enumType: Status::class)]
     private ?Status $status = null;
 
-    #[Groups(["event:read"])]
-    #[ORM\Column]
-    private ?User $creator = null;
-
     /**
      * @var Collection<int, EventReward>
      */
@@ -116,6 +114,10 @@ class Event
      */
     #[ORM\OneToMany(targetEntity: Manager::class, mappedBy: 'events', orphanRemoval: true)]
     private Collection $managers;
+
+    #[ORM\ManyToOne(inversedBy: 'createdEvents')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $creator = null;
 
     public function __construct()
     {
@@ -237,16 +239,6 @@ class Event
         $this->status = $status;
 
         return $this;
-    }
-
-    public function getCreator(): ?User
-    {
-        return $this->creator;
-    }
-
-    public function setCreator(?User $creator): void
-    {
-        $this->creator = $creator;
     }
 
     /**
@@ -407,6 +399,18 @@ class Event
                 $manager->setEvents(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreator(): ?User
+    {
+        return $this->creator;
+    }
+
+    public function setCreator(?User $creator): static
+    {
+        $this->creator = $creator;
 
         return $this;
     }

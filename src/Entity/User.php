@@ -46,12 +46,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["user:read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
     #[Assert\Email(message: 'The email "{{ value }}" is not a valid email.')]
-    #[Groups(["user:create", "register:read", "participations:read", "participation:read"])]
+    #[Groups(["user:read", "user:create", "register:read", "participations:read", "participation:read"])]
     private ?string $email = null;
 
     /**
@@ -64,27 +63,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[ApiProperty(description: 'Mots de passse hasher', readable: false, writable: false)]
+    #[ApiProperty(description: 'Hashed password', readable: false, writable: false)]
     private ?string $password = null;
 
     #[Assert\NotBlank(message: "Le mot de passe actuel ne doit pas être vide", groups: ["user:create"])]
     #[Assert\NotNull(message: "Le mot de passe actuel ne doit pas être null", groups: ["user:create"])]
-    #[Assert\Length(min: 8, max: 32, minMessage: "Le mot de passe actuel doit faire plus de 8 caractères", maxMessage: "Le mot de passe actuel doit faire moins de 32 caractères", groups: ["user:update"])]
+    #[Assert\Length(min: 8, max: 32, minMessage: "Le mot de passe actuel doit faire plus de 8 caractères", maxMessage: "Le mot de passe actuel doit faire moins de 32 caractères", groups: ["user:create"])]
     #[Assert\Regex(
         pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$/',
         message: 'The password must be at least 5 characters long, with at least one lowercase, one uppercase letter and one special character.',
         groups: ["user:create"]
     )]
     #[Groups(["user:create"])]
-    #[ApiProperty(description: 'Mots de passse non hasher', readable: false, writable: true)]
+    #[ApiProperty(description: 'Plain password for creating an user', readable: false, writable: true)]
     private ?string $plainPassword = null;
 
-    #[UserPassword(groups: ["utilisateur:update"])]
-    #[ApiProperty(description: 'Mots de passse pas hasher', readable: false, writable: true)]
-    #[Groups(["utilisateur:update"])]
+    #[ApiProperty(description: 'Plain password for updating an user', readable: false, writable: true)]
+    #[Groups(["user:update"])]
+    #[UserPassword(groups: ["user:update"])]
     private ?string $currentPlainPassword = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[ApiProperty(readable: true, writable: true)]
+    #[Groups(["user:read"])]
     private ?string $username = null;
 
     /**
@@ -112,12 +113,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Reward::class, mappedBy: 'manager', orphanRemoval: true)]
     private Collection $rewards;
 
+    /**
+     * @var Collection<int, Event>
+     */
+    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'creator')]
+    private Collection $createdEvents;
+
     public function __construct()
     {
         $this->belongs = new ArrayCollection();
         $this->registers = new ArrayCollection();
         $this->managers = new ArrayCollection();
         $this->rewards = new ArrayCollection();
+        $this->createdEvents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -353,5 +361,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __toString(): string
     {
         return 'User';
+    }
+
+    /**
+     * @return Collection<int, Event>
+     */
+    public function getCreatedEvents(): Collection
+    {
+        return $this->createdEvents;
+    }
+
+    public function addCreatedEvent(Event $createdEvent): static
+    {
+        if (!$this->createdEvents->contains($createdEvent)) {
+            $this->createdEvents->add($createdEvent);
+            $createdEvent->setCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCreatedEvent(Event $createdEvent): static
+    {
+        if ($this->createdEvents->removeElement($createdEvent)) {
+            // set the owning side to null (unless already changed)
+            if ($createdEvent->getCreator() === $this) {
+                $createdEvent->setCreator(null);
+            }
+        }
+
+        return $this;
     }
 }
