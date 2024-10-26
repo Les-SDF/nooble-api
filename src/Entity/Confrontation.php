@@ -50,11 +50,11 @@ class Confrontation
     private ?int $id = null;
 
     /**
-     * @var Collection<int, Encounter>
+     * @var Collection<int, Participation>
      */
-    #[ORM\OneToMany(targetEntity: Encounter::class, mappedBy: 'confrontation', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'confrontation', orphanRemoval: true)]
     #[Groups(["confrontations:read", "confrontation:read", "confrontation:update"])]
-    private Collection $encounters;
+    private Collection $participations;
 
     #[ORM\Column]
     #[Groups(["confrontations:read", "confrontation:read", "confrontation:update"])]
@@ -74,7 +74,7 @@ class Confrontation
 
     public function __construct()
     {
-        $this->encounters = new ArrayCollection();
+        $this->participations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -84,29 +84,29 @@ class Confrontation
 
 
     /**
-     * @return Collection<int, Encounter>
+     * @return Collection<int, Participation>
      */
-    public function getEncounters(): Collection
+    public function getParticipations(): Collection
     {
-        return $this->encounters;
+        return $this->participations;
     }
 
-    public function addEncounter(Encounter $encounter): static
+    public function addParticipation(Participation $participation): static
     {
-        if (!$this->encounters->contains($encounter)) {
-            $this->encounters->add($encounter);
-            $encounter->setConfrontation($this);
+        if (!$this->participations->contains($participation)) {
+            $this->participations->add($participation);
+            $participation->setConfrontation($this);
         }
 
         return $this;
     }
 
-    public function removeEncounter(Encounter $encounter): static
+    public function removeParticipation(Participation $participation): static
     {
-        if ($this->encounters->removeElement($encounter)) {
+        if ($this->participations->removeElement($participation)) {
             // set the owning side to null (unless already changed)
-            if ($encounter->getConfrontation() === $this) {
-                $encounter->setConfrontation(null);
+            if ($participation->getConfrontation() === $this) {
+                $participation->setConfrontation(null);
             }
         }
 

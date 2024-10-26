@@ -2,18 +2,18 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Encounter;
+use App\Entity\Participation;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-final class EncounterVoter extends AbstractVoter
+final class ParticipationVoter extends AbstractVoter
 {
-    public const CREATE = "ENCOUNTER_CREATE";
-    public const READ = "ENCOUNTER_READ";
-    public const UPDATE = "ENCOUNTER_UPDATE";
-    public const DELETE = "ENCOUNTER_DELETE";
+    public const CREATE = "PARTICIPATION_CREATE";
+    public const READ = "PARTICIPATION_READ";
+    public const UPDATE = "PARTICIPATION_UPDATE";
+    public const DELETE = "PARTICIPATION_DELETE";
 
     public function __construct(private readonly Security $security)
     {
@@ -22,7 +22,7 @@ final class EncounterVoter extends AbstractVoter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /**
-         * @var Encounter $subject
+         * @var Participation $subject
          * @var UserInterface $user
          */
         if (!($user = $token->getUser()) instanceof User) {
@@ -56,6 +56,6 @@ final class EncounterVoter extends AbstractVoter
 
     protected function getSubjectClass(): string
     {
-        return Encounter::class;
+        return Participation::class;
     }
 }

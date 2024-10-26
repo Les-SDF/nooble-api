@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\Encounter;
+use App\Entity\Participation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Encounter>
+ * @extends ServiceEntityRepository<Participation>
  */
-class EncounterRepository extends ServiceEntityRepository
+class ParticipationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Encounter::class);
+        parent::__construct($registry, Participation::class);
     }
 
 //    /**
-//     * @return Encounter[] Returns an array of Encounter objects
+//     * @return Participation[] Returns an array of Participation objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -31,7 +31,7 @@ class EncounterRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Encounter
+//    public function findOneBySomeField($value): ?Participation
 //    {
 //        return $this->createQueryBuilder('e')
 //            ->andWhere('e.exampleField = :val')

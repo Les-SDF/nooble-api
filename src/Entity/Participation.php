@@ -5,7 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
-use App\Repository\EncounterRepository;
+use App\Repository\ParticipationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -14,37 +14,37 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: EncounterRepository::class)]
+#[ORM\Entity(repositoryClass: ParticipationRepository::class)]
 #[ApiResource(
     operations: [
         new GetCollection(
-            uriTemplate: "/teams/{id}/encounters",
+            uriTemplate: "/teams/{id}/participations",
             uriVariables: [
                 "id" => new Link(
-                    fromProperty: "encounters",
+                    fromProperty: "participations",
                     fromClass: Team::class
                 )
             ]
         ),
         new GetCollection(
-            uriTemplate: "/confrontations/{id}/encounters",
+            uriTemplate: "/confrontations/{id}/participations",
             uriVariables: [
                 "id" => new Link(
-                    fromProperty: "encounters",
+                    fromProperty: "participations",
                     fromClass: Confrontation::class
                 )
             ]
         ),
         new Get(),
         new Post(
-            security: "is_granted('ENCOUNTER_CREATE', object)"
+            security: "is_granted('PARTICIPATION_CREATE', object)"
         ),
         new Delete(
-            security: "is_granted('ENCOUNTER_DELETE', object)"
+            security: "is_granted('PARTICIPATION_DELETE', object)"
         )
     ]
 )]
-class Encounter
+class Participation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -59,11 +59,11 @@ class Encounter
     #[Groups(["confrontations:read", "confrontation:read"])]
     private ?int $score = null;
 
-    #[ORM\ManyToOne(inversedBy: 'encounters')]
+    #[ORM\ManyToOne(inversedBy: 'participations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Confrontation $confrontation = null;
 
-    #[ORM\ManyToOne(inversedBy: 'encounters')]
+    #[ORM\ManyToOne(inversedBy: 'participations')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(["confrontations:read", "confrontation:read"])]
     private ?Team $team = null;
