@@ -54,11 +54,11 @@ class Team
     private Collection $teamSponsors;
 
     /**
-     * @var Collection<int, Belong>
+     * @var Collection<int, Member>
      */
-    #[ORM\OneToMany(targetEntity: Belong::class, mappedBy: 'team', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Member::class, mappedBy: 'team', orphanRemoval: true)]
     #[Groups(["participations:read", "participation:read"])]
-    private Collection $belongs;
+    private Collection $members;
 
     /**
      * @var Collection<int, Encounter>
@@ -71,7 +71,7 @@ class Team
     {
         $this->recipients = new ArrayCollection();
         $this->teamSponsors = new ArrayCollection();
-        $this->belongs = new ArrayCollection();
+        $this->members = new ArrayCollection();
         $this->encounters = new ArrayCollection();
     }
 
@@ -153,29 +153,29 @@ class Team
     }
 
     /**
-     * @return Collection<int, Belong>
+     * @return Collection<int, Member>
      */
-    public function getBelongs(): Collection
+    public function getMembers(): Collection
     {
-        return $this->belongs;
+        return $this->members;
     }
 
-    public function addBelong(Belong $belong): static
+    public function addMember(Member $member): static
     {
-        if (!$this->belongs->contains($belong)) {
-            $this->belongs->add($belong);
-            $belong->setTeam($this);
+        if (!$this->members->contains($member)) {
+            $this->members->add($member);
+            $member->setTeam($this);
         }
 
         return $this;
     }
 
-    public function removeBelong(Belong $belong): static
+    public function removeMember(Member $member): static
     {
-        if ($this->belongs->removeElement($belong)) {
+        if ($this->members->removeElement($member)) {
             // set the owning side to null (unless already changed)
-            if ($belong->getTeam() === $this) {
-                $belong->setTeam(null);
+            if ($member->getTeam() === $this) {
+                $member->setTeam(null);
             }
         }
 

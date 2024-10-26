@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Belong;
+use App\Entity\Member;
 use App\Entity\Encounter;
 use App\Entity\Event;
 use App\Entity\EventReward;
@@ -210,12 +210,12 @@ class AppFixtures extends Fixture
         $user->setPassword($this->passwordHasher->hashPassword($user, self::DEFAULT_PASSWORD));
         $user->setUsername($username);
 
-        $belong = new Belong();
-        $belong->setTeam($team);
-        $belong->setUser($user);
+        $member = new Member();
+        $member->setTeam($team);
+        $member->setUser($user);
 
         $this->manager->persist($user);
-        $this->manager->persist($belong);
+        $this->manager->persist($member);
     }
 
     private function addTeam(string $name): Team

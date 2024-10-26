@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
-use App\Repository\BelongRepository;
+use App\Repository\MemberRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
@@ -12,23 +12,14 @@ use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\Link;
 
-#[ORM\Entity(repositoryClass: BelongRepository::class)]
+#[ORM\Entity(repositoryClass: MemberRepository::class)]
 #[ApiResource(
     operations: [
         new GetCollection(
-            uriTemplate: "/users/{id}/belong",
+            uriTemplate: "/teams/{id}/member",
             uriVariables: [
                 "id" => new Link(
-                    fromProperty: "belongs",
-                    fromClass: User::class
-                )
-            ]
-        ),
-        new GetCollection(
-            uriTemplate: "/teams/{id}/belong",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "belongs",
+                    fromProperty: "members",
                     fromClass: Team::class
                 )
             ]
@@ -38,19 +29,19 @@ use ApiPlatform\Metadata\Link;
         new Delete()
     ]
 )]
-class Belong
+class Member
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'belongs')]
+    #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(["participations:read", "participation:read"])]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'belongs')]
+    #[ORM\ManyToOne(inversedBy: 'members')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(["user:read", "register:read"])]
     private ?Team $team = null;

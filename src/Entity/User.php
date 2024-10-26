@@ -89,13 +89,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $username = null;
 
     /**
-     * @var Collection<int, Belong>
-     */
-    #[ORM\OneToMany(targetEntity: Belong::class, mappedBy: 'user', orphanRemoval: true)]
-    #[Groups(["user:read", "register:read"])]
-    private Collection $belongs;
-
-    /**
      * @var Collection<int, Register>
      */
     #[ORM\OneToMany(targetEntity: Register::class, mappedBy: 'user', orphanRemoval: true)]
@@ -121,7 +114,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
-        $this->belongs = new ArrayCollection();
+        $this->members = new ArrayCollection();
         $this->registers = new ArrayCollection();
         $this->managers = new ArrayCollection();
         $this->rewards = new ArrayCollection();
@@ -233,36 +226,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(?string $username): static
     {
         $this->username = $username;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Belong>
-     */
-    public function getBelongs(): Collection
-    {
-        return $this->belongs;
-    }
-
-    public function addBelong(Belong $belong): static
-    {
-        if (!$this->belongs->contains($belong)) {
-            $this->belongs->add($belong);
-            $belong->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeBelong(Belong $belong): static
-    {
-        if ($this->belongs->removeElement($belong)) {
-            // set the owning side to null (unless already changed)
-            if ($belong->getUser() === $this) {
-                $belong->setUser(null);
-            }
-        }
 
         return $this;
     }

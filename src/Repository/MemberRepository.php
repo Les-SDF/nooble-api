@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\Belong;
+use App\Entity\Member;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Belong>
+ * @extends ServiceEntityRepository<Member>
  */
-class BelongRepository extends ServiceEntityRepository
+class MemberRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Belong::class);
+        parent::__construct($registry, Member::class);
     }
 
     //    /**
-    //     * @return Belong[] Returns an array of Belong objects
+    //     * @return Member[] Returns an array of Member objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class BelongRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Belong
+    //    public function findOneBySomeField($value): ?Member
     //    {
     //        return $this->createQueryBuilder('b')
     //            ->andWhere('b.exampleField = :val')
