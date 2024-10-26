@@ -33,7 +33,7 @@ use Doctrine\ORM\Mapping as ORM;
         ),
         new Delete(security: "is_granted('EVENT_DELETE', object)")
     ],
-    normalizationContext: ["groups" => ["event:read", "register:read", "participations:read"]]
+    normalizationContext: ["groups" => ["event:read", "register:read", "confrontations:read"]]
 )]
 class Event
 {
@@ -43,7 +43,7 @@ class Event
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["event:read", "register:read", "participations:read"])]
+    #[Groups(["event:read", "register:read", "confrontations:read"])]
     private ?string $name = null;
 
     #[ORM\Column]
@@ -103,11 +103,11 @@ class Event
     private Collection $registers;
 
     /**
-     * @var Collection<int, Participation>
+     * @var Collection<int, Confrontation>
      */
-    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'event', orphanRemoval: true)]
-    #[Groups(["participations:read"])]
-    private Collection $participations;
+    #[ORM\OneToMany(targetEntity: Confrontation::class, mappedBy: 'event', orphanRemoval: true)]
+    #[Groups(["confrontations:read"])]
+    private Collection $confrontations;
 
     /**
      * @var Collection<int, Manager>
@@ -124,7 +124,7 @@ class Event
         $this->eventRewards = new ArrayCollection();
         $this->eventSponsors = new ArrayCollection();
         $this->registers = new ArrayCollection();
-        $this->participations = new ArrayCollection();
+        $this->confrontations = new ArrayCollection();
         $this->managers = new ArrayCollection();
     }
 
@@ -344,29 +344,29 @@ class Event
     }
 
     /**
-     * @return Collection<int, Participation>
+     * @return Collection<int, Confrontation>
      */
-    public function getParticipations(): Collection
+    public function getConfrontations(): Collection
     {
-        return $this->participations;
+        return $this->confrontations;
     }
 
-    public function addParticipation(Participation $participation): static
+    public function addConfrontation(Confrontation $confrontation): static
     {
-        if (!$this->participations->contains($participation)) {
-            $this->participations->add($participation);
-            $participation->setEvent($this);
+        if (!$this->confrontations->contains($confrontation)) {
+            $this->confrontations->add($confrontation);
+            $confrontation->setEvent($this);
         }
 
         return $this;
     }
 
-    public function removeParticipation(Participation $participation): static
+    public function removeConfrontation(Confrontation $confrontation): static
     {
-        if ($this->participations->removeElement($participation)) {
+        if ($this->confrontations->removeElement($confrontation)) {
             // set the owning side to null (unless already changed)
-            if ($participation->getEvent() === $this) {
-                $participation->setEvent(null);
+            if ($confrontation->getEvent() === $this) {
+                $confrontation->setEvent(null);
             }
         }
 

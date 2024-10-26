@@ -7,7 +7,7 @@ use App\Entity\Encounter;
 use App\Entity\Event;
 use App\Entity\EventReward;
 use App\Entity\Game;
-use App\Entity\Participation;
+use App\Entity\Confrontation;
 use App\Entity\PrizePack;
 use App\Entity\Reward;
 use App\Entity\Team;
@@ -112,35 +112,35 @@ class AppFixtures extends Fixture
         ]);
 
         // Quarterfinals
-        $this->addParticipation($event, $game, new DateTimeImmutable('2024-10-17'), 1, [
+        $this->addConfrontation($event, $game, new DateTimeImmutable('2024-10-17'), 1, [
             $this->addEncounter($wbg, 1),
             $this->addEncounter($lng, 2)
         ]);
-        $this->addParticipation($event, $game, new DateTimeImmutable('2024-10-18'), 1, [
+        $this->addConfrontation($event, $game, new DateTimeImmutable('2024-10-18'), 1, [
             $this->addEncounter($hle, 2),
             $this->addEncounter($blg, 1)
         ]);
-        $this->addParticipation($event, $game, new DateTimeImmutable('2024-10-19'), 1, [
+        $this->addConfrontation($event, $game, new DateTimeImmutable('2024-10-19'), 1, [
             $this->addEncounter($tes, 2),
             $this->addEncounter($t1, 1)
         ]);
-        $this->addParticipation($event, $game, new DateTimeImmutable('2024-10-20'), 1, [
+        $this->addConfrontation($event, $game, new DateTimeImmutable('2024-10-20'), 1, [
             $this->addEncounter($gen, 1),
             $this->addEncounter($flq, 2)
         ]);
 
         // Semifinals
-        $this->addParticipation($event, $game, new DateTimeImmutable('2024-10-26'), 2, [
+        $this->addConfrontation($event, $game, new DateTimeImmutable('2024-10-26'), 2, [
             $this->addEncounter($wbg),
             $this->addEncounter($blg)
         ]);
-        $this->addParticipation($event, $game, new DateTimeImmutable('2024-10-27'), 2, [
+        $this->addConfrontation($event, $game, new DateTimeImmutable('2024-10-27'), 2, [
             $this->addEncounter($tes),
             $this->addEncounter($flq)
         ]);
 
         // Finals
-        $this->addParticipation($event, $game, new DateTimeImmutable('2024-11-02'), 3, [
+        $this->addConfrontation($event, $game, new DateTimeImmutable('2024-11-02'), 3, [
 
         ]);
 
@@ -248,18 +248,18 @@ class AppFixtures extends Fixture
         return $encounter;
     }
 
-    private function addParticipation(Event $event, Game $game, DateTimeImmutable $date = null, int $round = null, array $encounters = []): void
+    private function addConfrontation(Event $event, Game $game, DateTimeImmutable $date = null, int $round = null, array $encounters = []): void
     {
-        $participation = new Participation();
-        $participation->setEvent($event);
-        $participation->setGame($game);
-        $participation->setDate($date);
-        $participation->setRound($round);
+        $confrontation = new Confrontation();
+        $confrontation->setEvent($event);
+        $confrontation->setGame($game);
+        $confrontation->setDate($date);
+        $confrontation->setRound($round);
 
         foreach ($encounters as $encounter) {
-            $participation->addEncounter($encounter);
+            $confrontation->addEncounter($encounter);
         }
 
-        $this->manager->persist($participation);
+        $this->manager->persist($confrontation);
     }
 }

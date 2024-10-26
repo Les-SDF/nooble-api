@@ -38,7 +38,7 @@ class Team
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["user:read", "register:read", "participations:read", "participation:read"])]
+    #[Groups(["user:read", "register:read", "confrontations:read", "confrontation:read"])]
     private ?string $name = null;
 
     /**
@@ -57,7 +57,7 @@ class Team
      * @var Collection<int, Member>
      */
     #[ORM\OneToMany(targetEntity: Member::class, mappedBy: 'team', orphanRemoval: true)]
-    #[Groups(["participations:read", "participation:read"])]
+    #[Groups(["confrontations:read", "confrontation:read"])]
     private Collection $members;
 
     /**

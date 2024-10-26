@@ -38,7 +38,7 @@ class Member
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["participations:read", "participation:read"])]
+    #[Groups(["confrontations:read", "confrontation:read"])]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'members')]

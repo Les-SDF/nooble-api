@@ -27,11 +27,11 @@ use Doctrine\ORM\Mapping as ORM;
             ]
         ),
         new GetCollection(
-            uriTemplate: "/participations/{id}/encounters",
+            uriTemplate: "/confrontations/{id}/encounters",
             uriVariables: [
                 "id" => new Link(
                     fromProperty: "encounters",
-                    fromClass: Participation::class
+                    fromClass: Confrontation::class
                 )
             ]
         ),
@@ -52,20 +52,20 @@ class Encounter
     private ?int $id = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["participations:read", "participation:read"])]
+    #[Groups(["confrontations:read", "confrontation:read"])]
     private ?int $ranking = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["participations:read", "participation:read"])]
+    #[Groups(["confrontations:read", "confrontation:read"])]
     private ?int $score = null;
 
     #[ORM\ManyToOne(inversedBy: 'encounters')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Participation $participation = null;
+    private ?Confrontation $confrontation = null;
 
     #[ORM\ManyToOne(inversedBy: 'encounters')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["participations:read", "participation:read"])]
+    #[Groups(["confrontations:read", "confrontation:read"])]
     private ?Team $team = null;
 
     public function __construct() {}
@@ -99,14 +99,14 @@ class Encounter
         return $this;
     }
 
-    public function getParticipation(): ?Participation
+    public function getConfrontation(): ?Confrontation
     {
-        return $this->participation;
+        return $this->confrontation;
     }
 
-    public function setParticipation(?Participation $participation): static
+    public function setConfrontation(?Confrontation $confrontation): static
     {
-        $this->participation = $participation;
+        $this->confrontation = $confrontation;
 
         return $this;
     }

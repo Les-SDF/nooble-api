@@ -6,42 +6,43 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
-use App\Repository\ParticipationRepository;
+use App\Repository\ConfrontationRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 //TODO: RAJOUTER Game.
-#[ORM\Entity(repositoryClass: ParticipationRepository::class)]
+#[ORM\Entity(repositoryClass: ConfrontationRepository::class)]
 #[ApiResource(
     operations: [
         new GetCollection(
-            uriTemplate: "/game/{id}/participations",
+            uriTemplate: "/game/{id}/confrontations",
             uriVariables: [
                 "id" => new Link(
-                    fromProperty: "participations",
+                    fromProperty: "confrontations",
                     fromClass: Game::class
                 )
             ]
         ),
         new GetCollection(
-            uriTemplate: "/event/{id}/participations",
+            uriTemplate: "/event/{id}/confrontations",
             uriVariables: [
                 "id" => new Link(
-                    fromProperty: "participations",
+                    fromProperty: "confrontations",
                     fromClass: Event::class
                 )
             ]
         ),
         new Patch(
-            denormalizationContext: ["groups" => ["participation:update"]],
-            security: "is_granted('PARTICIPATION_UPDATE', object)",
-            validationContext: ["groups" => ["participation:update"]],
+            denormalizationContext: ["groups" => ["confrontation:update"]],
+            security: "is_granted('CONFRONTATION_UPDATE', object)",
+            validationContext: ["groups" => ["confrontation:update"]],
         )
     ],
-    normalizationContext: ["groups" => ["participation:read"]]
+    normalizationContext: ["groups" => ["confrontation:read"]]
 )]
-class Participation
+class Confrontation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -51,25 +52,25 @@ class Participation
     /**
      * @var Collection<int, Encounter>
      */
-    #[ORM\OneToMany(targetEntity: Encounter::class, mappedBy: 'participation', orphanRemoval: true)]
-    #[Groups(["participations:read", "participation:read", "participation:update"])]
+    #[ORM\OneToMany(targetEntity: Encounter::class, mappedBy: 'confrontation', orphanRemoval: true)]
+    #[Groups(["confrontations:read", "confrontation:read", "confrontation:update"])]
     private Collection $encounters;
 
     #[ORM\Column]
-    #[Groups(["participations:read", "participation:read", "participation:update"])]
+    #[Groups(["confrontations:read", "confrontation:read", "confrontation:update"])]
     private ?int $round = null;
 
-    #[ORM\ManyToOne(inversedBy: 'participations')]
+    #[ORM\ManyToOne(inversedBy: 'confrontations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Event $event = null;
 
-    #[ORM\ManyToOne(cascade: ["persist"], inversedBy: 'participations')]
+    #[ORM\ManyToOne(cascade: ["persist"], inversedBy: 'confrontations')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["participations:read", "participation:read", "participation:update"])]
+    #[Groups(["confrontations:read", "confrontation:read", "confrontation:update"])]
     private ?Game $game = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $date = null;
+    private ?DateTimeImmutable $date = null;
 
     public function __construct()
     {
@@ -94,7 +95,7 @@ class Participation
     {
         if (!$this->encounters->contains($encounter)) {
             $this->encounters->add($encounter);
-            $encounter->setParticipation($this);
+            $encounter->setConfrontation($this);
         }
 
         return $this;
@@ -104,8 +105,8 @@ class Participation
     {
         if ($this->encounters->removeElement($encounter)) {
             // set the owning side to null (unless already changed)
-            if ($encounter->getParticipation() === $this) {
-                $encounter->setParticipation(null);
+            if ($encounter->getConfrontation() === $this) {
+                $encounter->setConfrontation(null);
             }
         }
 

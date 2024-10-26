@@ -20,27 +20,27 @@ class Game
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["participations:read", "participation:read"])]
+    #[Groups(["confrontations:read", "confrontation:read"])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(["participations:read", "participation:read"])]
+    #[Groups(["confrontations:read", "confrontation:read"])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["participations:read"])]
+    #[Groups(["confrontations:read"])]
 
     private ?string $imageUrl = null;
 
     /**
-     * @var Collection<int, Participation>
+     * @var Collection<int, Confrontation>
      */
-    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'game', orphanRemoval: false)]
-    private Collection $participations;
+    #[ORM\OneToMany(targetEntity: Confrontation::class, mappedBy: 'game', orphanRemoval: false)]
+    private Collection $confrontations;
 
     public function __construct()
     {
-        $this->participations = new ArrayCollection();
+        $this->confrontations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -85,29 +85,29 @@ class Game
     }
 
     /**
-     * @return Collection<int, Participation>
+     * @return Collection<int, Confrontation>
      */
-    public function getParticipations(): Collection
+    public function getConfrontations(): Collection
     {
-        return $this->participations;
+        return $this->confrontations;
     }
 
-    public function addParticipation(Participation $participation): static
+    public function addConfrontation(Confrontation $confrontation): static
     {
-        if (!$this->participations->contains($participation)) {
-            $this->participations->add($participation);
-            $participation->setGame($this);
+        if (!$this->confrontations->contains($confrontation)) {
+            $this->confrontations->add($confrontation);
+            $confrontation->setGame($this);
         }
 
         return $this;
     }
 
-    public function removeParticipation(Participation $participation): static
+    public function removeConfrontation(Confrontation $confrontation): static
     {
-        if ($this->participations->removeElement($participation)) {
+        if ($this->confrontations->removeElement($confrontation)) {
             // set the owning side to null (unless already changed)
-            if ($participation->getGame() === $this) {
-                $participation->setGame(null);
+            if ($confrontation->getGame() === $this) {
+                $confrontation->setGame(null);
             }
         }
 
