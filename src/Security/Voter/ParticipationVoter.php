@@ -22,7 +22,7 @@ final class ParticipationVoter extends AbstractVoter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /**
-         * @var User $subject
+         * @var Participation $subject
          * @var UserInterface $user
          */
         if (!($user = $token->getUser()) instanceof User) {
@@ -30,9 +30,17 @@ final class ParticipationVoter extends AbstractVoter
         }
 
         switch ($attribute) {
+            case self::UPDATE:
+                // is_granted('ROLE_USER') and object.getEvent().getCreator() == user or is_granted('ROLE_USER') and object.getEvent().getManagers().contains(user)
+                // Seul le créateur de l'événement ou les managers de l'événement peuvent modifier des participations
+                if ($this->security->isGranted("ROLE_USER", $user)
+                    && ($subject->getEvent()->getCreator() === $user
+                        || $subject->getEvent()->getManagers()->contains($user))) {
+                    return true;
+                }
+                break;
             case self::CREATE:
             case self::READ:
-            case self::UPDATE:
             case self::DELETE:
                 return true;
         }

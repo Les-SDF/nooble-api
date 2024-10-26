@@ -37,10 +37,10 @@ use Doctrine\ORM\Mapping as ORM;
         ),
         new Get(),
         new Post(
-            security: "(is_granted('ROLE_USER') and object.getParticipation().getEvent().getCreator() == user or is_granted('ROLE_USER') and object.getParticipation().getEvent().getManagers().contains(user))"
+            security: "is_granted('ENCOUNTER_CREATE', object)"
         ),
         new Delete(
-            security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getParticipation().getEvent().getCreator() == user or is_granted('ROLE_USER') and object.getParticipation().getEvent().getManagers().contains(user))"
+            security: "is_granted('ENCOUNTER_DELETE', object)"
         )
     ]
 )]

@@ -1,6 +1,6 @@
 security:
     role_hierarchy:
-        ROLE_ORGANISATEUR: ROLE_USER
+        ROLE_ORGANISER: ROLE_USER
 
     password_hashers:
         App\Entity\User:

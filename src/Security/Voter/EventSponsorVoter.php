@@ -22,7 +22,7 @@ final class EventSponsorVoter extends AbstractVoter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /**
-         * @var User $subject
+         * @var EventSponsor $subject
          * @var UserInterface $user
          */
         if (!($user = $token->getUser()) instanceof User) {
@@ -31,9 +31,26 @@ final class EventSponsorVoter extends AbstractVoter
 
         switch ($attribute) {
             case self::CREATE:
+                // (is_granted('ROLE_USER') and object.getEvent().getCreator() == user or is_granted('ROLE_USER') and object.getEvent().getManagers().contains(user))
+                // Seul le créateur de l'événement ou les managers de l'événement peuvent ajouter des sponsors à l'événement
+                if ($this->security->isGranted("ROLE_USER", $user)
+                    && ($subject->getEvent()->getCreator() === $user
+                    || $subject->getEvent()->getManagers()->contains($user))) {
+                    return true;
+                }
+                break;
+            case self::DELETE:
+                // is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getEvent().getCreator() == user or is_granted('ROLE_USER') and object.getEvent().getManagers().contains(user))
+                // Seul le créateur de l'événement, les managers de l'événement ou un administrateur peuvent supprimer des sponsors de l'événement
+                if ($this->security->isGranted("ROLE_ADMIN", $user)
+                    || ($this->security->isGranted("ROLE_USER", $user)
+                    && ($subject->getEvent()->getCreator() === $user
+                    || $subject->getEvent()->getManagers()->contains($user)))) {
+                    return true;
+                }
+                break;
             case self::READ:
             case self::UPDATE:
-            case self::DELETE:
                 return true;
         }
         return false;

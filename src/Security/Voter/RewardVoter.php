@@ -22,7 +22,7 @@ final class RewardVoter extends AbstractVoter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /**
-         * @var User $subject
+         * @var Reward $subject
          * @var UserInterface $user
          */
         if (!($user = $token->getUser()) instanceof User) {
@@ -30,10 +30,25 @@ final class RewardVoter extends AbstractVoter
         }
 
         switch ($attribute) {
+            case self::UPDATE:
+                // is_granted('ROLE_USER') and object.getManager() == user
+                // Seul le manager de la récompense peut la modifier
+                if ($this->security->isGranted("ROLE_USER", $user)
+                    && $subject->getManager() === $user) {
+                    return true;
+                }
+                break;
+            case self::DELETE:
+                // is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getManager() == user)
+                // Seul le manager de la récompense ou un administrateur peut la supprimer
+                if ($this->security->isGranted("ROLE_ADMIN", $user)
+                    || ($this->security->isGranted("ROLE_USER", $user)
+                    && $subject->getManager() === $user)) {
+                    return true;
+                }
+                break;
             case self::CREATE:
             case self::READ:
-            case self::UPDATE:
-            case self::DELETE:
                 return true;
         }
         return false;

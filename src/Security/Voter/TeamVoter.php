@@ -22,7 +22,7 @@ final class TeamVoter extends AbstractVoter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /**
-         * @var User $subject
+         * @var Team $subject
          * @var UserInterface $user
          */
         if (!($user = $token->getUser()) instanceof User) {

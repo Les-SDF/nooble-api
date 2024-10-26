@@ -36,11 +36,11 @@ use Doctrine\ORM\Mapping as ORM;
         ),
         new Patch(
             denormalizationContext: ["groups" => ["prizepack:update"]],
-            security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getEventReward().getEvent().getCreator() == user) or (is_granted('ROLE_USER') and object.getEventReward().getEvent().getManagers().contains(user))",
+            security: "is_granted('PRIZE_PACK_UPDATE', object)",
             validationContext: ["groups" => ["prizepack:update"]],
         ),
         new Delete(
-            security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getEventReward().getEvent().getCreator() == user) or (is_granted('ROLE_USER') and object.getEventReward().getEvent().getManagers().contains(user))",
+            security: "is_granted('PRIZE_PACK_DELETE', object)",
         )
     ]
 )]

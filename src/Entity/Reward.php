@@ -25,10 +25,10 @@ use Doctrine\ORM\Mapping as ORM;
             // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
         ),
         new Patch(
-            security: "(is_granted('ROLE_USER') and object.getManager() == user)",
+            security: "is_granted('REWARD_UPDATE', object)",
         ),
         new Delete(
-            security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getManager() == user)",
+            security: "is_granted('REWARD_DELETE', object)",
         ),
     ]
 )]

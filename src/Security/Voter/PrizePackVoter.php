@@ -22,7 +22,7 @@ final class PrizePackVoter extends AbstractVoter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /**
-         * @var User $subject
+         * @var PrizePack $subject
          * @var UserInterface $user
          */
         if (!($user = $token->getUser()) instanceof User) {
@@ -30,10 +30,19 @@ final class PrizePackVoter extends AbstractVoter
         }
 
         switch ($attribute) {
-            case self::CREATE:
-            case self::READ:
             case self::UPDATE:
             case self::DELETE:
+                // is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getEventReward().getEvent().getCreator() == user) or (is_granted('ROLE_USER') and object.getEventReward().getEvent().getManagers().contains(user))
+                // Seul le créateur de l'événement, les managers de l'événement ou un administrateur peuvent modifier ou supprimer des lots
+                if ($this->security->isGranted("ROLE_ADMIN", $user)
+                    || ($this->security->isGranted("ROLE_USER", $user)
+                    && ($subject->getEventReward()->getEvent()->getCreator() === $user
+                    || $subject->getEventReward()->getEvent()->getManagers()->contains($user)))) {
+                    return true;
+                }
+                break;
+            case self::CREATE:
+            case self::READ:
                 return true;
         }
         return false;

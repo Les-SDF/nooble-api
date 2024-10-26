@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Sponsor;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -21,7 +22,7 @@ final class SponsorVoter extends AbstractVoter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /**
-         * @var User $subject
+         * @var Sponsor $subject
          * @var UserInterface $user
          */
         if (!($user = $token->getUser()) instanceof User) {

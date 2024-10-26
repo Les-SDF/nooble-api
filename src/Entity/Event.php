@@ -23,15 +23,15 @@ use Doctrine\ORM\Mapping as ORM;
         new Get(),
         new Post(
             denormalizationContext: ["groups" => ["utilisateur:create"]],
-            security: "is_granted('ROLE_ORGANISATEUR') and (object == creator or managers.contains(object)) ",
+            security: "is_granted('EVENT_CREATE', object)",
             validationContext: ["groups" => ["utilisateur:create"]],
         ),
         new Patch(
             denormalizationContext: ["groups" => ["utilisateur:update"]],
-            security: "is_granted('ROLE_ORGANISATEUR', object)",
+            security: "is_granted('EVENT_UPDATE', object)",
             validationContext: ["groups" => ["utilisateur:update"]],
         ),
-        new Delete(security: "is_granted('ROLE_ORGANISATEUR') and (object == creator)")
+        new Delete(security: "is_granted('EVENT_DELETE', object)")
     ],
     normalizationContext: ["groups" => ["event:read", "register:read", "participations:read"]]
 )]

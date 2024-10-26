@@ -35,10 +35,10 @@ use Doctrine\ORM\Mapping as ORM;
         ),
         new Get(),
         new Post(
-            security: "(is_granted('ROLE_USER') and object.getEvent().getCreator() == user or is_granted('ROLE_USER') and object.getEvent().getManagers().contains(user))"
+            security: "is_granted('EVENT_SPONSOR_CREATE', object)"
         ),
         new Delete(
-            security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getEvent().getCreator() == user or is_granted('ROLE_USER') and object.getEvent().getManagers().contains(user))"
+            security: "is_granted('EVENT_SPONSOR_CREATE', object)"
         )
     ]
 )]

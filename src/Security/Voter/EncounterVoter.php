@@ -22,7 +22,7 @@ final class EncounterVoter extends AbstractVoter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /**
-         * @var User $subject
+         * @var Encounter $subject
          * @var UserInterface $user
          */
         if (!($user = $token->getUser()) instanceof User) {
@@ -31,10 +31,25 @@ final class EncounterVoter extends AbstractVoter
 
         switch ($attribute) {
             case self::CREATE:
+                // (is_granted('ROLE_USER') and object.getParticipation().getEvent().getCreator() == user or is_granted('ROLE_USER') and object.getParticipation().getEvent().getManagers().contains(user))
+                // Seul le créateur de l'événement ou les managers de l'événement peuvent ajouter des rencontres
+                if ($this->security->isGranted("ROLE_USER", $user)
+                    && ($subject->getParticipation()->getEvent()->getCreator() === $user
+                    || $subject->getParticipation()->getEvent()->getManagers()->contains($user))) {
+                    return true;
+                }
             case self::READ:
             case self::UPDATE:
-            case self::DELETE:
                 return true;
+            case self::DELETE:
+                // is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getParticipation().getEvent().getCreator() == user or is_granted('ROLE_USER') and object.getParticipation().getEvent().getManagers().contains(user))
+                // Seul le créateur de l'événement, les managers de l'événement ou un administrateur peuvent supprimer des rencontres
+                if ($this->security->isGranted("ROLE_ADMIN", $user)
+                    || ($this->security->isGranted("ROLE_USER", $user)
+                    && ($subject->getParticipation()->getEvent()->getCreator() === $user
+                    || $subject->getParticipation()->getEvent()->getManagers()->contains($user)))) {
+                    return true;
+                }
         }
         return false;
     }

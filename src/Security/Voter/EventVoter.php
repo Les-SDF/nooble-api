@@ -22,7 +22,7 @@ final class EventVoter extends AbstractVoter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /**
-         * @var User $subject
+         * @var Event $subject
          * @var UserInterface $user
          */
         if (!($user = $token->getUser()) instanceof User) {
@@ -31,9 +31,27 @@ final class EventVoter extends AbstractVoter
 
         switch ($attribute) {
             case self::CREATE:
-            case self::READ:
+                // Seul les organisateurs peuvent créer des événements
+                if ($this->security->isGranted("ROLE_ORGANISER", $user)) {
+                    return true;
+                }
+                break;
             case self::UPDATE:
+                // Seul le créateur de l'événement ou des gérents peuvent le modifier
+                if ($this->security->isGranted("ROLE_ORGANISER", $user)
+                    && ($subject->getCreator() === $user || $subject->getManagers()->contains($user))) {
+                    return true;
+                }
+                break;
             case self::DELETE:
+                // is_granted('ROLE_ORGANISER') and (object == creator)
+                // Seul le créateur de l'événement peut le supprimer
+                if ($this->security->isGranted("ROLE_ORGANISER", $user)
+                    && $subject->getCreator() === $user) {
+                    return true;
+                }
+                break;
+            case self::READ:
                 return true;
         }
         return false;
