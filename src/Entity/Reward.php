@@ -57,9 +57,9 @@ class Reward
     #[ORM\OneToMany(targetEntity: PrizePack::class, mappedBy: 'reward', orphanRemoval: false)]
     private Collection $prizePacks;
 
-    #[ORM\ManyToOne(inversedBy: 'rewards')]
+    #[ORM\ManyToOne(inversedBy: 'createdRewards')]
     #[ORM\JoinColumn(nullable: true)]
-    private ?User $manager = null;
+    private ?User $creator = null;
 
 
     public function __construct()
@@ -138,14 +138,14 @@ class Reward
         return $this;
     }
 
-    public function getManager(): ?User
+    public function getCreator(): ?User
     {
-        return $this->manager;
+        return $this->creator;
     }
 
-    public function setManager(?User $manager): static
+    public function setCreator(?User $creator): static
     {
-        $this->manager = $manager;
+        $this->creator = $creator;
 
         return $this;
     }
