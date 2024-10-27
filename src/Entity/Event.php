@@ -27,6 +27,17 @@ use Doctrine\ORM\Mapping as ORM;
         ),
         new Get(),
         new GetCollection(
+            uriTemplate: "/user/{id}/event",
+            uriVariables: [
+                "id" => new Link(
+                    fromProperty: 'createdEvents',
+                    fromClass: User::class
+                )
+            ],
+            normalizationContext: ["groups" => ["create:read"]],
+            security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_ORGANISER') and request.attributes.get('id') == user.getId())"
+        ),
+        new GetCollection(
             uriTemplate: "/event/{id}/teams",
             uriVariables: [
                 "id" => new Link(
@@ -37,7 +48,6 @@ use Doctrine\ORM\Mapping as ORM;
             normalizationContext: ["groups" => ["teams:read"]],
             security: "is_granted('ROLE_ADMIN')"
         ),
-
         new Post(
             denormalizationContext: ["groups" => ["user:create"]],
             security: "is_granted('EVENT_CREATE', object)",
@@ -60,37 +70,38 @@ class Event
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["event:read", "register:read", "confrontations:read"])]
+    #[Groups(["event:read", "register:read", "confrontations:read", "create:read"])]
     private ?string $name = null;
 
     #[ORM\Column]
-    #[Groups(["event:read", "register:read"])]
+    #[Groups(["event:read", "register:read", "create:read"])]
     private ?\DateTimeImmutable $startDate = null;
 
     #[ORM\Column]
-    #[Groups(["event:read", "register:read"])]
+    #[Groups(["event:read", "register:read", "create:read"])]
     private ?\DateTimeImmutable $endDate = null;
 
-    #[Groups(["event:read"])]
+    #[Groups(["event:read", "create:read"])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[Groups(["event:read"])]
+    #[Groups(["event:read", "create:read"])]
     #[ORM\Column]
     private ?bool $official = null;
 
-    #[Groups(["event:read"])]
+    #[Groups(["event:read", "create:read"])]
     #[ORM\Column(options: ["default" => false])]
     private ?bool $charity = false;
 
     #[ORM\Column(enumType: Visibility::class, options: ["default" => Visibility::Public])]
+    #[Groups("create:read")]
     private ?Visibility $participantsVisibility = null;
 
-    #[Groups(["event:read"])]
+    #[Groups(["event:read", "create:read"])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
-    #[Groups(["event:read", "register:read"])]
+    #[Groups(["event:read", "register:read", "create:read"])]
     #[ORM\Column(enumType: Status::class)]
     private ?Status $status = null;
 
