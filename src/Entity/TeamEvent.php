@@ -3,13 +3,36 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use App\Enum\SaucisseType;
 use App\Repository\TeamEventRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TeamEventRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: "/teams/{id}/events",
+            uriVariables: [
+                "id" => new Link(
+                    fromProperty: "teamEvents",
+                    fromClass: Team::class
+                )
+            ]
+        ),
+        new GetCollection(
+            uriTemplate: "/events/{id}/teams",
+            uriVariables: [
+                "id" => new Link(
+                    fromProperty: "teamEvents",
+                    fromClass: Event::class
+                )
+            ]
+        )
+    ]
+)]
 class TeamEvent
 {
     #[ORM\Id]
