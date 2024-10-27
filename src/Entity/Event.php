@@ -6,8 +6,10 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use App\Enum\SaucisseType;
 use App\Enum\Status;
 use App\Enum\Visibility;
 use App\Repository\EventRepository;
@@ -21,7 +23,15 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource(
     operations: [
         new GetCollection(
-            security: "is_granted('EVENT_READ', object)"
+            uriTemplate: "/event/{id}/teams",
+            uriVariables: [
+                "id" => new Link(
+                    fromProperty: "teamEvents",
+                    fromClass: Event::class
+                )
+            ],
+            security: "is_granted('EVENT_READ', object)",
+            normalizationContext: ["groups" => ["team:read"]]
         ),
         new Get(),
         new Post(
@@ -126,11 +136,9 @@ class Event
      * @var Collection<int, TeamEvent>
      */
     #[ORM\OneToMany(targetEntity: TeamEvent::class, mappedBy: 'event', orphanRemoval: true)]
-    #[Groups(["teams:read"])]
     private Collection $teamEvents;
 
-    #[ORM\Column]
-    private ?bool $teamIsVisible = false;
+
 
     #[ORM\Column(nullable: true)]
     private ?int $price = null;
@@ -144,6 +152,35 @@ class Event
         $this->managers = new ArrayCollection();
         $this->teamEvents = new ArrayCollection();
     }
+    // #[Groups(["event:read"])]
+    // public function getPublicTeamEvent()
+    // {
+    //     if ($this->getParticipantsVisibility() == Visibility::Public) {
+    //         return $this->teamEvents->filter(
+    //             function ($teamEvent) {
+    //                 return $teamEvent->getSaucisse() === SaucisseType::Yes;
+    //             }
+    //         );
+    //     }
+    //     return new ArrayCollection();
+    // }
+
+    #[Groups(["event:read"])]
+    public function getPublicTeamEvent(): array
+    {
+        if ($this->getParticipantsVisibility() == Visibility::Public) {
+            return $this->teamEvents
+                ->filter(function ($teamEvent) {
+                    return $teamEvent->getSaucisse() === SaucisseType::Yes;
+                })
+                ->map(function ($teamEvent) {
+                    return $teamEvent->getTeam()->getName();
+                })
+                ->toArray();
+        }
+        return [];
+    }
+
 
     public function getId(): ?int
     {
@@ -458,18 +495,6 @@ class Event
                 $teamEvent->setEvent(null);
             }
         }
-
-        return $this;
-    }
-
-    public function isTeamIsVisible(): ?bool
-    {
-        return $this->teamIsVisible;
-    }
-
-    public function setTeamIsVisible(bool $teamIsVisible): static
-    {
-        $this->teamIsVisible = $teamIsVisible;
 
         return $this;
     }

@@ -11,9 +11,12 @@ use App\Entity\Confrontation;
 use App\Entity\PrizePack;
 use App\Entity\Reward;
 use App\Entity\Team;
+use App\Entity\TeamEvent;
 use App\Entity\User;
 use App\Enum\RewardType;
+use App\Enum\SaucisseType;
 use App\Enum\Status;
+use App\Enum\Visibility;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -23,10 +26,10 @@ class AppFixtures extends Fixture
 {
     const DEFAULT_PASSWORD = 'password';
 
-    public function __construct(private readonly UserPasswordHasherInterface $passwordHasher,
-                                private readonly ObjectManager $manager)
-    {
-    }
+    public function __construct(
+        private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly ObjectManager $manager
+    ) {}
 
     public function load(ObjectManager $manager): void
     {
@@ -110,7 +113,14 @@ class AppFixtures extends Fixture
             'Massu',
             'Busio'
         ]);
-
+        $this->addTeamEvent($event, $t1);
+        $this->addTeamEvent($event, $wbg);
+        $this->addTeamEvent($event, $lng);
+        $this->addTeamEvent($event, $hle);
+        $this->addTeamEvent($event, $blg);
+        $this->addTeamEvent($event, $tes);
+        $this->addTeamEvent($event, $gen);
+        $this->addTeamEvent($event, $flq);
         // Quarterfinals
         $this->addConfrontation($event, $game, new DateTimeImmutable('2024-10-17'), 1, [
             $this->addParticipation($wbg, 1),
@@ -140,20 +150,19 @@ class AppFixtures extends Fixture
         ]);
 
         // Finals
-        $this->addConfrontation($event, $game, new DateTimeImmutable('2024-11-02'), 3, [
-
-        ]);
+        $this->addConfrontation($event, $game, new DateTimeImmutable('2024-11-02'), 3, []);
 
         $this->manager->flush();
     }
 
-    private function addEvent(string $name,
-                              DateTimeImmutable $startDate,
-                              DateTimeImmutable $endDate,
-                              Status $status,
-                              User $creator,
-                              bool $official = false): Event
-    {
+    private function addEvent(
+        string $name,
+        DateTimeImmutable $startDate,
+        DateTimeImmutable $endDate,
+        Status $status,
+        User $creator,
+        bool $official = false
+    ): Event {
         $event = new Event();
         $event->setName($name);
         $event->setStartDate($startDate);
@@ -161,10 +170,20 @@ class AppFixtures extends Fixture
         $event->setStatus($status);
         $event->setCreator($creator);
         $event->setOfficial($official);
+        $event->setParticipantsVisibility(Visibility::Public);
 
         $this->manager->persist($event);
 
         return $event;
+    }
+
+    private function addTeamEvent(Event $event, Team $team)
+    {
+        $teamEvent = new TeamEvent;
+        $teamEvent->setTeam($team);
+        $teamEvent->setEvent($event);
+        $teamEvent->setSaucisse(SaucisseType::Yes);
+        $this->manager->persist($teamEvent);
     }
 
     private function addReward(string $name, RewardType $rewardType): Reward
