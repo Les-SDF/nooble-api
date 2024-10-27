@@ -14,22 +14,11 @@ use ApiPlatform\Metadata\Post;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TeamRepository::class)]
-#[ApiResource(
-    operations: [
-        new Get(
-            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
-        ),
-        new Patch(
-            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
-        ),
-        new Delete(
-            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
-        ),
-        new Post(
-            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
-        )
-    ]
-)]
+#[ApiResource]
+#[Get]
+#[Patch]
+#[Delete]
+#[Post]
 class Team
 {
     #[ORM\Id]

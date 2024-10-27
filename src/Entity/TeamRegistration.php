@@ -15,32 +15,29 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TeamRegistrationRepository::class)]
-#[ApiResource(
-    operations: [
-        new GetCollection(
-            uriTemplate: "/teams/{id}/events",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "teamRegistrations",
-                    fromClass: Team::class
-                )
-            ]
-        ),
-        new GetCollection(
-            uriTemplate: "/events/{id}/teams",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "teamRegistrations",
-                    fromClass: Event::class
-                ),
-            ],
-        ),
-        new Get(),
-        new Post(),
-        new Patch(),
-        new Delete()
+#[ApiResource]
+#[GetCollection(
+    uriTemplate: "/teams/{id}/events",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "teamRegistrations",
+            fromClass: Team::class
+        )
     ]
 )]
+#[GetCollection(
+    uriTemplate: "/events/{id}/teams",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "teamRegistrations",
+            fromClass: Event::class
+        ),
+    ],
+)]
+#[Get]
+#[Post]
+#[Patch]
+#[Delete]
 class TeamRegistration
 {
     #[ORM\Id]

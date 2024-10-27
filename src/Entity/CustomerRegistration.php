@@ -12,31 +12,28 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CustomerRegistrationRepository::class)]
-#[ApiResource(
-    operations: [
-        new GetCollection(
-            uriTemplate: "/users/{id}/customer-registrations",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "customerRegistrations",
-                    fromClass: User::class
-                )
-            ]
-        ),
-        new GetCollection(
-            uriTemplate: "/events/{id}/customer-registrations",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "customerRegistrations",
-                    fromClass: Event::class
-                )
-            ]
-        ),
-        new Patch(
-            denormalizationContext: ["groups" => ["customer-registration:update"]],
-            validationContext: ["groups" => ["customer-registration:update"]]
+#[ApiResource]
+#[GetCollection(
+    uriTemplate: "/users/{id}/customer_registrations",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "customerRegistrations",
+            fromClass: User::class
         )
     ]
+)]
+#[GetCollection(
+    uriTemplate: "/events/{id}/customer_registrations",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "customerRegistrations",
+            fromClass: Event::class
+        )
+    ]
+)]
+#[Patch(
+    denormalizationContext: ["groups" => ["customer-registration:update"]],
+    validationContext: ["groups" => ["customer-registration:update"]]
 )]
 class CustomerRegistration
 {

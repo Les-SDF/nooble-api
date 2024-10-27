@@ -16,21 +16,14 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RewardRepository::class)]
-#[ApiResource(
-    operations: [
-        new Get(
-            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
-        ),
-        new Post(
-            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
-        ),
-        new Patch(
-            security: "is_granted('REWARD_UPDATE', object)",
-        ),
-        new Delete(
-            security: "is_granted('REWARD_DELETE', object)",
-        ),
-    ]
+#[ApiResource]
+#[Get]
+#[Post]
+#[Patch(
+    security: "is_granted('REWARD_UPDATE', object)",
+)]
+#[Delete(
+    security: "is_granted('REWARD_DELETE', object)",
 )]
 class Reward
 {

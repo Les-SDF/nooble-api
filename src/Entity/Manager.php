@@ -13,32 +13,29 @@ use App\Repository\ManagerRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ManagerRepository::class)]
-#[ApiResource(
-    operations: [
-        new GetCollection(
-            uriTemplate: "/events/{id}/managers",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "managers",
-                    fromClass: Event::class
-                )
-            ]
-        ),
-        new GetCollection(
-            uriTemplate: "/users/{id}/managers",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "managers",
-                    fromClass: User::class
-                )
-            ]
-        ),
-        new GetCollection(),
-        new Get(),
-        new Post(),
-        new Delete()
+#[ApiResource]
+#[GetCollection(
+    uriTemplate: "/events/{id}/managers",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "managers",
+            fromClass: Event::class
+        )
     ]
 )]
+#[GetCollection(
+    uriTemplate: "/users/{id}/managers",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "managers",
+            fromClass: User::class
+        )
+    ]
+)]
+#[GetCollection]
+#[Get]
+#[Post]
+#[Delete]
 class Manager
 {
     #[ORM\Id]

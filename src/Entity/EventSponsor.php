@@ -13,34 +13,31 @@ use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EventSponsorRepository::class)]
-#[ApiResource(
-    operations: [
-        new GetCollection(
-            uriTemplate: "/sponsors/{id}/event-sponsors",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "eventSponsors",
-                    fromClass: Sponsor::class
-                )
-            ]
-        ),
-        new GetCollection(
-            uriTemplate: "/events/{id}/event-sponsors",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "eventSponsors",
-                    fromClass: Event::class
-                )
-            ]
-        ),
-        new Get(),
-        new Post(
-            security: "is_granted('EVENT_SPONSOR_CREATE', object)"
-        ),
-        new Delete(
-            security: "is_granted('EVENT_SPONSOR_CREATE', object)"
+#[ApiResource]
+#[GetCollection(
+    uriTemplate: "/sponsors/{id}/event_sponsors",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "eventSponsors",
+            fromClass: Sponsor::class
         )
     ]
+)]
+#[GetCollection(
+    uriTemplate: "/events/{id}/event_sponsors",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "eventSponsors",
+            fromClass: Event::class
+        )
+    ]
+)]
+#[Get]
+#[Post(
+    security: "is_granted('EVENT_SPONSOR_CREATE', object)"
+)]
+#[Delete(
+    security: "is_granted('EVENT_SPONSOR_DELETE', object)"
 )]
 class EventSponsor
 {

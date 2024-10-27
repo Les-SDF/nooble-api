@@ -12,31 +12,28 @@ use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RecipientRepository::class)]
-#[ApiResource(
-    operations: [
-        new GetCollection(
-            uriTemplate: "/teams/{id}/recipients",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "recipients",
-                    fromClass: Team::class
-                )
-            ]
-        ),
-        new GetCollection(
-            uriTemplate: "/event-rewards/{id}/recipients",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "recipients",
-                    fromClass: EventReward::class
-                )
-            ]
-        ),
-        new Get(),
-        new Post(),
-        new Delete()
+#[ApiResource]
+#[GetCollection(
+    uriTemplate: "/teams/{id}/recipients",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "recipients",
+            fromClass: Team::class
+        )
     ]
 )]
+#[GetCollection(
+    uriTemplate: "/event_rewards/{id}/recipients",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "recipients",
+            fromClass: EventReward::class
+        )
+    ]
+)]
+#[Get]
+#[Post]
+#[Delete]
 class Recipient
 {
     #[ORM\Id]

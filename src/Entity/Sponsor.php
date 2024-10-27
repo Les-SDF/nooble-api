@@ -14,22 +14,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SponsorRepository::class)]
-#[ApiResource(
-    operations: [
-        new Get(
-            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
-        ),
-        new Patch(
-            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
-        ),
-        new Delete(
-            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
-        ),
-        new Post(
-            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
-        )
-    ]
-)]
+#[ApiResource]
+#[Get]
+#[Patch]
+#[Delete]
+#[Post]
 class Sponsor
 {
     #[ORM\Id]

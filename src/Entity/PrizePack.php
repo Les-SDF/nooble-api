@@ -15,37 +15,37 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PrizePackRepository::class)]
-#[ApiResource(
-    operations: [
-        new GetCollection(
-            uriTemplate: "/rewards/{id}/prizePacks",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "prizePacks",
-                    fromClass: Reward::class
-                )
-            ]
-        ),
-        new GetCollection(
-            uriTemplate: "/event-rewards/{id}/prize-packs",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "prizePacks",
-                    fromClass: EventReward::class
-                )
-            ]
-        ),
-        new Post(),
-        new Patch(
-            denormalizationContext: ["groups" => ["prizepack:update"]],
-            security: "is_granted('PRIZE_PACK_UPDATE', object)",
-            validationContext: ["groups" => ["prizepack:update"]],
-        ),
-        new Delete(
-            security: "is_granted('PRIZE_PACK_DELETE', object)",
+#[ApiResource]
+#[GetCollection(
+    uriTemplate: "/rewards/{id}/prize_packs",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "prizePacks",
+            fromClass: Reward::class
         )
     ]
 )]
+#[GetCollection(
+    uriTemplate: "/rewards/{id}/prize_packs",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "prizePacks",
+            fromClass: Reward::class
+        )
+    ]
+)]
+#[GetCollection(
+    uriTemplate: "/event_rewards/{id}/prize_packs",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "prizePacks",
+            fromClass: EventReward::class
+        )
+    ]
+)]
+#[Post]
+#[Patch]
+#[Delete]
 class PrizePack
 {
     #[ORM\Id]
@@ -54,17 +54,17 @@ class PrizePack
     private ?int $id = null;
 
     #[ORM\Column(options: ["default" => 1])]
-    #[Groups(["event:read", "prizepack:update"])]
+    #[Groups(["event:read", "prize-pack:update"])]
     private ?int $quantity = 1;
 
     #[ORM\ManyToOne(inversedBy: 'prizePacks')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["event:read", "prizepack:update"])]
+    #[Groups(["event:read", "prize-pack:update"])]
     private ?Reward $reward = null;
 
     #[ORM\ManyToOne(inversedBy: 'prizePacks')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["prizepack:update"])]
+    #[Groups(["prize-pack:update"])]
     private ?EventReward $eventReward = null;
 
     public function __construct() {}

@@ -13,22 +13,19 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\Link;
 
 #[ORM\Entity(repositoryClass: MemberRepository::class)]
-#[ApiResource(
-    operations: [
-        new GetCollection(
-            uriTemplate: "/teams/{id}/members",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "members",
-                    fromClass: Team::class
-                )
-            ]
-        ),
-        new Get(),
-        new Post(),
-        new Delete()
+#[ApiResource]
+#[GetCollection(
+    uriTemplate: "/teams/{id}/members",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "members",
+            fromClass: Team::class
+        )
     ]
 )]
+#[Get]
+#[Post]
+#[Delete]
 class Member
 {
     #[ORM\Id]

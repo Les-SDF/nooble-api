@@ -25,24 +25,22 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Get(),
-        new Post(
-            denormalizationContext: ["groups" => ["user:create"]],
-            validationContext: ["groups" => ["Default", "user:create"]],
-            processor: UserProcessor::class
-        ),
-        new Patch(
-            denormalizationContext: ["groups" => ["user:update"]],
-            validationContext: ["groups" => ["Default", "user:update"]],
-            processor: UserProcessor::class
-        ),
-        new Delete(
-            security: "is_granted('USER_DELETE', object)",
-        )
-    ],
     normalizationContext: ["groups" => ["user:read"]]
+)]
+#[GetCollection]
+#[Get]
+#[Post(
+    denormalizationContext: ["groups" => ["user:create"]],
+    validationContext: ["groups" => ["Default", "user:create"]],
+    processor: UserProcessor::class
+)]
+#[Patch(
+    denormalizationContext: ["groups" => ["user:update"]],
+    validationContext: ["groups" => ["Default", "user:update"]],
+    processor: UserProcessor::class
+)]
+#[Delete(
+    security: "is_granted('USER_DELETE', object)",
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {

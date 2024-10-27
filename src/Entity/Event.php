@@ -21,47 +21,50 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[ApiResource(
-    operations: [
-        new GetCollection(
-            normalizationContext: ["groups" => ["event:read"]],
-            security: "is_granted('EVENT_READ', object)"
-        ),
-        new GetCollection(
-            uriTemplate: "/users/{id}/events",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: 'createdEvents',
-                    fromClass: User::class
-                )
-            ],
-            normalizationContext: ["groups" => ["create:read"]],
-            security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_ORGANISER') and request.attributes.get('id') == user.getId())"
-        ),
-        new GetCollection(
-            uriTemplate: "/events/{id}/teams",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "event",
-                    fromClass: TeamRegistration::class
-                )
-            ],
-            normalizationContext: ["groups" => ["teams:read"]],
-            security: "is_granted('ROLE_ADMIN')"
-        ),
-        new Get(),
-        new Post(
-            denormalizationContext: ["groups" => ["user:create"]],
-            security: "is_granted('EVENT_CREATE', object)",
-            validationContext: ["groups" => ["user:create"]],
-        ),
-        new Patch(
-            denormalizationContext: ["groups" => ["user:update"]],
-            security: "is_granted('EVENT_UPDATE', object)",
-            validationContext: ["groups" => ["user:update"]],
-        ),
-        new Delete(security: "is_granted('EVENT_DELETE', object)")
+    normalizationContext: ["groups" => [
+        "event:read",
+        "customer-registration:read",
+        "confrontations:read"]]
+)]
+#[GetCollection(
+    normalizationContext: ["groups" => ["event:read"]],
+    security: "is_granted('EVENT_READ', object)"
+)]
+#[GetCollection(
+    uriTemplate: "/users/{id}/events",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: 'createdEvents',
+            fromClass: User::class
+        )
     ],
-    normalizationContext: ["groups" => ["event:read", "customer-registration:read", "confrontations:read"]]
+    normalizationContext: ["groups" => ["create:read"]],
+    security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_ORGANISER') and request.attributes.get('id') == user.getId())"
+)]
+#[GetCollection(
+    uriTemplate: "/events/{id}/teams",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "event",
+            fromClass: TeamRegistration::class
+        )
+    ],
+    normalizationContext: ["groups" => ["teams:read"]],
+    security: "is_granted('ROLE_ADMIN')"
+)]
+#[Get]
+#[Post(
+    denormalizationContext: ["groups" => ["user:create"]],
+    security: "is_granted('EVENT_CREATE', object)",
+    validationContext: ["groups" => ["user:create"]],
+)]
+#[Patch(
+    denormalizationContext: ["groups" => ["user:update"]],
+    security: "is_granted('EVENT_UPDATE', object)",
+    validationContext: ["groups" => ["user:update"]],
+)]
+#[Delete(
+    security: "is_granted('EVENT_DELETE', object)"
 )]
 class Event
 {

@@ -104,8 +104,8 @@ La classe **EventReward** représente une entité coordinatrice entre un **évé
 
 | Méthode | Route                                                                                               | Description                                                                      |
 |---------|-----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
-| GET     | [`/api/events/{id}/event-rewards`](http://localhost:80/nooble/public/api/events/{id}/event-rewards) | Récupération de la liste de ressources EventReward pour un événement spécifique. |
-| POST    | [`/api/event-rewards`](http://localhost:80/nooble/public/api/event-rewards)                         | Création d'un EventReward.                                                       |
+| GET     | [`/api/events/{id}/event_rewards`](http://localhost:80/nooble/public/api/events/{id}/event_rewards) | Récupération de la liste de ressources EventReward pour un événement spécifique. |
+| POST    | [`/api/event_rewards`](http://localhost:80/nooble/public/api/event_rewards)                         | Création d'un EventReward.                                                       |
 
 ### EventSponsor
 
@@ -113,11 +113,11 @@ La classe **EventSponsor** représente une entité coordinatrice entre un **év�
 
 | Méthode | Route                                                                                                     | Description                                                                       |
 |---------|-----------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
-| GET     | [`/api/event-sponsors/{id}`](http://localhost:80/nooble/public/api/event-sponsors/{id})                   | Récupération des données d'une ressource EventSponsor.                            |
-| GET     | [`/api/events/{id}/event-sponsors`](http://localhost:80/nooble/public/api/events/{id}/event-sponsors)     | Récupération de la liste de ressources EventSponsor pour un événement spécifique. |
-| GET     | [`/api/sponsors/{id}/event-sponsors`](http://localhost:80/nooble/public/api/sponsors/{id}/event-sponsors) | Récupération de la liste de ressources EventSponsor pour un sponsor spécifique.   |
-| POST    | [`/api/event-sponsors`](http://localhost:80/nooble/public/api/event-sponsors)                             | Création d'une ressource EventSponsor.                                            |
-| DELETE  | [`/api/event-sponsors/{id}`](http://localhost:80/nooble/public/api/event-sponsors/{id})                   | Suppression d'une ressource EventSponsor.                                         |
+| GET     | [`/api/event_sponsors/{id}`](http://localhost:80/nooble/public/api/event_sponsors/{id})                   | Récupération des données d'une ressource EventSponsor.                            |
+| GET     | [`/api/events/{id}/event_sponsors`](http://localhost:80/nooble/public/api/events/{id}/event_sponsors)     | Récupération de la liste de ressources EventSponsor pour un événement spécifique. |
+| GET     | [`/api/sponsors/{id}/event_sponsors`](http://localhost:80/nooble/public/api/sponsors/{id}/event_sponsors) | Récupération de la liste de ressources EventSponsor pour un sponsor spécifique.   |
+| POST    | [`/api/event_sponsors`](http://localhost:80/nooble/public/api/event_sponsors)                             | Création d'une ressource EventSponsor.                                            |
+| DELETE  | [`/api/event_sponsors/{id}`](http://localhost:80/nooble/public/api/event_sponsors/{id})                   | Suppression d'une ressource EventSponsor.                                         |
 
 ### Game
 
@@ -171,11 +171,11 @@ La classe **PrizePack** représente une entité coordinatrice entre une **récom
 
 | Méthode | Route                                                                                                         | Description                                                                      |
 |---------|---------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
-| GET     | [`/api/event-rewards/{id}/prize-packs`](http://localhost:80/nooble/public/api/event-rewards/{id}/prize-packs) | Récupération de la liste de ressources PrizePack pour une recompense d'événement |
-| GET     | [`/api/rewards/{id}/prize-packs`](http://localhost:80/nooble/public/api/rewards/{id}/prize-packs)             | Récupération de la liste de ressources PrizePack pour une récompense             |
-| POST    | [`/api/rewards/prize-packs`](http://localhost:80/nooble/public/api/rewards/prize-packs)                       | Création d'une ressource PrizePack                                               |
-| PATCH   | [`/api/prize-packs/{id}`](http://localhost:80/nooble/public/api/prize-packs/{id})                             | Modification d'une ressource PrizePack.                                          |
-| DELETE  | [`/api/prize-packs/{id}`](http://localhost:80/nooble/public/api/prize-packs/{id})                             | Suppression d'une ressource PrizePack.                                           |
+| GET     | [`/api/event_rewards/{id}/prize_packs`](http://localhost:80/nooble/public/api/event_rewards/{id}/prize_packs) | Récupération de la liste de ressources PrizePack pour une recompense d'événement |
+| GET     | [`/api/rewards/{id}/prize_packs`](http://localhost:80/nooble/public/api/rewards/{id}/prize_packs)             | Récupération de la liste de ressources PrizePack pour une récompense             |
+| POST    | [`/api/rewards/prize_packs`](http://localhost:80/nooble/public/api/rewards/prize_packs)                       | Création d'une ressource PrizePack                                               |
+| PATCH   | [`/api/prize_packs/{id}`](http://localhost:80/nooble/public/api/prize_packs/{id})                             | Modification d'une ressource PrizePack.                                          |
+| DELETE  | [`/api/prize_packs/{id}`](http://localhost:80/nooble/public/api/prize_packs/{id})                             | Suppression d'une ressource PrizePack.                                           |
 
 ### Recipient
 
@@ -184,7 +184,7 @@ La classe **Recipient** représente une entité coordinatrice entre une **équip
 | Méthode | Route                                                                                                       | Description                                                                      |
 |---------|-------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
 | GET     | [`/api/recipients/{id}`](http://localhost:80/nooble/public/api/recipients/{id})                             | Récupération des données d'une ressource Recipient.                              |
-| GET     | [`/api/event-rewards/{id}/recipients`](http://localhost:80/nooble/public/api/event-rewards/{id}/recipients) | Récupération de la liste de ressources Recipient pour une récompense d'événement |
+| GET     | [`/api/event_rewards/{id}/recipients`](http://localhost:80/nooble/public/api/event_rewards/{id}/recipients) | Récupération de la liste de ressources Recipient pour une récompense d'événement |
 | GET     | [`/api/teams/{id}/recipients`](http://localhost:80/nooble/public/api/teams/{id}/recipients)                 | Récupération de la liste de ressources Recipient pour une équipe                 |
 | POST    | [`/api/recipients`](http://localhost:80/nooble/public/api/recipients)                                       | Création d'une ressource Recipient                                               |
 | DELETE  | [`/api/recipients/{id}`](http://localhost:80/nooble/public/api/recipients/{id})                             | Suppression d'une ressource Recipient.                                           |
@@ -195,9 +195,9 @@ La classe **CustomerRegistration** représente une entité coordinatrice entre u
 
 | Méthode | Route                                                                                                                 | Description                                                                     |
 |---------|-----------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|
-| GET     | [`/api/events/{id}/customer-registrations`](http://localhost:80/nooble/public/api/events/{id}/customer-registrations) | Récupération de la liste de ressources CustomerRegistration pour un événement   |
-| GET     | [`/api/users/{id}/customer-registrations`](http://localhost:80/nooble/public/api/users/{id}/customer-registrations)   | Récupération de la liste de ressources CustomerRegistration pour un utilisateur |
-| PATCH   | [`/api/customer-registrations/{id}`](http://localhost:80/nooble/public/api/customer-registrations/{id})               | Modification d'une ressource CustomerRegistration.                              |
+| GET     | [`/api/events/{id}/customer_registrations`](http://localhost:80/nooble/public/api/events/{id}/customer_registrations) | Récupération de la liste de ressources CustomerRegistration pour un événement   |
+| GET     | [`/api/users/{id}/customer_registrations`](http://localhost:80/nooble/public/api/users/{id}/customer_registrations)   | Récupération de la liste de ressources CustomerRegistration pour un utilisateur |
+| PATCH   | [`/api/customer_registrations/{id}`](http://localhost:80/nooble/public/api/customer_registrations/{id})               | Modification d'une ressource CustomerRegistration.                              |
 
 ### Reward
 
@@ -232,11 +232,11 @@ La classe **TeamRegistration** représente une entité coordinatrice entre une *
 
 | Méthode | Route                                                                                           | Description                                                |
 |---------|-------------------------------------------------------------------------------------------------|------------------------------------------------------------|
-| GET     | [`/api/team-registrations`](http://localhost:80/nooble/public/api/team-registrations)           | Récupération de la liste de ressources TeamRegistration    |
-| GET     | [`/api/team-registrations/{id}`](http://localhost:80/nooble/public/api/team-registrations/{id}) | Récupération des données d'une ressource TeamRegistration. |
-| POST    | [`/api/team-registrations`](http://localhost:80/nooble/public/api/team-registrations)           | Création d'une ressource TeamRegistration                  |
-| PATCH   | [`/api/team-registrations/{id}`](http://localhost:80/nooble/public/api/team-registrations/{id}) | Modification d'une ressource TeamRegistration              |
-| DELETE  | [`/api/team-registrations/{id}`](http://localhost:80/nooble/public/api/team-registrations/{id}) | Suppression d'une ressource TeamRegistration               |
+| GET     | [`/api/team_registrations`](http://localhost:80/nooble/public/api/team_registrations)           | Récupération de la liste de ressources TeamRegistration    |
+| GET     | [`/api/team_registrations/{id}`](http://localhost:80/nooble/public/api/team_registrations/{id}) | Récupération des données d'une ressource TeamRegistration. |
+| POST    | [`/api/team_registrations`](http://localhost:80/nooble/public/api/team_registrations)           | Création d'une ressource TeamRegistration                  |
+| PATCH   | [`/api/team_registrations/{id}`](http://localhost:80/nooble/public/api/team_registrations/{id}) | Modification d'une ressource TeamRegistration              |
+| DELETE  | [`/api/team_registrations/{id}`](http://localhost:80/nooble/public/api/team_registrations/{id}) | Suppression d'une ressource TeamRegistration               |
 
 ### TeamSponsor
 
@@ -244,11 +244,11 @@ La classe **TeamSponsor** représente une entité coordinatrice entre une **équ
 
 | Méthode | Route                                                                                                   | Description                                                         |
 |---------|---------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
-| GET     | [`/api/team-sponsors/{id}`](http://localhost:80/nooble/public/api/team-sponsors/{id})                   | Récupération des données d'une ressource TeamSponsor.               |
-| GET     | [`/api/sponsors/{id}/team-sponsors`](http://localhost:80/nooble/public/api/sponsors/{id}/team-sponsors) | Récupération de la liste de ressources TeamSponsor pour un sponsor  |
-| GET     | [`/api/teams/{id}/team-sponsors`](http://localhost:80/nooble/public/api/teams/{id}/sponsors)            | Récupération de la liste de ressources TeamSponsor pour une équipes |
-| POST    | [`/api/team-sponsors`](http://localhost:80/nooble/public/api/team-sponsors)                             | Création d'une ressource TeamSponsor                                |
-| DELETE  | [`/api/team-sponsors/{id}`](http://localhost:80/nooble/public/api/team-sponsors/{id})                   | Suppression d'une ressource TeamSponsor                             |
+| GET     | [`/api/team_sponsors/{id}`](http://localhost:80/nooble/public/api/team_sponsors/{id})                   | Récupération des données d'une ressource TeamSponsor.               |
+| GET     | [`/api/sponsors/{id}/team_sponsors`](http://localhost:80/nooble/public/api/sponsors/{id}/team_sponsors) | Récupération de la liste de ressources TeamSponsor pour un sponsor  |
+| GET     | [`/api/teams/{id}/team_sponsors`](http://localhost:80/nooble/public/api/teams/{id}/sponsors)            | Récupération de la liste de ressources TeamSponsor pour une équipes |
+| POST    | [`/api/team_sponsors`](http://localhost:80/nooble/public/api/team_sponsors)                             | Création d'une ressource TeamSponsor                                |
+| DELETE  | [`/api/team_sponsors/{id}`](http://localhost:80/nooble/public/api/team_sponsors/{id})                   | Suppression d'une ressource TeamSponsor                             |
 
 
 ### User

@@ -13,20 +13,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EventRewardRepository::class)]
-#[ApiResource(
-    operations: [
-        new GetCollection(
-            uriTemplate: "/events/{id}/event-rewards",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "eventRewards",
-                    fromClass: Event::class
-                )
-            ]
-        ),
-        new Post()
+#[ApiResource]
+#[GetCollection(
+    uriTemplate: "/events/{id}/event_rewards",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "eventRewards",
+            fromClass: Event::class
+        )
     ]
 )]
+#[Post]
 class EventReward
 {
     #[ORM\Id]

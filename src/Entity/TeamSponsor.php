@@ -12,33 +12,28 @@ use App\Repository\TeamSponsorRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TeamSponsorRepository::class)]
-#[ApiResource(
-    operations: [
-        new GetCollection(
-            uriTemplate: "/teams/{id}/team-sponsors",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "teamSponsors",
-                    fromClass: Team::class
-                )
-            ]
-        ),
-        new GetCollection(
-            uriTemplate: "/sponsors/{id}/team-sponsors",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "teamSponsors",
-                    fromClass: Sponsor::class
-                )
-            ]
-        ),
-        new Get(),
-        new Post(
-            //security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
-        ),
-        new Delete()
+#[ApiResource]
+#[GetCollection(
+    uriTemplate: "/teams/{id}/team_sponsors",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "teamSponsors",
+            fromClass: Team::class
+        )
     ]
 )]
+#[GetCollection(
+    uriTemplate: "/sponsors/{id}/team_sponsors",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "teamSponsors",
+            fromClass: Sponsor::class
+        )
+    ]
+)]
+#[Get]
+#[Post]
+#[Delete]
 class TeamSponsor
 {
     #[ORM\Id]

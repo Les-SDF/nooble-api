@@ -15,32 +15,30 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ConfrontationRepository::class)]
 #[ApiResource(
-    operations: [
-        new GetCollection(
-            uriTemplate: "/games/{id}/confrontations",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "confrontations",
-                    fromClass: Game::class
-                )
-            ]
-        ),
-        new GetCollection(
-            uriTemplate: "/events/{id}/confrontations",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "confrontations",
-                    fromClass: Event::class
-                )
-            ]
-        ),
-        new Patch(
-            denormalizationContext: ["groups" => ["confrontation:update"]],
-            security: "is_granted('CONFRONTATION_UPDATE', object)",
-            validationContext: ["groups" => ["confrontation:update"]],
-        )
-    ],
     normalizationContext: ["groups" => ["confrontation:read"]]
+)]
+#[GetCollection(
+    uriTemplate: "/games/{id}/confrontations",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "confrontations",
+            fromClass: Game::class
+        )
+    ]
+)]
+#[GetCollection(
+    uriTemplate: "/events/{id}/confrontations",
+    uriVariables: [
+        "id" => new Link(
+            fromProperty: "confrontations",
+            fromClass: Event::class
+        )
+    ]
+)]
+#[Patch(
+    denormalizationContext: ["groups" => ["confrontation:update"]],
+    security: "is_granted('CONFRONTATION_UPDATE', object)",
+    validationContext: ["groups" => ["confrontation:update"]],
 )]
 class Confrontation
 {
@@ -149,12 +147,12 @@ class Confrontation
         return $this;
     }
 
-    public function getDate(): ?\DateTimeImmutable
+    public function getDate(): ?DateTimeImmutable
     {
         return $this->date;
     }
 
-    public function setDate(?\DateTimeImmutable $date): static
+    public function setDate(?DateTimeImmutable $date): static
     {
         $this->date = $date;
 
