@@ -2,17 +2,18 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Member;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-final class UserVoter extends AbstractVoter
+final class MemberVoter extends AbstractVoter
 {
-    public const CREATE = "USER_CREATE";
-    public const READ = "USER_READ";
-    public const UPDATE = "USER_UPDATE";
-    public const DELETE = "USER_DELETE";
+    public const CREATE = "MEMBER_CREATE";
+    public const READ = "MEMBER_READ";
+    public const UPDATE = "MEMBER_UPDATE";
+    public const DELETE = "MEMBER_DELETE";
 
     public function __construct(private readonly Security $security)
     {
@@ -21,7 +22,7 @@ final class UserVoter extends AbstractVoter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /**
-         * @var User $subject
+         * @var Member $subject
          * @var UserInterface $user
          */
         if (!($user = $token->getUser()) instanceof User) {
@@ -30,9 +31,9 @@ final class UserVoter extends AbstractVoter
 
         switch ($attribute) {
             case self::DELETE:
-                // Seul les administrateurs ou les utilisateurs eux-mêmes peuvent supprimer leur compte
+                // Seul les administrateurs ou les utilisateurs eux-mêmes peuvent quitter une équipe
                 if ($this->security->isGranted("ROLE_ADMIN", $user)
-                    || $subject === $user) {
+                    || $subject->getUser() === $user) {
                     return true;
                 }
                 break;
@@ -42,6 +43,6 @@ final class UserVoter extends AbstractVoter
 
     protected function getSubjectClass(): string
     {
-        return User::class;
+        return Member::class;
     }
 }

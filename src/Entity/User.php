@@ -32,11 +32,13 @@ use Symfony\Component\Validator\Constraints as Assert;
             validationContext: ["groups" => ["Default", "user:create"]],
             processor: UserProcessor::class
         ),
-        new Delete(),
         new Patch(
             denormalizationContext: ["groups" => ["user:update"]],
             validationContext: ["groups" => ["Default", "user:update"]],
             processor: UserProcessor::class
+        ),
+        new Delete(
+            security: "is_granted('USER_DELETE', object)",
         )
     ],
     normalizationContext: ["groups" => ["user:read"]]
@@ -89,6 +91,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $username = null;
 
     /**
+     * @var Collection<int, Member>
+     */
+    #[ORM\OneToMany(targetEntity: Member::class, mappedBy: 'user', orphanRemoval: true)]
+    #[Groups(["user:read", "register:read"])]
+    private Collection $members;
+
+
+    /**
      * @var Collection<int, Register>
      */
     #[ORM\OneToMany(targetEntity: Register::class, mappedBy: 'user', orphanRemoval: true)]
@@ -114,6 +124,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
+        $this->members = new ArrayCollection();
         $this->registers = new ArrayCollection();
         $this->managers = new ArrayCollection();
         $this->rewards = new ArrayCollection();
@@ -225,6 +236,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(?string $username): static
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Member>
+     */
+    public function getMembers(): Collection
+    {
+        return $this->members;
+    }
+
+    public function addMember(Member $belong): static
+    {
+        if (!$this->members->contains($belong)) {
+            $this->members->add($belong);
+            $belong->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMember(Member $belong): static
+    {
+        if ($this->members->removeElement($belong)) {
+            // set the owning side to null (unless already changed)
+            if ($belong->getUser() === $this) {
+                $belong->setUser(null);
+            }
+        }
 
         return $this;
     }

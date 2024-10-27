@@ -24,15 +24,46 @@ final class TeamEventVoter extends AbstractVoter
     {
         /**
          * @var TeamEvent $subject
-         * @var UserInterface $user
+         * @var User $user
          */
         if (!($user = $token->getUser()) instanceof User) {
             return false;
         }
 
         switch ($attribute) {
+            case self::CREATE:
+                /**
+                 * On peut inscrire une équipe à un événement si le nombre de participants de l'événement n'est pas
+                 * atteint. Et seul un membre de son équipe peut l'inscrire à un événement, si aucun des membres de
+                 * cette équipe n'est déjà inscrit avec une de ses équipes à un événement se déroulant sur la même
+                 * période
+                 */
+                if ($subject->getEvent()->getTeamEvents()->count() > $subject->getEvent()->getMaxParticipants()
+                    && $subject->getTeam()->getMembers()->contains($user)) {
+
+                    // Liste des membres de l'équipe
+                    foreach ($subject->getTeam()->getMembers() as $teamMembers) {
+
+                        // Liste de toutes les équipes de chaque membre
+                        foreach ($teamMembers->getUser()->getMembers() as $userMembers) {
+
+                            // Liste de tous les événements de chacune des équipes
+                            foreach ($userMembers->getTeam()->getTeamEvents() as $teamEvents) {
+
+                                if ($teamEvents->getEvent()->getStartDate() <= $subject->getEvent()->getEndDate()
+                                    && $teamEvents->getEvent()->getEndDate() >= $subject->getEvent()->getStartDate()) {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                    return true;
+                }
+                break;
             case self::READ:
-                // Seul les administrateurs, les organisateurs de l'événement, leurs gérants et les membres de l'équipe inscrite peuvent lire les événements s'il elle n'est pas privée
+                /**
+                 * Seul les administrateurs, les organisateurs de l'événement, leurs gérants et les membres de l'équipe inscrite peuvent lire les événements s'il elle n'est pas privée
+                 */
                 if ($this->security->isGranted("ROLE_ADMIN", $user)
                     || $this->security->isGranted("ROLE_ORGANISER", $user) && $subject->getEvent()->getCreator() === $user
                     || $subject->getEvent()->getManagers()->contains($user)
@@ -41,10 +72,16 @@ final class TeamEventVoter extends AbstractVoter
                     return true;
                 }
                 break;
-            case self::CREATE:
             case self::UPDATE:
             case self::DELETE:
-                return true;
+                /**
+                 * Seul l'organisateur de l'événement et leurs gérants peuvent y modifier ou supprimer les
+                 * inscriptions des équipes
+                 */
+                if ($this->security->isGranted("ROLE_ORGANISER", $user) && $subject->getEvent()->getCreator() === $user
+                    || $subject->getEvent()->getManagers()->contains($user)) {
+                    return true;
+                }
         }
         return false;
     }

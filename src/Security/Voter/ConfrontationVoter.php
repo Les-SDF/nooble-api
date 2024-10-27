@@ -31,18 +31,13 @@ final class ConfrontationVoter extends AbstractVoter
 
         switch ($attribute) {
             case self::UPDATE:
-                // is_granted('ROLE_USER') and object.getEvent().getCreator() == user or is_granted('ROLE_USER') and object.getEvent().getManagers().contains(user)
-                // Seul le créateur de l'événement ou les managers de l'événement peuvent modifier des confrontations
+                // Seul le l'organisateur de l'événement ou leurs gérants peuvent modifier des confrontations
                 if ($this->security->isGranted("ROLE_USER", $user)
                     && ($subject->getEvent()->getCreator() === $user
                         || $subject->getEvent()->getManagers()->contains($user))) {
                     return true;
                 }
                 break;
-            case self::CREATE:
-            case self::READ:
-            case self::DELETE:
-                return true;
         }
         return false;
     }
