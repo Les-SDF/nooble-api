@@ -38,7 +38,7 @@ class Team
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["user:read", "register:read", "confrontations:read", "confrontation:read"])]
+    #[Groups(["user:read", "register:read", "confrontations:read", "confrontation:read", "teams:read"])]
     private ?string $name = null;
 
     /**
@@ -66,6 +66,12 @@ class Team
     #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'team', orphanRemoval: true)]
     private Collection $participations;
 
+    /**
+     * @var Collection<int, TeamEvent>
+     */
+    #[ORM\OneToMany(targetEntity: TeamEvent::class, mappedBy: 'team', orphanRemoval: true)]
+    private Collection $teamEvents;
+
 
     public function __construct()
     {
@@ -73,6 +79,7 @@ class Team
         $this->teamSponsors = new ArrayCollection();
         $this->members = new ArrayCollection();
         $this->participations = new ArrayCollection();
+        $this->teamEvents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -206,6 +213,36 @@ class Team
             // set the owning side to null (unless already changed)
             if ($participation->getTeam() === $this) {
                 $participation->setTeam(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TeamEvent>
+     */
+    public function getTeamEvents(): Collection
+    {
+        return $this->teamEvents;
+    }
+
+    public function addTeamEvent(TeamEvent $teamEvent): static
+    {
+        if (!$this->teamEvents->contains($teamEvent)) {
+            $this->teamEvents->add($teamEvent);
+            $teamEvent->setTeam($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTeamEvent(TeamEvent $teamEvent): static
+    {
+        if ($this->teamEvents->removeElement($teamEvent)) {
+            // set the owning side to null (unless already changed)
+            if ($teamEvent->getTeam() === $this) {
+                $teamEvent->setTeam(null);
             }
         }
 

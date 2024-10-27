@@ -119,6 +119,16 @@ class Event
     #[ORM\JoinColumn(nullable: false)]
     private ?User $creator = null;
 
+    /**
+     * @var Collection<int, TeamEvent>
+     */
+    #[ORM\OneToMany(targetEntity: TeamEvent::class, mappedBy: 'event', orphanRemoval: true)]
+    #[Groups(["teams:read"])]
+    private Collection $teamEvents;
+
+    #[ORM\Column]
+    private ?bool $teamIsVisible = false;
+
     public function __construct()
     {
         $this->eventRewards = new ArrayCollection();
@@ -126,6 +136,7 @@ class Event
         $this->registers = new ArrayCollection();
         $this->confrontations = new ArrayCollection();
         $this->managers = new ArrayCollection();
+        $this->teamEvents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -411,6 +422,48 @@ class Event
     public function setCreator(?User $creator): static
     {
         $this->creator = $creator;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TeamEvent>
+     */
+    public function getTeamEvents(): Collection
+    {
+        return $this->teamEvents;
+    }
+
+    public function addTeamEvent(TeamEvent $teamEvent): static
+    {
+        if (!$this->teamEvents->contains($teamEvent)) {
+            $this->teamEvents->add($teamEvent);
+            $teamEvent->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTeamEvent(TeamEvent $teamEvent): static
+    {
+        if ($this->teamEvents->removeElement($teamEvent)) {
+            // set the owning side to null (unless already changed)
+            if ($teamEvent->getEvent() === $this) {
+                $teamEvent->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function isTeamIsVisible(): ?bool
+    {
+        return $this->teamIsVisible;
+    }
+
+    public function setTeamIsVisible(bool $teamIsVisible): static
+    {
+        $this->teamIsVisible = $teamIsVisible;
 
         return $this;
     }
