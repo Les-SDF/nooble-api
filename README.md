@@ -64,6 +64,10 @@ Dans notre implémentation, l'inscription à un événement se fait de la maniè
 
 - **Désinscription** : Un membre de l'équipe ne peut pas désinscrire l'équipe de l'événement. La désinscription doit être effectuée par l'organisateur de l'événement. Si un membre ne souhaite plus participer à un événement, il doit quitter l'équipe.
 
+# Information supplémentaire
+
+Suite à la récente refonte de notre modèle de données, avec la conversion de plusieurs relations ManyToMany en ManyToOne via des entités intermédiaires, nous avons rencontré des défis de timing. Cette nouvelle implémentation, intégrée en milieu de semaine, nous a laissé un temps limité pour adapter et sécuriser toutes les entités. En conséquence, certaines entités ne bénéficient pas encore des protections de sécurité complètes, notamment au niveau des voters et des contrôles d'accès.
+
 # Routes de l'application
 
 ### Authentification
