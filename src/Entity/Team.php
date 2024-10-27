@@ -38,7 +38,7 @@ class Team
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["user:read", "register:read", "confrontations:read", "confrontation:read", "event:read", "team:read"])]
+    #[Groups(["user:read", "register:read", "confrontations:read", "confrontation:read", "event:read", "team:read", "teams:read"])]
     private ?string $name = null;
 
     /**

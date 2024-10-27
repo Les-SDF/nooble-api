@@ -50,7 +50,7 @@ class TeamEvent
 
     #[ORM\ManyToOne(inversedBy: 'teamEvents')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["event:read", "team:read"])]
+    #[Groups(["event:read", "team:read", "teams:read"])]
     private ?Team $team = null;
 
     #[ORM\ManyToOne(inversedBy: 'teamEvents')]
@@ -58,7 +58,7 @@ class TeamEvent
     private ?Event $event = null;
 
     #[ORM\Column(enumType: SaucisseType::class)]
-    #[Groups(["team:read"])]
+    #[Groups(["team:read", "teams:read"])]
     private ?SaucisseType $saucisse = null;
 
     public function getId(): ?int

@@ -26,6 +26,18 @@ use Doctrine\ORM\Mapping as ORM;
             normalizationContext: ["groups" => ["event:read"]]
         ),
         new Get(),
+        new GetCollection(
+            uriTemplate: "/event/{id}/teams",
+            uriVariables: [
+                "id" => new Link(
+                    fromProperty: "event",
+                    fromClass: TeamEvent::class
+                )
+            ],
+            normalizationContext: ["groups" => ["teams:read"]],
+            security: "is_granted('ROLE_ADMIN')"
+        ),
+
         new Post(
             denormalizationContext: ["groups" => ["user:create"]],
             security: "is_granted('EVENT_CREATE', object)",
@@ -128,6 +140,7 @@ class Event
      * @var Collection<int, TeamEvent>
      */
     #[ORM\OneToMany(targetEntity: TeamEvent::class, mappedBy: 'event', orphanRemoval: true)]
+    #[Groups("teams:read")]
     private Collection $teamEvents;
 
 
