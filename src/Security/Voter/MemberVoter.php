@@ -31,7 +31,9 @@ final class MemberVoter extends AbstractVoter
 
         switch ($attribute) {
             case self::DELETE:
-                // Seul les administrateurs ou les utilisateurs eux-mêmes peuvent quitter une équipe
+                /**
+                 * Seuls les administrateurs ou les utilisateurs eux-mêmes peuvent quitter une équipe
+                 */
                 if ($this->security->isGranted("ROLE_ADMIN", $user)
                     || $subject->getUser() === $user) {
                     return true;

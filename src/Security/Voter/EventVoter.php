@@ -22,11 +22,16 @@ final class EventVoter extends AbstractVoter
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
+//        dd (
+//            $subject,
+//            $attribute,
+//            $token
+//        );
         /**
          * @var Event $subject
          * @var UserInterface $user
          */
-        if (!($user = $token->getUser()) instanceof User) {
+        if ($attribute !== self::READ && !($user = $token->getUser()) instanceof User) {
             return false;
         }
 
@@ -44,10 +49,18 @@ final class EventVoter extends AbstractVoter
                  * Seuls les administrateurs, l'organisateur de l'événement ou leurs gérants peuvent lire les
                  * événements archivés
                  */
-                if ($subject->getStatus() === Status::Archived
-                    && ($this->security->isGranted("ROLE_ADMIN", $user)
-                        || $this->security->isGranted("ROLE_ORGANISER", $user) && $subject->getCreator() === $user
-                        || $subject->getManagers()->contains($user))) {
+                if (is_array($subject)) {
+                    foreach ($subject as $item) {
+                        if ($this->voteOnAttribute($attribute, $item, $token)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                if ($subject->getStatus() !== Status::Archived
+                    || $this->security->isGranted("ROLE_ADMIN", $user)
+                    || $this->security->isGranted("ROLE_ORGANISER", $user) && $subject->getCreator() === $user
+                    || $subject->getManagers()->contains($user)) {
                     return true;
                 }
                 break;
@@ -61,7 +74,9 @@ final class EventVoter extends AbstractVoter
                 }
                 break;
             case self::DELETE:
-                // Seul les administrateurs ou les organisateurs de l'événement peuvent le supprimer
+                /**
+                 * Seuls les administrateurs ou les organisateurs de l'événement peuvent le supprimer
+                 */
                 if ($this->security->isGranted("ROLE_ADMIN", $user)
                     || $this->security->isGranted("ROLE_ORGANISER", $user) && $subject->getCreator() === $user) {
                     return true;

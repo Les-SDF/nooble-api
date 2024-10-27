@@ -2,6 +2,7 @@ api_platform:
     title: nooble
     version: 1.0.0
     defaults:
+        pagination_enabled: false
         cache_headers:
             vary: ['Content-Type', 'Authorization', 'Origin']
         formats:

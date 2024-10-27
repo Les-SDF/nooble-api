@@ -23,11 +23,11 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource(
     operations: [
         new GetCollection(
-            normalizationContext: ["groups" => ["event:read"]]
+            normalizationContext: ["groups" => ["event:read"]],
+            security: "is_granted('EVENT_READ', object)"
         ),
-        new Get(),
         new GetCollection(
-            uriTemplate: "/user/{id}/event",
+            uriTemplate: "/user/{id}/events",
             uriVariables: [
                 "id" => new Link(
                     fromProperty: 'createdEvents',
@@ -48,6 +48,7 @@ use Doctrine\ORM\Mapping as ORM;
             normalizationContext: ["groups" => ["teams:read"]],
             security: "is_granted('ROLE_ADMIN')"
         ),
+        new Get(),
         new Post(
             denormalizationContext: ["groups" => ["user:create"]],
             security: "is_granted('EVENT_CREATE', object)",

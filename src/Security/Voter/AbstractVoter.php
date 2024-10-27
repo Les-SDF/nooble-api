@@ -12,7 +12,16 @@ abstract class AbstractVoter extends Voter
     {
         $reflection = new ReflectionClass($this);
         $class = $this->getSubjectClass();
+
+        if (is_array($subject)) {
+            foreach ($subject as $item) {
+                if (!$item instanceof $class) {
+                    return false;
+                }
+            }
+            return true;
+        }
         return in_array($attribute, $reflection->getConstants())
-            and (is_null($subject) or $subject instanceof $class);
+            && (is_null($subject) || !is_array($subject) && $subject instanceof $class);
     }
 }
