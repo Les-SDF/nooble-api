@@ -23,13 +23,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
             ]
         ),
         new GetCollection(
-            uriTemplate: "/events/{id}/teams",
+            uriTemplate: "/event/{id}/teams",
             uriVariables: [
                 "id" => new Link(
                     fromProperty: "teamEvents",
                     fromClass: Event::class
-                )
-            ]
+                ),
+            ],
         )
     ]
 )]
@@ -42,7 +42,7 @@ class TeamEvent
 
     #[ORM\ManyToOne(inversedBy: 'teamEvents')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["event:read"])]
+    #[Groups(["event:read", "team:read"])]
     private ?Team $team = null;
 
     #[ORM\ManyToOne(inversedBy: 'teamEvents')]
@@ -50,6 +50,7 @@ class TeamEvent
     private ?Event $event = null;
 
     #[ORM\Column(enumType: SaucisseType::class)]
+    #[Groups(["team:read"])]
     private ?SaucisseType $saucisse = null;
 
     public function getId(): ?int

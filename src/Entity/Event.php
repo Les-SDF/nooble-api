@@ -23,15 +23,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource(
     operations: [
         new GetCollection(
-            uriTemplate: "/event/{id}/teams",
-            uriVariables: [
-                "id" => new Link(
-                    fromProperty: "teamEvents",
-                    fromClass: Event::class
-                )
-            ],
-            security: "is_granted('EVENT_READ', object)",
-            normalizationContext: ["groups" => ["team:read"]]
+            normalizationContext: ["groups" => ["event:read"]]
         ),
         new Get(),
         new Post(
