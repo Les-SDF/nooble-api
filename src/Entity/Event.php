@@ -129,6 +129,9 @@ class Event
     #[ORM\Column]
     private ?bool $teamIsVisible = false;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $price = null;
+
     public function __construct()
     {
         $this->eventRewards = new ArrayCollection();
@@ -464,6 +467,18 @@ class Event
     public function setTeamIsVisible(bool $teamIsVisible): static
     {
         $this->teamIsVisible = $teamIsVisible;
+
+        return $this;
+    }
+
+    public function getPrice(): ?int
+    {
+        return $this->price;
+    }
+
+    public function setPrice(?int $price): static
+    {
+        $this->price = $price;
 
         return $this;
     }
