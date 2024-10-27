@@ -31,8 +31,9 @@ final class EventSponsorVoter extends AbstractVoter
 
         switch ($attribute) {
             case self::CREATE:
-                // (is_granted('ROLE_USER') and object.getEvent().getCreator() == user or is_granted('ROLE_USER') and object.getEvent().getManagers().contains(user))
-                // Seul le créateur de l'événement ou les managers de l'événement peuvent ajouter des sponsors à l'événement
+                /**
+                 * Seul l'organisateur de l'événement ou leurs gérants peuvent y ajouter des sponsors
+                 */
                 if ($this->security->isGranted("ROLE_USER", $user)
                     && ($subject->getEvent()->getCreator() === $user
                     || $subject->getEvent()->getManagers()->contains($user))) {
@@ -40,8 +41,10 @@ final class EventSponsorVoter extends AbstractVoter
                 }
                 break;
             case self::DELETE:
-                // is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getEvent().getCreator() == user or is_granted('ROLE_USER') and object.getEvent().getManagers().contains(user))
-                // Seul le créateur de l'événement, les managers de l'événement ou un administrateur peuvent supprimer des sponsors de l'événement
+                /**
+                 * Seuls l'organisateur de l'événement, leurs gérants ou un administrateur peuvent y supprimer des
+                 * sponsors
+                 */
                 if ($this->security->isGranted("ROLE_ADMIN", $user)
                     || ($this->security->isGranted("ROLE_USER", $user)
                     && ($subject->getEvent()->getCreator() === $user
@@ -49,9 +52,6 @@ final class EventSponsorVoter extends AbstractVoter
                     return true;
                 }
                 break;
-            case self::READ:
-            case self::UPDATE:
-                return true;
         }
         return false;
     }

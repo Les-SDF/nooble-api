@@ -62,21 +62,25 @@ final class TeamEventVoter extends AbstractVoter
                 break;
             case self::READ:
                 /**
-                 * Seul les administrateurs, les organisateurs de l'événement, leurs gérants et les membres de l'équipe inscrite peuvent lire les événements s'il elle n'est pas privée
+                 * Seuls les administrateurs, les organisateurs de l'événement, leurs gérants ou les membres de
+                 * l'équipe inscrite peuvent lire la liste des équipes inscrites si la visibilité est privée
                  */
-                if ($this->security->isGranted("ROLE_ADMIN", $user)
+                if ($subject->getEvent()->getParticipantsVisibility() === Visibility::Public
+                    || $this->security->isGranted("ROLE_ADMIN", $user)
                     || $this->security->isGranted("ROLE_ORGANISER", $user) && $subject->getEvent()->getCreator() === $user
                     || $subject->getEvent()->getManagers()->contains($user)
-                    || $subject->getTeam()->getMembers()->contains($user)
-                    || $subject->getEvent()->getParticipantsVisibility() === Visibility::Public) {
+                    || $subject->getTeam()->getMembers()->contains($user)) {
                     return true;
                 }
                 break;
             case self::UPDATE:
+                /**
+                 * Seuls l'organisateur de l'événement ou leurs gérants peuvent y modifier les inscriptions des équipes
+                 */
             case self::DELETE:
                 /**
-                 * Seul l'organisateur de l'événement et leurs gérants peuvent y modifier ou supprimer les
-                 * inscriptions des équipes
+                 * Seuls l'organisateur de l'événement ou leurs gérants peuvent y supprimer les inscriptions des
+                 * équipes
                  */
                 if ($this->security->isGranted("ROLE_ORGANISER", $user) && $subject->getEvent()->getCreator() === $user
                     || $subject->getEvent()->getManagers()->contains($user)) {

@@ -30,11 +30,6 @@ final class SponsorVoter extends AbstractVoter
         }
 
         switch ($attribute) {
-            case self::CREATE:
-            case self::READ:
-            case self::UPDATE:
-            case self::DELETE:
-                return true;
         }
         return false;
     }

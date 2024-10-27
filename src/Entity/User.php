@@ -113,8 +113,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Reward>
      */
-    #[ORM\OneToMany(targetEntity: Reward::class, mappedBy: 'manager', orphanRemoval: true)]
-    private Collection $rewards;
+    #[ORM\OneToMany(targetEntity: Reward::class, mappedBy: 'creator', orphanRemoval: true)]
+    private Collection $createdRewards;
 
     /**
      * @var Collection<int, Event>
@@ -127,7 +127,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->members = new ArrayCollection();
         $this->registers = new ArrayCollection();
         $this->managers = new ArrayCollection();
-        $this->rewards = new ArrayCollection();
+        $this->createdRewards = new ArrayCollection();
         $this->createdEvents = new ArrayCollection();
     }
 
@@ -333,37 +333,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Reward>
      */
-    public function getRewards(): Collection
+    public function getCreatedRewards(): Collection
     {
-        return $this->rewards;
+        return $this->createdRewards;
     }
 
-    public function addReward(Reward $reward): static
+    public function addCreatedReward(Reward $createdReward): static
     {
-        if (!$this->rewards->contains($reward)) {
-            $this->rewards->add($reward);
-            $reward->setManager($this);
+        if (!$this->createdRewards->contains($createdReward)) {
+            $this->createdRewards->add($createdReward);
+            $createdReward->setCreator($this);
         }
 
         return $this;
     }
 
-    public function removeReward(Reward $reward): static
+    public function removeCreatedReward(Reward $createdReward): static
     {
-        if ($this->rewards->removeElement($reward)) {
+        if ($this->createdRewards->removeElement($createdReward)) {
             // set the owning side to null (unless already changed)
-            if ($reward->getManager() === $this) {
-                $reward->setManager(null);
+            if ($createdReward->getCreator() === $this) {
+                $createdReward->setCreator(null);
             }
         }
 
         return $this;
-    }
-
-    // TODO: Enlever cette méthode, elle règle un problème de sérialisation pour AppFixtures
-    public function __toString(): string
-    {
-        return 'User';
     }
 
     /**

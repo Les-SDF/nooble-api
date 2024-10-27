@@ -31,25 +31,24 @@ final class RewardVoter extends AbstractVoter
 
         switch ($attribute) {
             case self::UPDATE:
-                // is_granted('ROLE_USER') and object.getManager() == user
-                // Seul le manager de la récompense peut la modifier
+                /**
+                 * Seul le créateur de la récompense peut la modifier
+                 */
                 if ($this->security->isGranted("ROLE_USER", $user)
-                    && $subject->getManager() === $user) {
+                    && $subject->getCreator() === $user) {
                     return true;
                 }
                 break;
             case self::DELETE:
-                // is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getManager() == user)
-                // Seul le manager de la récompense ou un administrateur peut la supprimer
+                /**
+                 * Seul le créateur de la récompense ou un administrateur peut la supprimer
+                 */
                 if ($this->security->isGranted("ROLE_ADMIN", $user)
                     || ($this->security->isGranted("ROLE_USER", $user)
-                    && $subject->getManager() === $user)) {
+                    && $subject->getCreator() === $user)) {
                     return true;
                 }
                 break;
-            case self::CREATE:
-            case self::READ:
-                return true;
         }
         return false;
     }

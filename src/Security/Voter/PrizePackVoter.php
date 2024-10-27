@@ -31,9 +31,13 @@ final class PrizePackVoter extends AbstractVoter
 
         switch ($attribute) {
             case self::UPDATE:
+                /**
+                 * Seuls l'organisateur de l'événement ou leurs gérants peuvent y modifier des lots
+                 */
             case self::DELETE:
-                // is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getEventReward().getEvent().getCreator() == user) or (is_granted('ROLE_USER') and object.getEventReward().getEvent().getManagers().contains(user))
-                // Seul le créateur de l'événement, les managers de l'événement ou un administrateur peuvent modifier ou supprimer des lots
+                /**
+                 * Seuls l'organisateur de l'événement ou leurs gérants peuvent y supprimer des lots
+                 */
                 if ($this->security->isGranted("ROLE_ADMIN", $user)
                     || ($this->security->isGranted("ROLE_USER", $user)
                     && ($subject->getEventReward()->getEvent()->getCreator() === $user
@@ -41,9 +45,6 @@ final class PrizePackVoter extends AbstractVoter
                     return true;
                 }
                 break;
-            case self::CREATE:
-            case self::READ:
-                return true;
         }
         return false;
     }

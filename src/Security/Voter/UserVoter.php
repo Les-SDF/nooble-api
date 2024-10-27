@@ -30,7 +30,9 @@ final class UserVoter extends AbstractVoter
 
         switch ($attribute) {
             case self::DELETE:
-                // Seul les administrateurs ou les utilisateurs eux-mêmes peuvent supprimer leur compte
+                /**
+                 * Seuls les administrateurs ou les utilisateurs eux-mêmes peuvent supprimer leur compte
+                 */
                 if ($this->security->isGranted("ROLE_ADMIN", $user)
                     || $subject === $user) {
                     return true;
