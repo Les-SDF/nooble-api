@@ -22,11 +22,6 @@ final class EventVoter extends AbstractVoter
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
-//        dd (
-//            $subject,
-//            $attribute,
-//            $token
-//        );
         /**
          * @var Event $subject
          * @var UserInterface $user
@@ -51,16 +46,17 @@ final class EventVoter extends AbstractVoter
                  */
                 if (is_array($subject)) {
                     foreach ($subject as $item) {
-                        if ($this->voteOnAttribute($attribute, $item, $token)) {
-                            return true;
+                        if (!$this->voteOnAttribute($attribute, $item, $token)) {
+                            return false;
                         }
+                        return true;
                     }
-                    return false;
                 }
                 if ($subject->getStatus() !== Status::Archived
-                    || $this->security->isGranted("ROLE_ADMIN", $user)
-                    || $this->security->isGranted("ROLE_ORGANISER", $user) && $subject->getCreator() === $user
-                    || $subject->getManagers()->contains($user)) {
+                    || ($user = $token->getUser()) instanceof User
+                    && ($this->security->isGranted("ROLE_ADMIN", $user)
+                        || $this->security->isGranted("ROLE_ORGANISER", $user) && $subject->getCreator() === $user
+                        || $subject->getManagers()->contains($user))) {
                     return true;
                 }
                 break;
