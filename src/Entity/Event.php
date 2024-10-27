@@ -9,6 +9,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Enum\Status;
+use App\Enum\Visibility;
 use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -19,17 +20,19 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[ApiResource(
     operations: [
-        new GetCollection(),
+        new GetCollection(
+            security: "is_granted('EVENT_READ', object)"
+        ),
         new Get(),
         new Post(
-            denormalizationContext: ["groups" => ["utilisateur:create"]],
+            denormalizationContext: ["groups" => ["user:create"]],
             security: "is_granted('EVENT_CREATE', object)",
-            validationContext: ["groups" => ["utilisateur:create"]],
+            validationContext: ["groups" => ["user:create"]],
         ),
         new Patch(
-            denormalizationContext: ["groups" => ["utilisateur:update"]],
+            denormalizationContext: ["groups" => ["user:update"]],
             security: "is_granted('EVENT_UPDATE', object)",
-            validationContext: ["groups" => ["utilisateur:update"]],
+            validationContext: ["groups" => ["user:update"]],
         ),
         new Delete(security: "is_granted('EVENT_DELETE', object)")
     ],
@@ -66,8 +69,8 @@ class Event
     #[ORM\Column(options: ["default" => false])]
     private ?bool $charity = false;
 
-    #[ORM\Column(options: ["default" => false])]
-    private ?bool $private = false;
+    #[ORM\Column(enumType: Visibility::class, options: ["default" => Visibility::Public])]
+    private ?Visibility $participantsVisibility = null;
 
     #[Groups(["event:read"])]
     #[ORM\Column(length: 255, nullable: true)]
@@ -219,14 +222,14 @@ class Event
         return $this;
     }
 
-    public function isPrivate(): ?bool
+    public function getParticipantsVisibility(): ?Visibility
     {
-        return $this->private;
+        return $this->participantsVisibility;
     }
 
-    public function setPrivate(bool $private): static
+    public function setParticipantsVisibility(Visibility $participantsVisibility): static
     {
-        $this->private = $private;
+        $this->participantsVisibility = $participantsVisibility;
 
         return $this;
     }
