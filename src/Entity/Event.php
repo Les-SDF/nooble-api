@@ -27,7 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
             security: "is_granted('EVENT_READ', object)"
         ),
         new GetCollection(
-            uriTemplate: "/user/{id}/events",
+            uriTemplate: "/users/{id}/events",
             uriVariables: [
                 "id" => new Link(
                     fromProperty: 'createdEvents',
@@ -38,7 +38,7 @@ use Doctrine\ORM\Mapping as ORM;
             security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_ORGANISER') and request.attributes.get('id') == user.getId())"
         ),
         new GetCollection(
-            uriTemplate: "/event/{id}/teams",
+            uriTemplate: "/events/{id}/teams",
             uriVariables: [
                 "id" => new Link(
                     fromProperty: "event",

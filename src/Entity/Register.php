@@ -24,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
             ]
         ),
         new GetCollection(
-            uriTemplate: "/event/{id}/registers",
+            uriTemplate: "/events/{id}/registers",
             uriVariables: [
                 "id" => new Link(
                     fromProperty: "registers",

@@ -16,7 +16,7 @@ use ApiPlatform\Metadata\Link;
 #[ApiResource(
     operations: [
         new GetCollection(
-            uriTemplate: "/teams/{id}/member",
+            uriTemplate: "/teams/{id}/members",
             uriVariables: [
                 "id" => new Link(
                     fromProperty: "members",

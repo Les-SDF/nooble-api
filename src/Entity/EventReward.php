@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource(
     operations: [
         new GetCollection(
-            uriTemplate: "/event/{id}/eventRewards",
+            uriTemplate: "/events/{id}/event-rewards",
             uriVariables: [
                 "id" => new Link(
                     fromProperty: "eventRewards",

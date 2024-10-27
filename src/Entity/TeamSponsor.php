@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource(
     operations: [
         new GetCollection(
-            uriTemplate: "/teams/{id}/teamSponsors",
+            uriTemplate: "/teams/{id}/team-sponsors",
             uriVariables: [
                 "id" => new Link(
                     fromProperty: "teamSponsors",
@@ -24,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
             ]
         ),
         new GetCollection(
-            uriTemplate: "/sponsor/{id}/teamSponsors",
+            uriTemplate: "/sponsors/{id}/team-sponsors",
             uriVariables: [
                 "id" => new Link(
                     fromProperty: "teamSponsors",
