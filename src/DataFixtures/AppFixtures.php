@@ -33,7 +33,7 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $this->addUser('admin@nooble.com', 'Admin');
+        $this->addUser('admin@nooble.com', 'Admin', ['ROLE_ADMIN']);
         $riotGames = $this->addUser('organiser@riotgames.com', 'Riot Games');
 
         $event = $this->addEvent(
@@ -156,12 +156,13 @@ class AppFixtures extends Fixture
         $this->manager->flush();
     }
 
-    private function addUser(string $email, string $username): User
+    private function addUser(string $email, string $username, array $roles = []): User
     {
         $user = new User();
         $user->setEmail($email);
         $user->setPassword($this->passwordHasher->hashPassword($user, self::DEFAULT_PASSWORD));
         $user->setUsername($username);
+        $user->setRoles($roles);
 
         $this->manager->persist($user);
 
