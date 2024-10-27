@@ -26,31 +26,29 @@ class AppFixtures extends Fixture
 {
     const DEFAULT_PASSWORD = 'password';
 
-    public function __construct(
-        private readonly UserPasswordHasherInterface $passwordHasher,
-        private readonly ObjectManager $manager
-    ) {}
+    public function __construct(private readonly UserPasswordHasherInterface $passwordHasher,
+                                private readonly ObjectManager $manager)
+    {
+    }
 
     public function load(ObjectManager $manager): void
     {
-        $riotgames = new User();
-        $riotgames->setEmail('manager@riotgames.com');
-        $riotgames->setPassword($this->passwordHasher->hashPassword($riotgames, self::DEFAULT_PASSWORD));
-        $riotgames->setUsername('Riot Games');
-        $this->manager->persist($riotgames);
+        $this->addUser('admin@nooble.com', 'Admin');
+        $riotGames = $this->addUser('organiser@riotgames.com', 'Riot Games');
 
         $event = $this->addEvent(
             'Worlds 2024',
             new DateTimeImmutable('2024-09-01'),
             new DateTimeImmutable('2024-11-01'),
             Status::Ongoing,
-            $riotgames,
+            $riotGames,
             true
         );
 
         $this->addEventReward($event, [
             $this->addPrizePack($this->addReward('Summoner\'s Cup', RewardType::Trophy)),
-            $this->addPrizePack($this->addReward('$450,000', RewardType::Cashprize))
+            $this->addPrizePack($this->addReward('$450,000', RewardType::Cashprize)),
+            $this->addPrizePack($this->addReward('Champion\'s Medal', RewardType::Medal), 5),
         ]);
 
         $game = new Game();
@@ -121,6 +119,7 @@ class AppFixtures extends Fixture
         $this->addTeamEvent($event, $tes);
         $this->addTeamEvent($event, $gen);
         $this->addTeamEvent($event, $flq);
+
         // Quarterfinals
         $this->addConfrontation($event, $game, new DateTimeImmutable('2024-10-17'), 1, [
             $this->addParticipation($wbg, 1),
@@ -145,24 +144,37 @@ class AppFixtures extends Fixture
             $this->addParticipation($blg)
         ]);
         $this->addConfrontation($event, $game, new DateTimeImmutable('2024-10-27'), 2, [
-            $this->addParticipation($tes),
-            $this->addParticipation($flq)
+            $this->addParticipation($t1),
+            $this->addParticipation($gen)
         ]);
 
         // Finals
-        $this->addConfrontation($event, $game, new DateTimeImmutable('2024-11-02'), 3, []);
+        $this->addConfrontation($event, $game, new DateTimeImmutable('2024-11-02'), 3, [
+            $this->addParticipation($blg),
+        ]);
 
         $this->manager->flush();
     }
 
-    private function addEvent(
-        string $name,
-        DateTimeImmutable $startDate,
-        DateTimeImmutable $endDate,
-        Status $status,
-        User $creator,
-        bool $official = false
-    ): Event {
+    private function addUser(string $email, string $username): User
+    {
+        $user = new User();
+        $user->setEmail($email);
+        $user->setPassword($this->passwordHasher->hashPassword($user, self::DEFAULT_PASSWORD));
+        $user->setUsername($username);
+
+        $this->manager->persist($user);
+
+        return $user;
+    }
+
+    private function addEvent(string $name,
+                              DateTimeImmutable $startDate,
+                              DateTimeImmutable $endDate,
+                              Status $status,
+                              User $creator,
+                              bool $official = false): Event
+    {
         $event = new Event();
         $event->setName($name);
         $event->setStartDate($startDate);
@@ -177,7 +189,7 @@ class AppFixtures extends Fixture
         return $event;
     }
 
-    private function addTeamEvent(Event $event, Team $team)
+    private function addTeamEvent(Event $event, Team $team): void
     {
         $teamEvent = new TeamEvent;
         $teamEvent->setTeam($team);
