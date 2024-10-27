@@ -45,6 +45,7 @@ php bin/console lexik:jwt:generate-keypair
     - Conception de la structure de données
     - Ajout du système de connexion par JWT
     - Création des getCollection
+    - ReadMe
 - #### Nikhil RAM : 33%
     - Conception de la structure de données
     - Ecriture des règles de sécurité pour les entités
@@ -54,6 +55,14 @@ php bin/console lexik:jwt:generate-keypair
     - Initialisation du projet
     - Création des entités
     - Voters
+
+# Choix d'implementation
+
+Dans notre implémentation, l'inscription à un événement se fait de la manière suivante :
+
+- **Inscription par l'équipe** : Ce sont les équipes qui s'inscrivent aux événements par le biais de l'entité coordinatrice `TeamEvent`. Chaque membre d'une équipe peut inscrire son équipe à un événement.
+
+- **Désinscription** : Un membre de l'équipe ne peut pas désinscrire l'équipe de l'événement. La désinscription doit être effectuée par l'organisateur de l'événement. Si un membre ne souhaite plus participer à un événement, il doit quitter l'équipe.
 
 # Routes de l'application
 
@@ -75,12 +84,13 @@ La classe **Confrontation** représente une entité coordinatrice entre un **év
 
 ### Event
 
-| Méthode | Route                                                                   | Description                             |
-|---------|-------------------------------------------------------------------------|:----------------------------------------|
-| GET     | [`/api/events/{id}`](http://localhost:80/nooble/public/api/events/{id}) | Récupération de la liste des événements |
-| POST    | [`/api/events`](http://localhost:80/nooble/public/api/events)           | Création d'un événement.                |
-| PATCH   | [`/api/events/{id}`](http://localhost:80/nooble/public/api/events/{id}) | Modification d'un événement             |
-| DELETE  | [`/api/events/{id}`](http://localhost:80/nooble/public/api/events/{id}) | Suppression d'un événement              |
+| Méthode | Route                                                                   | Description                                         |
+|---------|-------------------------------------------------------------------------|:----------------------------------------------------|
+| GET     | [`/api/events/`](http://localhost:80/nooble/public/api/events/{id})     | Récupération de la liste des événements             |
+| GET     | [`/api/events/{id}`](http://localhost:80/nooble/public/api/events/{id}) | Récupération des données d'une ressource événements |
+| POST    | [`/api/events`](http://localhost:80/nooble/public/api/events)           | Création d'un événement.                            |
+| PATCH   | [`/api/events/{id}`](http://localhost:80/nooble/public/api/events/{id}) | Modification d'un événement                         |
+| DELETE  | [`/api/events/{id}`](http://localhost:80/nooble/public/api/events/{id}) | Suppression d'un événement                          |
 
 ### EventReward
 
@@ -89,7 +99,7 @@ La classe **EventReward** représente une entité coordinatrice entre un **évé
 | Méthode | Route                                                                                           | Description                                                                      |
 |---------|-------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
 | GET     | [`/api/event/{id}/eventRewards`](http://localhost:80/nooble/public/api/event/{id}/eventRewards) | Récupération de la liste de ressources EventReward pour un événement spécifique. |
-| POST    | [`/api/eventRewards`](http://localhost:80/nooble/public/api/eventRewards)                       | Modification d'une ressource EventReward                                         |
+| POST    | [`/api/eventRewards`](http://localhost:80/nooble/public/api/eventRewards)                       | Création d'un EventReward.                                                       |
 
 ### EventSponsor
 
