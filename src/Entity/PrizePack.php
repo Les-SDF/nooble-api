@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Repository\PrizePackRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -34,6 +35,7 @@ use Doctrine\ORM\Mapping as ORM;
                 )
             ]
         ),
+        new Post(),
         new Patch(
             denormalizationContext: ["groups" => ["prizepack:update"]],
             security: "is_granted('PRIZE_PACK_UPDATE', object)",
