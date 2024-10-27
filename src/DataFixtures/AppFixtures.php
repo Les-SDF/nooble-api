@@ -11,7 +11,7 @@ use App\Entity\Confrontation;
 use App\Entity\PrizePack;
 use App\Entity\Reward;
 use App\Entity\Team;
-use App\Entity\TeamEvent;
+use App\Entity\TeamRegistration;
 use App\Entity\User;
 use App\Enum\RewardType;
 use App\Enum\RegistrationStatus;
@@ -125,14 +125,14 @@ class AppFixtures extends Fixture
             'Massu',
             'Busio'
         ]);
-        $this->addTeamEvent($event, $t1);
-        $this->addTeamEvent($event, $wbg);
-        $this->addTeamEvent($event, $lng);
-        $this->addTeamEvent($event, $hle);
-        $this->addTeamEvent($event, $blg);
-        $this->addTeamEvent($event, $tes);
-        $this->addTeamEvent($event, $gen);
-        $this->addTeamEvent($event, $flq);
+        $this->addTeamRegistration($event, $t1);
+        $this->addTeamRegistration($event, $wbg);
+        $this->addTeamRegistration($event, $lng);
+        $this->addTeamRegistration($event, $hle);
+        $this->addTeamRegistration($event, $blg);
+        $this->addTeamRegistration($event, $tes);
+        $this->addTeamRegistration($event, $gen);
+        $this->addTeamRegistration($event, $flq);
 
         // Quarterfinals
         $this->addConfrontation($event, $game, new DateTimeImmutable('2024-10-17'), 1, [
@@ -204,13 +204,13 @@ class AppFixtures extends Fixture
         return $event;
     }
 
-    private function addTeamEvent(Event $event, Team $team): void
+    private function addTeamRegistration(Event $event, Team $team): void
     {
-        $teamEvent = new TeamEvent;
-        $teamEvent->setTeam($team);
-        $teamEvent->setEvent($event);
-        $teamEvent->setRegistrationStatus(RegistrationStatus::Accepted);
-        $this->manager->persist($teamEvent);
+        $teamRegistration = new TeamRegistration();
+        $teamRegistration->setTeam($team);
+        $teamRegistration->setEvent($event);
+        $teamRegistration->setRegistrationStatus(RegistrationStatus::Accepted);
+        $this->manager->persist($teamRegistration);
     }
 
     private function addReward(string $name, RewardType $rewardType): Reward

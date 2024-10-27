@@ -2,18 +2,18 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Register;
+use App\Entity\CustomerRegistration;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-final class RegisterVoter extends AbstractVoter
+final class CustomerRegistrationVoter extends AbstractVoter
 {
-    public const CREATE = "REGISTER_CREATE";
-    public const READ = "REGISTER_READ";
-    public const UPDATE = "REGISTER_UPDATE";
-    public const DELETE = "REGISTER_DELETE";
+    public const CREATE = "CUSTOMER_REGISTRATION_CREATE";
+    public const READ = "CUSTOMER_REGISTRATION_READ";
+    public const UPDATE = "CUSTOMER_REGISTRATION_UPDATE";
+    public const DELETE = "CUSTOMER_REGISTRATION_DELETE";
 
     public function __construct(private readonly Security $security)
     {
@@ -22,7 +22,7 @@ final class RegisterVoter extends AbstractVoter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /**
-         * @var Register $subject
+         * @var CustomerRegistration $subject
          * @var UserInterface $user
          */
         if (!($user = $token->getUser()) instanceof User) {
@@ -36,6 +36,6 @@ final class RegisterVoter extends AbstractVoter
 
     protected function getSubjectClass(): string
     {
-        return Register::class;
+        return CustomerRegistration::class;
     }
 }

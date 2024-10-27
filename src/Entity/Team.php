@@ -38,7 +38,7 @@ class Team
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["user:read", "register:read", "confrontations:read", "confrontation:read", "event:read", "team:read", "teams:read"])]
+    #[Groups(["user:read", "customer-registration:read", "confrontations:read", "confrontation:read", "event:read", "team:read", "teams:read"])]
     private ?string $name = null;
 
     /**
@@ -67,10 +67,10 @@ class Team
     private Collection $participations;
 
     /**
-     * @var Collection<int, TeamEvent>
+     * @var Collection<int, TeamRegistration>
      */
-    #[ORM\OneToMany(targetEntity: TeamEvent::class, mappedBy: 'team', orphanRemoval: true)]
-    private Collection $teamEvents;
+    #[ORM\OneToMany(targetEntity: TeamRegistration::class, mappedBy: 'team', orphanRemoval: true)]
+    private Collection $teamRegistrations;
 
 
     public function __construct()
@@ -79,7 +79,7 @@ class Team
         $this->teamSponsors = new ArrayCollection();
         $this->members = new ArrayCollection();
         $this->participations = new ArrayCollection();
-        $this->teamEvents = new ArrayCollection();
+        $this->teamRegistrations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -220,29 +220,29 @@ class Team
     }
 
     /**
-     * @return Collection<int, TeamEvent>
+     * @return Collection<int, TeamRegistration>
      */
-    public function getTeamEvents(): Collection
+    public function getTeamRegistrations(): Collection
     {
-        return $this->teamEvents;
+        return $this->teamRegistrations;
     }
 
-    public function addTeamEvent(TeamEvent $teamEvent): static
+    public function addTeamRegistration(TeamRegistration $teamRegistration): static
     {
-        if (!$this->teamEvents->contains($teamEvent)) {
-            $this->teamEvents->add($teamEvent);
-            $teamEvent->setTeam($this);
+        if (!$this->teamRegistrations->contains($teamRegistration)) {
+            $this->teamRegistrations->add($teamRegistration);
+            $teamRegistration->setTeam($this);
         }
 
         return $this;
     }
 
-    public function removeTeamEvent(TeamEvent $teamEvent): static
+    public function removeTeamRegistration(TeamRegistration $teamRegistration): static
     {
-        if ($this->teamEvents->removeElement($teamEvent)) {
+        if ($this->teamRegistrations->removeElement($teamRegistration)) {
             // set the owning side to null (unless already changed)
-            if ($teamEvent->getTeam() === $this) {
-                $teamEvent->setTeam(null);
+            if ($teamRegistration->getTeam() === $this) {
+                $teamRegistration->setTeam(null);
             }
         }
 

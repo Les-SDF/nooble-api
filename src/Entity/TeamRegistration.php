@@ -10,18 +10,18 @@ use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Enum\RegistrationStatus;
-use App\Repository\TeamEventRepository;
+use App\Repository\TeamRegistrationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity(repositoryClass: TeamEventRepository::class)]
+#[ORM\Entity(repositoryClass: TeamRegistrationRepository::class)]
 #[ApiResource(
     operations: [
         new GetCollection(
             uriTemplate: "/teams/{id}/events",
             uriVariables: [
                 "id" => new Link(
-                    fromProperty: "teamEvents",
+                    fromProperty: "teamRegistrations",
                     fromClass: Team::class
                 )
             ]
@@ -30,7 +30,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             uriTemplate: "/events/{id}/teams",
             uriVariables: [
                 "id" => new Link(
-                    fromProperty: "teamEvents",
+                    fromProperty: "teamRegistrations",
                     fromClass: Event::class
                 ),
             ],
@@ -41,19 +41,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Delete()
     ]
 )]
-class TeamEvent
+class TeamRegistration
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'teamEvents')]
+    #[ORM\ManyToOne(inversedBy: 'teamRegistrations')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(["event:read", "team:read", "teams:read"])]
     private ?Team $team = null;
 
-    #[ORM\ManyToOne(inversedBy: 'teamEvents')]
+    #[ORM\ManyToOne(inversedBy: 'teamRegistrations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Event $event = null;
 

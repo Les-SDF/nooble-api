@@ -2,19 +2,19 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\TeamEvent;
+use App\Entity\TeamRegistration;
 use App\Entity\User;
 use App\Enum\Visibility;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-final class TeamEventVoter extends AbstractVoter
+final class TeamRegistrationVoter extends AbstractVoter
 {
-    public const CREATE = "TEAM_EVENT_CREATE";
-    public const READ = "TEAM_EVENT_READ";
-    public const UPDATE = "TEAM_EVENT_UPDATE";
-    public const DELETE = "TEAM_EVENT_DELETE";
+    public const CREATE = "TEAM_REGISTRATION_CREATE";
+    public const READ = "TEAM_REGISTRATION_READ";
+    public const UPDATE = "TEAM_REGISTRATION_UPDATE";
+    public const DELETE = "TEAM_REGISTRATION_DELETE";
 
     public function __construct(private readonly Security $security)
     {
@@ -23,7 +23,7 @@ final class TeamEventVoter extends AbstractVoter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /**
-         * @var TeamEvent $subject
+         * @var TeamRegistration $subject
          * @var User $user
          */
         if (!($user = $token->getUser()) instanceof User) {
@@ -38,7 +38,7 @@ final class TeamEventVoter extends AbstractVoter
                  * cette équipe n'est déjà inscrit avec une de ses équipes à un événement se déroulant sur la même
                  * période
                  */
-                if ($subject->getEvent()->getTeamEvents()->count() > $subject->getEvent()->getMaxParticipants()
+                if ($subject->getEvent()->getTeamRegistrations()->count() > $subject->getEvent()->getMaxParticipants()
                     && $subject->getTeam()->getMembers()->contains($user)) {
 
                     // Liste des membres de l'équipe
@@ -48,10 +48,10 @@ final class TeamEventVoter extends AbstractVoter
                         foreach ($teamMembers->getUser()->getMembers() as $userMembers) {
 
                             // Liste de tous les événements de chacune des équipes
-                            foreach ($userMembers->getTeam()->getTeamEvents() as $teamEvents) {
+                            foreach ($userMembers->getTeam()->getTeamRegistrations() as $teamRegistration) {
 
-                                if ($teamEvents->getEvent()->getStartDate() <= $subject->getEvent()->getEndDate()
-                                    && $teamEvents->getEvent()->getEndDate() >= $subject->getEvent()->getStartDate()) {
+                                if ($teamRegistration->getEvent()->getStartDate() <= $subject->getEvent()->getEndDate()
+                                    && $teamRegistration->getEvent()->getEndDate() >= $subject->getEvent()->getStartDate()) {
                                     return false;
                                 }
                             }
@@ -92,6 +92,6 @@ final class TeamEventVoter extends AbstractVoter
 
     protected function getSubjectClass(): string
     {
-        return TeamEvent::class;
+        return TeamRegistration::class;
     }
 }

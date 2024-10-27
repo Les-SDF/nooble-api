@@ -53,7 +53,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     #[Assert\Email(message: 'The email "{{ value }}" is not a valid email.')]
-    #[Groups(["user:read", "user:create", "register:read", "confrontations:read", "confrontation:read"])]
+    #[Groups(["user:read", "user:create", "customer-registration:read", "confrontations:read", "confrontation:read"])]
     private ?string $email = null;
 
     /**
@@ -95,15 +95,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Member>
      */
     #[ORM\OneToMany(targetEntity: Member::class, mappedBy: 'user', orphanRemoval: true)]
-    #[Groups(["user:read", "register:read"])]
+    #[Groups(["user:read", "customer-registration:read"])]
     private Collection $members;
 
 
     /**
-     * @var Collection<int, Register>
+     * @var Collection<int, CustomerRegistration>
      */
-    #[ORM\OneToMany(targetEntity: Register::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $registers;
+    #[ORM\OneToMany(targetEntity: CustomerRegistration::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $customerRegistrations;
 
     /**
      * @var Collection<int, Manager>
@@ -127,7 +127,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->members = new ArrayCollection();
-        $this->registers = new ArrayCollection();
+        $this->customerRegistrations = new ArrayCollection();
         $this->managers = new ArrayCollection();
         $this->createdRewards = new ArrayCollection();
         $this->createdEvents = new ArrayCollection();
@@ -273,29 +273,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Register>
+     * @return Collection<int, CustomerRegistration>
      */
-    public function getRegisters(): Collection
+    public function getCustomerRegistrations(): Collection
     {
-        return $this->registers;
+        return $this->customerRegistrations;
     }
 
-    public function addRegister(Register $register): static
+    public function addCustomerRegistration(CustomerRegistration $customerRegistration): static
     {
-        if (!$this->registers->contains($register)) {
-            $this->registers->add($register);
-            $register->setUser($this);
+        if (!$this->customerRegistrations->contains($customerRegistration)) {
+            $this->customerRegistrations->add($customerRegistration);
+            $customerRegistration->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeRegister(Register $register): static
+    public function removeCustomerRegistration(CustomerRegistration $customerRegistration): static
     {
-        if ($this->registers->removeElement($register)) {
+        if ($this->customerRegistrations->removeElement($customerRegistration)) {
             // set the owning side to null (unless already changed)
-            if ($register->getUser() === $this) {
-                $register->setUser(null);
+            if ($customerRegistration->getUser() === $this) {
+                $customerRegistration->setUser(null);
             }
         }
 

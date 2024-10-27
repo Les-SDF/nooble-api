@@ -42,7 +42,7 @@ use Doctrine\ORM\Mapping as ORM;
             uriVariables: [
                 "id" => new Link(
                     fromProperty: "event",
-                    fromClass: TeamEvent::class
+                    fromClass: TeamRegistration::class
                 )
             ],
             normalizationContext: ["groups" => ["teams:read"]],
@@ -61,7 +61,7 @@ use Doctrine\ORM\Mapping as ORM;
         ),
         new Delete(security: "is_granted('EVENT_DELETE', object)")
     ],
-    normalizationContext: ["groups" => ["event:read", "register:read", "confrontations:read"]]
+    normalizationContext: ["groups" => ["event:read", "customer-registration:read", "confrontations:read"]]
 )]
 class Event
 {
@@ -71,15 +71,15 @@ class Event
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["event:read", "register:read", "confrontations:read", "create:read"])]
+    #[Groups(["event:read", "customer-registration:read", "confrontations:read", "create:read"])]
     private ?string $name = null;
 
     #[ORM\Column]
-    #[Groups(["event:read", "register:read", "create:read"])]
+    #[Groups(["event:read", "customer-registration:read", "create:read"])]
     private ?\DateTimeImmutable $startDate = null;
 
     #[ORM\Column]
-    #[Groups(["event:read", "register:read", "create:read"])]
+    #[Groups(["event:read", "customer-registration:read", "create:read"])]
     private ?\DateTimeImmutable $endDate = null;
 
     #[Groups(["event:read", "create:read"])]
@@ -102,7 +102,7 @@ class Event
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
-    #[Groups(["event:read", "register:read", "create:read"])]
+    #[Groups(["event:read", "customer-registration:read", "create:read"])]
     #[ORM\Column(enumType: Status::class)]
     private ?Status $status = null;
 
@@ -114,7 +114,7 @@ class Event
     private Collection $eventRewards;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["event:read", "register:read"])]
+    #[Groups(["event:read", "customer-registration:read"])]
     private ?int $maxParticipants = null;
 
     /**
@@ -125,11 +125,11 @@ class Event
     private Collection $eventSponsors;
 
     /**
-     * @var Collection<int, Register>
+     * @var Collection<int, CustomerRegistration>
      */
-    #[ORM\OneToMany(targetEntity: Register::class, mappedBy: 'event', orphanRemoval: true)]
-    #[Groups(["register:read"])]
-    private Collection $registers;
+    #[ORM\OneToMany(targetEntity: CustomerRegistration::class, mappedBy: 'event', orphanRemoval: true)]
+    #[Groups(["customer-registration:read"])]
+    private Collection $customerRegistrations;
 
     /**
      * @var Collection<int, Confrontation>
@@ -149,13 +149,11 @@ class Event
     private ?User $creator = null;
 
     /**
-     * @var Collection<int, TeamEvent>
+     * @var Collection<int, TeamRegistration>
      */
-    #[ORM\OneToMany(targetEntity: TeamEvent::class, mappedBy: 'event', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: TeamRegistration::class, mappedBy: 'event', orphanRemoval: true)]
     #[Groups("teams:read")]
-    private Collection $teamEvents;
-
-
+    private Collection $teamRegistrations;
 
     #[ORM\Column(nullable: true)]
     private ?int $price = null;
@@ -164,28 +162,28 @@ class Event
     {
         $this->eventRewards = new ArrayCollection();
         $this->eventSponsors = new ArrayCollection();
-        $this->registers = new ArrayCollection();
+        $this->customerRegistrations = new ArrayCollection();
         $this->confrontations = new ArrayCollection();
         $this->managers = new ArrayCollection();
-        $this->teamEvents = new ArrayCollection();
+        $this->teamRegistrations = new ArrayCollection();
     }
 
     #[Groups(["event:read"])]
-    public function getPublicTeamEvent(): array
+    public function getPublicTeamRegistration(): array
     {
         if ($this->getParticipantsVisibility() == Visibility::Public) {
-            return $this->teamEvents
-                ->filter(function ($teamEvent) {
+            return $this->teamRegistrations
+                ->filter(function ($teamRegistration) {
                     /**
-                     * @var TeamEvent $teamEvent
+                     * @var TeamRegistration $teamRegistration
                      */
-                    return $teamEvent->getRegistrationStatus() === RegistrationStatus::Accepted;
+                    return $teamRegistration->getRegistrationStatus() === RegistrationStatus::Accepted;
                 })
-                ->map(function ($teamEvent) {
+                ->map(function ($teamRegistration) {
                     /**
-                     * @var TeamEvent $teamEvent
+                     * @var TeamRegistration $teamRegistration
                      */
-                    return $teamEvent->getTeam()->getName();
+                    return $teamRegistration->getTeam()->getName();
                 })
                 ->toArray();
         }
@@ -379,29 +377,29 @@ class Event
     }
 
     /**
-     * @return Collection<int, Register>
+     * @return Collection<int, CustomerRegistration>
      */
-    public function getRegisters(): Collection
+    public function getCustomerRegistrations(): Collection
     {
-        return $this->registers;
+        return $this->customerRegistrations;
     }
 
-    public function addRegister(Register $register): static
+    public function addCustomerRegistration(CustomerRegistration $customerRegistration): static
     {
-        if (!$this->registers->contains($register)) {
-            $this->registers->add($register);
-            $register->setEvent($this);
+        if (!$this->customerRegistrations->contains($customerRegistration)) {
+            $this->customerRegistrations->add($customerRegistration);
+            $customerRegistration->setEvent($this);
         }
 
         return $this;
     }
 
-    public function removeRegister(Register $register): static
+    public function removeCustomerRegistration(CustomerRegistration $customerRegistration): static
     {
-        if ($this->registers->removeElement($register)) {
+        if ($this->customerRegistrations->removeElement($customerRegistration)) {
             // set the owning side to null (unless already changed)
-            if ($register->getEvent() === $this) {
-                $register->setEvent(null);
+            if ($customerRegistration->getEvent() === $this) {
+                $customerRegistration->setEvent(null);
             }
         }
 
@@ -481,29 +479,29 @@ class Event
     }
 
     /**
-     * @return Collection<int, TeamEvent>
+     * @return Collection<int, TeamRegistration>
      */
-    public function getTeamEvents(): Collection
+    public function getTeamRegistrations(): Collection
     {
-        return $this->teamEvents;
+        return $this->teamRegistrations;
     }
 
-    public function addTeamEvent(TeamEvent $teamEvent): static
+    public function addTeamRegistration(TeamRegistration $teamRegistration): static
     {
-        if (!$this->teamEvents->contains($teamEvent)) {
-            $this->teamEvents->add($teamEvent);
-            $teamEvent->setEvent($this);
+        if (!$this->teamRegistrations->contains($teamRegistration)) {
+            $this->teamRegistrations->add($teamRegistration);
+            $teamRegistration->setEvent($this);
         }
 
         return $this;
     }
 
-    public function removeTeamEvent(TeamEvent $teamEvent): static
+    public function removeTeamRegistration(TeamRegistration $teamRegistration): static
     {
-        if ($this->teamEvents->removeElement($teamEvent)) {
+        if ($this->teamRegistrations->removeElement($teamRegistration)) {
             // set the owning side to null (unless already changed)
-            if ($teamEvent->getEvent() === $this) {
-                $teamEvent->setEvent(null);
+            if ($teamRegistration->getEvent() === $this) {
+                $teamRegistration->setEvent(null);
             }
         }
 

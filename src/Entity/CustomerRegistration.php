@@ -7,56 +7,55 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use App\Enum\RegistrationStatus;
-use App\Repository\RegisterRepository;
+use App\Repository\CustomerRegistrationRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: RegisterRepository::class)]
+#[ORM\Entity(repositoryClass: CustomerRegistrationRepository::class)]
 #[ApiResource(
     operations: [
         new GetCollection(
-            uriTemplate: "/users/{id}/registers",
+            uriTemplate: "/users/{id}/customer-registrations",
             uriVariables: [
                 "id" => new Link(
-                    fromProperty: "registers",
+                    fromProperty: "customerRegistrations",
                     fromClass: User::class
                 )
             ]
         ),
         new GetCollection(
-            uriTemplate: "/events/{id}/registers",
+            uriTemplate: "/events/{id}/customer-registrations",
             uriVariables: [
                 "id" => new Link(
-                    fromProperty: "registers",
+                    fromProperty: "customerRegistrations",
                     fromClass: Event::class
                 )
             ]
         ),
         new Patch(
-            denormalizationContext: ["groups" => ["register:update"]],
-            // security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
-            validationContext: ["groups" => ["register:update"]],
+            denormalizationContext: ["groups" => ["customer-registration:update"]],
+            validationContext: ["groups" => ["customer-registration:update"]]
         )
     ]
 )]
-class Register
+class CustomerRegistration
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'registers')]
+    #[ORM\ManyToOne(inversedBy: 'customerRegistrations')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["register:read"])]
+    #[Groups(["customer-registration:read"])]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'registers')]
+    #[ORM\ManyToOne(inversedBy: 'customerRegistrations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Event $event = null;
 
     #[ORM\Column(enumType: RegistrationStatus::class)]
-    #[Groups(["register:read", "register:update"])]
+    #[Groups(["customer-registration:read", "customer-registration:update"])]
     private ?RegistrationStatus $registrationStatus = null;
 
     public function getId(): ?int

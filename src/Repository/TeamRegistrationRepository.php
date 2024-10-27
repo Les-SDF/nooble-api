@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\TeamEvent;
+use App\Entity\TeamRegistration;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<TeamEvent>
+ * @extends ServiceEntityRepository<TeamRegistration>
  */
-class TeamEventRepository extends ServiceEntityRepository
+class TeamRegistrationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, TeamEvent::class);
+        parent::__construct($registry, TeamRegistration::class);
     }
 
     //    /**
-    //     * @return TeamEvent[] Returns an array of TeamEvent objects
+    //     * @return TeamRegistration[] Returns an array of TeamRegistration objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class TeamEventRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?TeamEvent
+    //    public function findOneBySomeField($value): ?TeamRegistration
     //    {
     //        return $this->createQueryBuilder('t')
     //            ->andWhere('t.exampleField = :val')
