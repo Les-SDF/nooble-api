@@ -23,7 +23,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             ]
         ),
         new GetCollection(
-            uriTemplate: "/event/{id}/teams",
+            uriTemplate: "/events/{id}/teams",
             uriVariables: [
                 "id" => new Link(
                     fromProperty: "teamEvents",
