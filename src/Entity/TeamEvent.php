@@ -9,7 +9,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use App\Enum\SaucisseType;
+use App\Enum\RegistrationStatus;
 use App\Repository\TeamEventRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -57,9 +57,9 @@ class TeamEvent
     #[ORM\JoinColumn(nullable: false)]
     private ?Event $event = null;
 
-    #[ORM\Column(enumType: SaucisseType::class)]
+    #[ORM\Column(enumType: RegistrationStatus::class)]
     #[Groups(["team:read", "teams:read"])]
-    private ?SaucisseType $saucisse = null;
+    private ?RegistrationStatus $registrationStatus = null;
 
     public function getId(): ?int
     {
@@ -90,22 +90,14 @@ class TeamEvent
         return $this;
     }
 
-    /**
-     * Get the value of saucisse
-     */
-    public function getSaucisse()
+    public function getRegistrationStatus(): ?RegistrationStatus
     {
-        return $this->saucisse;
+        return $this->registrationStatus;
     }
 
-    /**
-     * Set the value of saucisse
-     *
-     * @return  self
-     */
-    public function setSaucisse($saucisse)
+    public function setRegistrationStatus(RegistrationStatus $registrationStatus): static
     {
-        $this->saucisse = $saucisse;
+        $this->registrationStatus = $registrationStatus;
 
         return $this;
     }

@@ -14,7 +14,7 @@ use App\Entity\Team;
 use App\Entity\TeamEvent;
 use App\Entity\User;
 use App\Enum\RewardType;
-use App\Enum\SaucisseType;
+use App\Enum\RegistrationStatus;
 use App\Enum\Status;
 use App\Enum\Visibility;
 use DateTimeImmutable;
@@ -209,7 +209,7 @@ class AppFixtures extends Fixture
         $teamEvent = new TeamEvent;
         $teamEvent->setTeam($team);
         $teamEvent->setEvent($event);
-        $teamEvent->setSaucisse(SaucisseType::Yes);
+        $teamEvent->setRegistrationStatus(RegistrationStatus::Accepted);
         $this->manager->persist($teamEvent);
     }
 

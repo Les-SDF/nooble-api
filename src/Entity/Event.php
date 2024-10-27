@@ -9,7 +9,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use App\Enum\SaucisseType;
+use App\Enum\RegistrationStatus;
 use App\Enum\Status;
 use App\Enum\Visibility;
 use App\Repository\EventRepository;
@@ -169,18 +169,6 @@ class Event
         $this->managers = new ArrayCollection();
         $this->teamEvents = new ArrayCollection();
     }
-    // #[Groups(["event:read"])]
-    // public function getPublicTeamEvent()
-    // {
-    //     if ($this->getParticipantsVisibility() == Visibility::Public) {
-    //         return $this->teamEvents->filter(
-    //             function ($teamEvent) {
-    //                 return $teamEvent->getSaucisse() === SaucisseType::Yes;
-    //             }
-    //         );
-    //     }
-    //     return new ArrayCollection();
-    // }
 
     #[Groups(["event:read"])]
     public function getPublicTeamEvent(): array
@@ -188,9 +176,15 @@ class Event
         if ($this->getParticipantsVisibility() == Visibility::Public) {
             return $this->teamEvents
                 ->filter(function ($teamEvent) {
-                    return $teamEvent->getSaucisse() === SaucisseType::Yes;
+                    /**
+                     * @var TeamEvent $teamEvent
+                     */
+                    return $teamEvent->getRegistrationStatus() === RegistrationStatus::Accepted;
                 })
                 ->map(function ($teamEvent) {
+                    /**
+                     * @var TeamEvent $teamEvent
+                     */
                     return $teamEvent->getTeam()->getName();
                 })
                 ->toArray();
