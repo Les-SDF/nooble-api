@@ -33,8 +33,8 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $this->addUser('admin@nooble.com', 'Admin', ['ROLE_ADMIN']);
-        $riotGames = $this->addUser('organiser@riotgames.com', 'Riot Games');
+        $admin = $this->addUser('admin@nooble.com', 'Admin', ['ROLE_ADMIN', 'ROLE_ORGANISER']);
+        $riotGames = $this->addUser('organiser@riotgames.com', 'Riot Games', ['ROLE_ORGANISER']);
 
         $event = $this->addEvent(
             'Worlds 2024',
@@ -44,6 +44,20 @@ class AppFixtures extends Fixture
             $riotGames,
             true
         );
+
+        $event2 = $this->addEvent(
+            'Japan Matsuri Dragon Ball Sparking Zero Tournament',
+            new DateTimeImmutable('2024-10-26'),
+            new DateTimeImmutable('2024-10-27'),
+            Status::Ongoing,
+            $admin,
+            true
+        );
+        $this->addTeamAndUsers('Les SDF', [
+            'Nikhil',
+            'Quentin',
+            'Ylias'
+        ]);
 
         $this->addEventReward($event, [
             $this->addPrizePack($this->addReward('Summoner\'s Cup', RewardType::Trophy)),
