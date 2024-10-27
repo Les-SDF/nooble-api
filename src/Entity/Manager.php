@@ -3,11 +3,42 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Repository\ManagerRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ManagerRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: "/events/{id}/managers",
+            uriVariables: [
+                "id" => new Link(
+                    fromProperty: "managers",
+                    fromClass: Event::class
+                )
+            ]
+        ),
+        new GetCollection(
+            uriTemplate: "/users/{id}/managers",
+            uriVariables: [
+                "id" => new Link(
+                    fromProperty: "managers",
+                    fromClass: User::class
+                )
+            ]
+        ),
+        new GetCollection(),
+        new Get(),
+        new Post(),
+        new Delete()
+    ]
+)]
 class Manager
 {
     #[ORM\Id]
