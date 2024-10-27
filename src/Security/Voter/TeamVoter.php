@@ -30,6 +30,12 @@ final class TeamVoter extends AbstractVoter
         }
 
         switch ($attribute) {
+            case self::CREATE:
+                return $this->security->isGranted('ROLE_USER');
+            case self::UPDATE:
+                return $this->security->isGranted('ROLE_USER') && $subject->getMembers()->contains($user);
+            case self::DELETE:
+                return $this->security->isGranted('ROLE_ADMIN');
         }
         return false;
     }

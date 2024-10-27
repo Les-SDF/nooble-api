@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\TeamRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,13 +13,23 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TeamRepository::class)]
 #[ApiResource]
+#[GetCollection]
 #[Get]
-#[Patch]
-#[Delete]
-#[Post]
+#[Post(
+    denormalizationContext: ["groups" => ["team:create"]],
+    security: "is_granted('TEAM_CREATE', object)",
+)]
+#[Patch(
+    denormalizationContext: ["groups" => ["team:update"]],
+    security: "is_granted('TEAM_UPDATE', object)",
+)]
+#[Delete(
+    security: "is_granted('TEAM_DELETE', object)",
+)]
 class Team
 {
     #[ORM\Id]
@@ -26,8 +37,21 @@ class Team
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank(groups: ["team:create", "team:update"])]
+    #[Assert\NotNull(groups: ["team:create", "team:update"])]
+    #[Assert\Length(min: 2, max: 255, minMessage: "Name must at least contains 2 characters", maxMessage: "Name must not exceed 255 characters", groups: ["team:create", "team:update"])]
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["user:read", "customer-registration:read", "confrontations:read", "confrontation:read", "event:read", "team:read", "teams:read"])]
+    #[Groups([
+        "team:read",
+        "team:create",
+        "team:update",
+        "user:read",
+        "customer-registration:read",
+        "confrontations:read",
+        "confrontation:read",
+        "event:read",
+        "teams:read"
+    ])]
     private ?string $name = null;
 
     /**
@@ -46,7 +70,10 @@ class Team
      * @var Collection<int, Member>
      */
     #[ORM\OneToMany(targetEntity: Member::class, mappedBy: 'team', orphanRemoval: true)]
-    #[Groups(["confrontations:read", "confrontation:read"])]
+    #[Groups([
+        "confrontations:read",
+        "confrontation:read"
+    ])]
     private Collection $members;
 
     /**
