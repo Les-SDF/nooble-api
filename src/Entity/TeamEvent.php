@@ -3,8 +3,12 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Enum\SaucisseType;
 use App\Repository\TeamEventRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -30,7 +34,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
                     fromClass: Event::class
                 ),
             ],
-        )
+        ),
+        new Get(),
+        new Post(),
+        new Patch(),
+        new Delete()
     ]
 )]
 class TeamEvent

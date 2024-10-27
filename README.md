@@ -238,7 +238,7 @@ La classe **TeamSponsor** représente une entité coordinatrice entre une **équ
 |---------|-----------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
 | GET     | [`/api/team_sponsors/{id}`](http://localhost:80/nooble/public/api/team_sponsors/{id})               | Récupération des données d'une ressource TeamSponsor.               |
 | GET     | [`/api/sponsor/{id}/teamSponsors`](http://localhost:80/nooble/public/api/sponsor/{id}/teamSponsors) | Récupération de la liste de ressources TeamSponsor pour un sponsor  |
-| GET     | [`/api/teams/{id}/sponsors`](http://localhost:80/nooble/public/api/teams/{id}/sponsors)             | Récupération de la liste de ressources TeamSponsor pour une équipes |
+| GET     | [`/api/teams/{id}/teamSponsors`](http://localhost:80/nooble/public/api/teams/{id}/sponsors)             | Récupération de la liste de ressources TeamSponsor pour une équipes |
 | POST    | [`/api/team_sponsors`](http://localhost:80/nooble/public/api/team_sponsors)                         | Création d'une ressource TeamSponsor                                |
 | DELETE  | [`/api/team_sponsors/{id}`](http://localhost:80/nooble/public/api/team_sponsors/{id})               | Suppression d'une ressource TeamSponsor                             |
 
