@@ -88,14 +88,15 @@ La classe **Confrontation** représente une entité coordinatrice entre un **év
 
 ### Event
 
-| Méthode | Route                                                                             | Description                                                  |
-|---------|-----------------------------------------------------------------------------------|:-------------------------------------------------------------|
-| GET     | [`/api/events/`](http://localhost:80/nooble/public/api/events/{id})               | Récupération de la liste des événements                      |
-| GET     | [`/api/events/{id}`](http://localhost:80/nooble/public/api/events/{id})           | Récupération des données d'une ressource événements          |
-| GET     | [`/api/event/{id}/teams`](http://localhost:80/nooble/public/api/event/{id}/teams) | Récupération de la liste des équipes inscrites ou en attente |
-| POST    | [`/api/events`](http://localhost:80/nooble/public/api/events)                     | Création d'un événement.                                     |
-| PATCH   | [`/api/events/{id}`](http://localhost:80/nooble/public/api/events/{id})           | Modification d'un événement                                  |
-| DELETE  | [`/api/events/{id}`](http://localhost:80/nooble/public/api/events/{id})           | Suppression d'un événement                                   |
+| Méthode | Route                                                                           | Description                                                                |
+|---------|---------------------------------------------------------------------------------|:---------------------------------------------------------------------------|
+| GET     | [`/api/events/`](http://localhost:80/nooble/public/api/events/{id})             | Récupération de la liste des événements                                    |
+| GET     | [`/api/events/{id}`](http://localhost:80/nooble/public/api/events/{id})         | Récupération des données d'une ressource événements                        |
+| GET     | [`/api/events/{id}`](http://localhost:80/nooble/public/api/events/{id})         | Récupération des données d'une ressource événements                        |
+| GET     | [`/api/user/{id}/event`](http://localhost:80/nooble/public/api/user/{id}/event) | Récupération de la liste des événements dont l'utilisateur est le créateur |
+| POST    | [`/api/events`](http://localhost:80/nooble/public/api/events)                   | Création d'un événement.                                                   |
+| PATCH   | [`/api/events/{id}`](http://localhost:80/nooble/public/api/events/{id})         | Modification d'un événement                                                |
+| DELETE  | [`/api/events/{id}`](http://localhost:80/nooble/public/api/events/{id})         | Suppression d'un événement                                                 |
 
 ### EventReward
 
@@ -172,6 +173,7 @@ La classe **PrizePack** représente une entité coordinatrice entre une **récom
 |---------|---------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
 | GET     | [`/api/eventReward/{id}/prizePacks`](http://localhost:80/nooble/public/api/eventReward/{id}/prizePacks) | Récupération de la liste de ressources PrizePack pour une recompense d'événement |
 | GET     | [`/api/reward/{id}/prizePacks`](http://localhost:80/nooble/public/api/reward/{id}/prizePacks)           | Récupération de la liste de ressources PrizePack pour une récompense             |
+| POST    | [`/api/reward/prizePacks`](http://localhost:80/nooble/public/api/reward/prizePacks)                     | Création d'une ressource PrizePack                                               |
 | PATCH   | [`/api/prize_packs/{id}`](http://localhost:80/nooble/public/api/prize_packs/{id})                       | Modification d'une ressource PrizePack.                                          |
 | DELETE  | [`/api/prize_packs/{id}`](http://localhost:80/nooble/public/api/prize_packs/{id})                       | Suppression d'une ressource PrizePack.                                           |
 
