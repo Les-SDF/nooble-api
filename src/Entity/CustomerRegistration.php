@@ -32,8 +32,8 @@ use Doctrine\ORM\Mapping as ORM;
     ]
 )]
 #[Patch(
-    denormalizationContext: ["groups" => ["customer-registration:update"]],
-    validationContext: ["groups" => ["customer-registration:update"]]
+    denormalizationContext: ["groups" => ["customer_registration:update"]],
+    validationContext: ["groups" => ["customer_registration:update"]]
 )]
 class CustomerRegistration
 {
@@ -44,7 +44,7 @@ class CustomerRegistration
 
     #[ORM\ManyToOne(inversedBy: 'customerRegistrations')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["customer-registration:read"])]
+    #[Groups(["customer_registration:read"])]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'customerRegistrations')]
@@ -52,7 +52,7 @@ class CustomerRegistration
     private ?Event $event = null;
 
     #[ORM\Column(enumType: RegistrationStatus::class)]
-    #[Groups(["customer-registration:read", "customer-registration:update"])]
+    #[Groups(["customer_registration:read", "customer_registration:update"])]
     private ?RegistrationStatus $registrationStatus = null;
 
     public function getId(): ?int

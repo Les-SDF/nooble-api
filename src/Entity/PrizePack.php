@@ -54,17 +54,17 @@ class PrizePack
     private ?int $id = null;
 
     #[ORM\Column(options: ["default" => 1])]
-    #[Groups(["event:read", "prize-pack:update"])]
+    #[Groups(["event:read", "prize_pack:update"])]
     private ?int $quantity = 1;
 
     #[ORM\ManyToOne(inversedBy: 'prizePacks')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["event:read", "prize-pack:update"])]
+    #[Groups(["event:read", "prize_pack:update"])]
     private ?Reward $reward = null;
 
     #[ORM\ManyToOne(inversedBy: 'prizePacks')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["prize-pack:update"])]
+    #[Groups(["prize_pack:update"])]
     private ?EventReward $eventReward = null;
 
     public function __construct() {}

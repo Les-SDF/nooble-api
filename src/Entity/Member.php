@@ -40,7 +40,7 @@ class Member
 
     #[ORM\ManyToOne(inversedBy: 'members')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["user:read", "customer-registration:read"])]
+    #[Groups(["user:read", "customer_registration:read"])]
     private ?Team $team = null;
 
     public function getId(): ?int

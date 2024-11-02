@@ -23,7 +23,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource(
     normalizationContext: ["groups" => [
         "event:read",
-        "customer-registration:read",
+        "customer_registration:read",
         "confrontations:read"]]
 )]
 #[GetCollection(
@@ -74,15 +74,15 @@ class Event
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["event:read", "customer-registration:read", "confrontations:read", "create:read"])]
+    #[Groups(["event:read", "customer_registration:read", "confrontations:read", "create:read"])]
     private ?string $name = null;
 
     #[ORM\Column]
-    #[Groups(["event:read", "customer-registration:read", "create:read"])]
+    #[Groups(["event:read", "customer_registration:read", "create:read"])]
     private ?\DateTimeImmutable $startDate = null;
 
     #[ORM\Column]
-    #[Groups(["event:read", "customer-registration:read", "create:read"])]
+    #[Groups(["event:read", "customer_registration:read", "create:read"])]
     private ?\DateTimeImmutable $endDate = null;
 
     #[Groups(["event:read", "create:read"])]
@@ -105,7 +105,7 @@ class Event
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
-    #[Groups(["event:read", "customer-registration:read", "create:read"])]
+    #[Groups(["event:read", "customer_registration:read", "create:read"])]
     #[ORM\Column(enumType: Status::class)]
     private ?Status $status = null;
 
@@ -117,7 +117,7 @@ class Event
     private Collection $eventRewards;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["event:read", "customer-registration:read"])]
+    #[Groups(["event:read", "customer_registration:read"])]
     private ?int $maxParticipants = null;
 
     /**
@@ -131,7 +131,7 @@ class Event
      * @var Collection<int, CustomerRegistration>
      */
     #[ORM\OneToMany(targetEntity: CustomerRegistration::class, mappedBy: 'event', orphanRemoval: true)]
-    #[Groups(["customer-registration:read"])]
+    #[Groups(["customer_registration:read"])]
     private Collection $customerRegistrations;
 
     /**

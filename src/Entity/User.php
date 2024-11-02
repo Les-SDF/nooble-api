@@ -51,7 +51,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     #[Assert\Email(message: 'The email "{{ value }}" is not a valid email.')]
-    #[Groups(["user:read", "user:create", "customer-registration:read", "confrontations:read", "confrontation:read"])]
+    #[Groups(["user:read", "user:create", "customer_registration:read", "confrontations:read", "confrontation:read"])]
     private ?string $email = null;
 
     /**
@@ -93,7 +93,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Member>
      */
     #[ORM\OneToMany(targetEntity: Member::class, mappedBy: 'user', orphanRemoval: true)]
-    #[Groups(["user:read", "customer-registration:read"])]
+    #[Groups(["user:read", "customer_registration:read"])]
     private Collection $members;
 
 

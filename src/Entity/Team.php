@@ -46,7 +46,7 @@ class Team
         "team:create",
         "team:update",
         "user:read",
-        "customer-registration:read",
+        "customer_registration:read",
         "confrontations:read",
         "confrontation:read",
         "event:read",
