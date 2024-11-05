@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TeamRegistrationRepository::class)]
+#[ORM\UniqueConstraint(columns: ["team_id", "event_id"])]
 #[ApiResource]
 #[GetCollection(
     uriTemplate: "/teams/{id}/events",
@@ -35,7 +36,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ],
 )]
 #[Get]
-#[Post]
+#[Post(
+/**
+ * https://api-platform.com/docs/core/security/#hooking-custom-permission-checks-using-voters
+ */
+    securityPostDenormalize: "is_granted('TEAM_REGISTRATION_CREATE', object)",
+)]
 #[Patch]
 #[Delete]
 class TeamRegistration
@@ -54,9 +60,9 @@ class TeamRegistration
     #[ORM\JoinColumn(nullable: false)]
     private ?Event $event = null;
 
-    #[ORM\Column(enumType: RegistrationStatus::class)]
+    #[ORM\Column(enumType: RegistrationStatus::class, options: ["default" => RegistrationStatus::Waiting])]
     #[Groups(["team:read", "teams:read"])]
-    private ?RegistrationStatus $registrationStatus = null;
+    private ?RegistrationStatus $registrationStatus = RegistrationStatus::Waiting;
 
     public function getId(): ?int
     {

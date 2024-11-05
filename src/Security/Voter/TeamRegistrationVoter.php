@@ -2,12 +2,12 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Member;
 use App\Entity\TeamRegistration;
 use App\Entity\User;
 use App\Enum\Visibility;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 final class TeamRegistrationVoter extends AbstractVoter
 {
@@ -25,11 +25,13 @@ final class TeamRegistrationVoter extends AbstractVoter
         /**
          * @var TeamRegistration $subject
          * @var User $user
+         * @var Member $teamMember
+         * @var Member $userMember
          */
         if (!($user = $token->getUser()) instanceof User) {
             return false;
         }
-
+        
         switch ($attribute) {
             case self::CREATE:
                 /**
@@ -38,17 +40,26 @@ final class TeamRegistrationVoter extends AbstractVoter
                  * cette équipe n'est déjà inscrit avec une de ses équipes à un événement se déroulant sur la même
                  * période
                  */
-                if ($subject->getEvent()->getTeamRegistrations()->count() > $subject->getEvent()->getMaxParticipants()
-                    && $subject->getTeam()->getMembers()->contains($user)) {
+
+                /**
+                 * TODO: $team->getMembers()->contains($user) ne retourne pas le bon résultat, il faudrait comparer les l'id de l'utilisateur connecté avec l'id de l'utilisateur de chaque membre de l'équipe
+                 */
+                //dump($team->getMembers());
+                //dump($user);
+                //dump($team->getMembers()->contains($user));
+
+                if ($subject->getTeam()->getMembers()->contains($user)
+                    && (is_null($subject->getEvent()->getMaxParticipants())
+                        || $subject->getEvent()->getMaxParticipants() > $subject->getEvent()->getTeamRegistrations()->count())) {
 
                     // Liste des membres de l'équipe
-                    foreach ($subject->getTeam()->getMembers() as $teamMembers) {
+                    foreach ($subject->getTeam()->getMembers() as $teamMember) {
 
-                        // Liste de toutes les équipes de chaque membre
-                        foreach ($teamMembers->getUser()->getMembers() as $userMembers) {
+                        // Liste des équipes pour chaque membre
+                        foreach ($teamMember->getUser()->getMembers() as $userMember) {
 
-                            // Liste de tous les événements de chacune des équipes
-                            foreach ($userMembers->getTeam()->getTeamRegistrations() as $teamRegistration) {
+                            // Liste des enregistrements aux événements pour chaque équipe
+                            foreach ($userMember->getTeam()->getTeamRegistrations() as $teamRegistration) {
 
                                 if ($teamRegistration->getEvent()->getStartDate() <= $subject->getEvent()->getEndDate()
                                     && $teamRegistration->getEvent()->getEndDate() >= $subject->getEvent()->getStartDate()) {

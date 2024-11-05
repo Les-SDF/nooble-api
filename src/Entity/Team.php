@@ -69,7 +69,7 @@ class Team
     /**
      * @var Collection<int, Member>
      */
-    #[ORM\OneToMany(targetEntity: Member::class, mappedBy: 'team', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Member::class, mappedBy: 'team', fetch: 'EAGER', orphanRemoval: true)]
     #[Groups([
         "confrontations:read",
         "confrontation:read"
