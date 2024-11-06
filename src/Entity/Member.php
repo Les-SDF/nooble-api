@@ -35,12 +35,18 @@ class Member
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["confrontations:read", "confrontation:read"])]
+    #[Groups([
+        Confrontation::READ_GROUP,
+        Confrontation::READ_COLLECTION_GROUP,
+    ])]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'members')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["user:read", "customer_registration:read"])]
+    #[Groups([
+        CustomerRegistration::READ_GROUP,
+        User::READ_GROUP,
+    ])]
     private ?Team $team = null;
 
     public function getId(): ?int

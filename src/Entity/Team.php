@@ -20,11 +20,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[GetCollection]
 #[Get]
 #[Post(
-    denormalizationContext: ["groups" => ["team:create"]],
+    denormalizationContext: ["groups" => [self::CREATE_GROUP]],
     security: "is_granted('TEAM_CREATE', object)",
 )]
 #[Patch(
-    denormalizationContext: ["groups" => ["team:update"]],
+    denormalizationContext: ["groups" => [self::UPDATE_GROUP]],
     security: "is_granted('TEAM_UPDATE', object)",
 )]
 #[Delete(
@@ -32,25 +32,30 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 class Team
 {
+    public const CREATE_GROUP = "team:create";
+    public const READ_GROUP = "team:read";
+    public const READ_COLLECTION_GROUP = "team:collection:read";
+    public const UPDATE_GROUP = "team:update";
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Assert\NotBlank(groups: ["team:create", "team:update"])]
-    #[Assert\NotNull(groups: ["team:create", "team:update"])]
-    #[Assert\Length(min: 2, max: 255, minMessage: "Name must at least contains 2 characters", maxMessage: "Name must not exceed 255 characters", groups: ["team:create", "team:update"])]
+    #[Assert\NotBlank(groups: [self::CREATE_GROUP, self::UPDATE_GROUP])]
+    #[Assert\NotNull(groups: [self::CREATE_GROUP, self::UPDATE_GROUP])]
+    #[Assert\Length(min: 2, max: 255, minMessage: "Name must at least contains 2 characters", maxMessage: "Name must not exceed 255 characters", groups: [self::CREATE_GROUP, self::UPDATE_GROUP])]
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups([
-        "team:read",
-        "team:create",
-        "team:update",
-        "user:read",
-        "customer_registration:read",
-        "confrontations:read",
-        "confrontation:read",
-        "event:read",
-        "teams:read"
+        self::CREATE_GROUP,
+        self::READ_GROUP,
+        self::READ_COLLECTION_GROUP,
+        self::UPDATE_GROUP,
+        Confrontation::READ_COLLECTION_GROUP,
+        Confrontation::READ_GROUP,
+        CustomerRegistration::READ_GROUP,
+        Event::READ_GROUP,
+        User::READ_GROUP,
     ])]
     private ?string $name = null;
 
@@ -71,8 +76,8 @@ class Team
      */
     #[ORM\OneToMany(targetEntity: Member::class, mappedBy: 'team', fetch: 'EAGER', orphanRemoval: true)]
     #[Groups([
-        "confrontations:read",
-        "confrontation:read"
+        Confrontation::READ_COLLECTION_GROUP,
+        Confrontation::READ_GROUP,
     ])]
     private Collection $members;
 

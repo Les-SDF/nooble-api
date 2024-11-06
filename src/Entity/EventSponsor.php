@@ -52,7 +52,7 @@ class EventSponsor
 
     #[ORM\ManyToOne(inversedBy: 'eventSponsors')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["event:read"])]
+    #[Groups([Event::READ_GROUP])]
     private ?Sponsor $sponsor = null;
 
     public function getId(): ?int

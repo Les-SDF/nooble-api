@@ -53,7 +53,11 @@ class TeamRegistration
 
     #[ORM\ManyToOne(inversedBy: 'teamRegistrations')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["event:read", "team:read", "teams:read"])]
+    #[Groups([
+        Event::READ_GROUP,
+        Team::READ_GROUP,
+        Team::READ_COLLECTION_GROUP,
+    ])]
     private ?Team $team = null;
 
     #[ORM\ManyToOne(inversedBy: 'teamRegistrations')]
@@ -61,7 +65,10 @@ class TeamRegistration
     private ?Event $event = null;
 
     #[ORM\Column(enumType: RegistrationStatus::class, options: ["default" => RegistrationStatus::Waiting])]
-    #[Groups(["team:read", "teams:read"])]
+    #[Groups([
+        Team::READ_GROUP,
+        Team::READ_COLLECTION_GROUP
+    ])]
     private ?RegistrationStatus $registrationStatus = RegistrationStatus::Waiting;
 
     public function getId(): ?int

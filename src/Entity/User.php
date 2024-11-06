@@ -25,18 +25,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ApiResource(
-    normalizationContext: ["groups" => ["user:read"]]
+    normalizationContext: ["groups" => [self::READ_GROUP]]
 )]
 #[GetCollection]
 #[Get]
 #[Post(
-    denormalizationContext: ["groups" => ["user:create"]],
-    validationContext: ["groups" => ["Default", "user:create"]],
+    denormalizationContext: ["groups" => [self::CREATE_GROUP]],
+    validationContext: ["groups" => ["Default", self::CREATE_GROUP]],
     processor: UserProcessor::class
 )]
 #[Patch(
-    denormalizationContext: ["groups" => ["user:update"]],
-    validationContext: ["groups" => ["Default", "user:update"]],
+    denormalizationContext: ["groups" => [self::UPDATE_GROUP]],
+    validationContext: ["groups" => ["Default", self::UPDATE_GROUP]],
     processor: UserProcessor::class
 )]
 #[Delete(
@@ -44,6 +44,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const CREATE_GROUP = "user:create";
+    public const READ_GROUP = "user:read";
+    public const UPDATE_GROUP = "user:update";
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -51,7 +55,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     #[Assert\Email(message: 'The email "{{ value }}" is not a valid email.')]
-    #[Groups(["user:read", "user:create", "customer_registration:read", "confrontations:read", "confrontation:read"])]
+    #[Groups([
+        self::CREATE_GROUP,
+        self::READ_GROUP,
+        Confrontation::READ_GROUP,
+        Confrontation::READ_COLLECTION_GROUP,
+        CustomerRegistration::READ_GROUP,
+    ])]
     private ?string $email = null;
 
     /**
@@ -67,33 +77,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ApiProperty(description: 'Hashed password', readable: false, writable: false)]
     private ?string $password = null;
 
-    #[Assert\NotBlank(message: "Le mot de passe actuel ne doit pas être vide", groups: ["user:create"])]
-    #[Assert\NotNull(message: "Le mot de passe actuel ne doit pas être null", groups: ["user:create"])]
-    #[Assert\Length(min: 8, max: 32, minMessage: "Le mot de passe actuel doit faire plus de 8 caractères", maxMessage: "Le mot de passe actuel doit faire moins de 32 caractères", groups: ["user:create"])]
+    #[Assert\NotBlank(message: "Le mot de passe actuel ne doit pas être vide", groups: [self::CREATE_GROUP])]
+    #[Assert\NotNull(message: "Le mot de passe actuel ne doit pas être null", groups: [self::CREATE_GROUP])]
+    #[Assert\Length(min: 8, max: 32, minMessage: "Le mot de passe actuel doit faire plus de 8 caractères", maxMessage: "Le mot de passe actuel doit faire moins de 32 caractères", groups: [self::CREATE_GROUP])]
     #[Assert\Regex(
         pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$/',
         message: 'The password must be at least 5 characters long, with at least one lowercase, one uppercase letter and one special character.',
-        groups: ["user:create"]
+        groups: [self::CREATE_GROUP]
     )]
-    #[Groups(["user:create"])]
+    #[Groups([self::CREATE_GROUP])]
     #[ApiProperty(description: 'Plain password for creating an user', readable: false, writable: true)]
     private ?string $plainPassword = null;
 
     #[ApiProperty(description: 'Plain password for updating an user', readable: false, writable: true)]
-    #[Groups(["user:update"])]
-    #[UserPassword(groups: ["user:update"])]
+    #[Groups([self::UPDATE_GROUP])]
+    #[UserPassword(groups: [self::UPDATE_GROUP])]
     private ?string $currentPlainPassword = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[ApiProperty(readable: true, writable: true)]
-    #[Groups(["user:read"])]
+    #[Groups([self::READ_GROUP])]
     private ?string $username = null;
 
     /**
      * @var Collection<int, Member>
      */
     #[ORM\OneToMany(targetEntity: Member::class, mappedBy: 'user', orphanRemoval: true)]
-    #[Groups(["user:read", "customer_registration:read"])]
+    #[Groups([
+        self::READ_GROUP,
+        CustomerRegistration::READ_GROUP
+    ])]
     private Collection $members;
 
 

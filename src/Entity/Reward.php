@@ -33,15 +33,15 @@ class Reward
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["event:read"])]
+    #[Groups([Event::READ_GROUP])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(["event:read"])]
+    #[Groups([Event::READ_GROUP])]
     private ?string $description = null;
 
     #[ORM\Column(enumType: RewardType::class)]
-    #[Groups(["event:read"])]
+    #[Groups([Event::READ_GROUP])]
     private ?RewardType $rewardType = null;
 
     /**

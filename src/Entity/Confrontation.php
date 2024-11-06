@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ConfrontationRepository::class)]
 #[ApiResource(
-    normalizationContext: ["groups" => ["confrontation:read"]]
+    normalizationContext: ["groups" => [self::READ_GROUP]]
 )]
 #[GetCollection(
     uriTemplate: "/games/{id}/confrontations",
@@ -36,12 +36,16 @@ use Doctrine\ORM\Mapping as ORM;
     ]
 )]
 #[Patch(
-    denormalizationContext: ["groups" => ["confrontation:update"]],
+    denormalizationContext: ["groups" => [self::UPDATE_GROUP]],
     security: "is_granted('CONFRONTATION_UPDATE', object)",
-    validationContext: ["groups" => ["confrontation:update"]],
+    validationContext: ["groups" => [self::UPDATE_GROUP]],
 )]
 class Confrontation
 {
+    public const READ_GROUP = 'confrontation:read';
+    public const READ_COLLECTION_GROUP = 'confrontation:collection:read';
+    public const UPDATE_GROUP = 'confrontation:update';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -51,11 +55,19 @@ class Confrontation
      * @var Collection<int, Participation>
      */
     #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'confrontation', orphanRemoval: true)]
-    #[Groups(["confrontations:read", "confrontation:read", "confrontation:update"])]
+    #[Groups([
+        self::READ_GROUP,
+        self::READ_COLLECTION_GROUP,
+        self::UPDATE_GROUP,
+    ])]
     private Collection $participations;
 
     #[ORM\Column]
-    #[Groups(["confrontations:read", "confrontation:read", "confrontation:update"])]
+    #[Groups([
+        self::READ_COLLECTION_GROUP,
+        self::READ_GROUP,
+        self::UPDATE_GROUP
+    ])]
     private ?int $round = null;
 
     #[ORM\ManyToOne(inversedBy: 'confrontations')]
@@ -64,7 +76,11 @@ class Confrontation
 
     #[ORM\ManyToOne(cascade: ["persist"], inversedBy: 'confrontations')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["confrontations:read", "confrontation:read", "confrontation:update"])]
+    #[Groups([
+        self::READ_GROUP,
+        self::READ_COLLECTION_GROUP,
+        self::UPDATE_GROUP,
+    ])]
     private ?Game $game = null;
 
     #[ORM\Column(nullable: true)]

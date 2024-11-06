@@ -40,7 +40,7 @@ class EventReward
      * @var Collection<int, PrizePack>
      */
     #[ORM\OneToMany(targetEntity: PrizePack::class, mappedBy: 'eventReward', orphanRemoval: true)]
-    #[Groups(["event:read"])]
+    #[Groups([Event::READ_GROUP])]
     private Collection $prizePacks;
 
     /**

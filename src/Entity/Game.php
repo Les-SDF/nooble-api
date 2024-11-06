@@ -20,15 +20,21 @@ class Game
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["confrontations:read", "confrontation:read"])]
+    #[Groups([
+        Confrontation::READ_GROUP,
+        Confrontation::READ_COLLECTION_GROUP,
+    ])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(["confrontations:read", "confrontation:read"])]
+    #[Groups([
+        Confrontation::READ_GROUP,
+        Confrontation::READ_COLLECTION_GROUP,
+    ])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["confrontations:read"])]
+    #[Groups([Confrontation::READ_COLLECTION_GROUP])]
 
     private ?string $imageUrl = null;
 

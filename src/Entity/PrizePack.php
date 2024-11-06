@@ -48,23 +48,31 @@ use Doctrine\ORM\Mapping as ORM;
 #[Delete]
 class PrizePack
 {
+    public const UPDATE_GROUP = "update_prize_pack:update";
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(options: ["default" => 1])]
-    #[Groups(["event:read", "prize_pack:update"])]
+    #[Groups([
+        self::UPDATE_GROUP,
+        Event::READ_GROUP,
+    ])]
     private ?int $quantity = 1;
 
     #[ORM\ManyToOne(inversedBy: 'prizePacks')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["event:read", "prize_pack:update"])]
+    #[Groups([
+        self::UPDATE_GROUP,
+        Event::READ_GROUP,
+    ])]
     private ?Reward $reward = null;
 
     #[ORM\ManyToOne(inversedBy: 'prizePacks')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["prize_pack:update"])]
+    #[Groups([self::UPDATE_GROUP])]
     private ?EventReward $eventReward = null;
 
     public function __construct() {}

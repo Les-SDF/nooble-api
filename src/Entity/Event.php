@@ -22,12 +22,14 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[ApiResource(
     normalizationContext: ["groups" => [
-        "event:read",
-        "customer_registration:read",
-        "confrontations:read"]]
+        self::READ_GROUP,
+        Confrontation::READ_COLLECTION_GROUP,
+        CustomerRegistration::READ_GROUP,
+        ]
+    ]
 )]
 #[GetCollection(
-    normalizationContext: ["groups" => ["event:read"]],
+    normalizationContext: ["groups" => [self::READ_GROUP]],
     security: "is_granted('EVENT_READ', object)"
 )]
 #[GetCollection(
@@ -49,63 +51,94 @@ use Doctrine\ORM\Mapping as ORM;
             fromClass: TeamRegistration::class
         )
     ],
-    normalizationContext: ["groups" => ["teams:read"]],
+    normalizationContext: ["groups" => [Team::READ_COLLECTION_GROUP]],
     security: "is_granted('ROLE_ADMIN')"
 )]
 #[Get]
 #[Post(
-    denormalizationContext: ["groups" => ["user:create"]],
+    denormalizationContext: ["groups" => [User::CREATE_GROUP]],
     security: "is_granted('EVENT_CREATE', object)",
-    validationContext: ["groups" => ["user:create"]],
+    validationContext: ["groups" => [User::CREATE_GROUP]],
 )]
 #[Patch(
-    denormalizationContext: ["groups" => ["user:update"]],
+    denormalizationContext: ["groups" => [User::UPDATE_GROUP]],
     security: "is_granted('EVENT_UPDATE', object)",
-    validationContext: ["groups" => ["user:update"]],
+    validationContext: ["groups" => [User::UPDATE_GROUP]],
 )]
 #[Delete(
     security: "is_granted('EVENT_DELETE', object)"
 )]
 class Event
 {
+    public const READ_GROUP = "event:read";
+    
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["event:read", "customer_registration:read", "confrontations:read", "create:read"])]
+    #[Groups([
+        self::READ_GROUP,
+        Confrontation::READ_COLLECTION_GROUP,
+        CustomerRegistration::READ_GROUP,
+        "create:read",
+    ])]
     private ?string $name = null;
 
     #[ORM\Column]
-    #[Groups(["event:read", "customer_registration:read", "create:read"])]
+    #[Groups([
+        self::READ_GROUP,
+        CustomerRegistration::READ_GROUP,
+        "create:read",
+    ])]
     private ?\DateTimeImmutable $startDate = null;
 
     #[ORM\Column]
-    #[Groups(["event:read", "customer_registration:read", "create:read"])]
+    #[Groups([
+        self::READ_GROUP,
+        CustomerRegistration::READ_GROUP,
+        "create:read"
+    ])]
     private ?\DateTimeImmutable $endDate = null;
 
-    #[Groups(["event:read", "create:read"])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups([
+        self::READ_GROUP,
+        "create:read"
+    ])]
     private ?string $description = null;
 
-    #[Groups(["event:read", "create:read"])]
     #[ORM\Column]
+    #[Groups([
+        self::READ_GROUP,
+        "create:read"
+    ])]
     private ?bool $official = null;
 
-    #[Groups(["event:read", "create:read"])]
     #[ORM\Column(options: ["default" => false])]
+    #[Groups([
+        self::READ_GROUP,
+        "create:read"
+    ])]
     private ?bool $charity = false;
 
     #[ORM\Column(enumType: Visibility::class, options: ["default" => Visibility::Public])]
     #[Groups("create:read")]
     private ?Visibility $participantsVisibility = null;
 
-    #[Groups(["event:read", "create:read"])]
+    #[Groups([
+        self::READ_GROUP,
+        "create:read"
+    ])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
-    #[Groups(["event:read", "customer_registration:read", "create:read"])]
+    #[Groups([
+        self::READ_GROUP,
+        CustomerRegistration::READ_GROUP,
+        "create:read"
+    ])]
     #[ORM\Column(enumType: Status::class)]
     private ?Status $status = null;
 
@@ -113,32 +146,35 @@ class Event
      * @var Collection<int, EventReward>
      */
     #[ORM\OneToMany(targetEntity: EventReward::class, mappedBy: 'event', orphanRemoval: true)]
-    #[Groups(["event:read"])]
+    #[Groups([self::READ_GROUP])]
     private Collection $eventRewards;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["event:read", "customer_registration:read"])]
+    #[Groups([
+        self::READ_GROUP,
+        CustomerRegistration::READ_GROUP
+    ])]
     private ?int $maxParticipants = null;
 
     /**
      * @var Collection<int, EventSponsor>
      */
     #[ORM\OneToMany(targetEntity: EventSponsor::class, mappedBy: 'event', orphanRemoval: true)]
-    #[Groups(["event:read"])]
+    #[Groups([self::READ_GROUP])]
     private Collection $eventSponsors;
 
     /**
      * @var Collection<int, CustomerRegistration>
      */
     #[ORM\OneToMany(targetEntity: CustomerRegistration::class, mappedBy: 'event', orphanRemoval: true)]
-    #[Groups(["customer_registration:read"])]
+    #[Groups([CustomerRegistration::READ_GROUP])]
     private Collection $customerRegistrations;
 
     /**
      * @var Collection<int, Confrontation>
      */
     #[ORM\OneToMany(targetEntity: Confrontation::class, mappedBy: 'event', orphanRemoval: true)]
-    #[Groups(["confrontations:read"])]
+    #[Groups([Confrontation::READ_COLLECTION_GROUP])]
     private Collection $confrontations;
 
     /**
@@ -155,7 +191,7 @@ class Event
      * @var Collection<int, TeamRegistration>
      */
     #[ORM\OneToMany(targetEntity: TeamRegistration::class, mappedBy: 'event', orphanRemoval: true)]
-    #[Groups("teams:read")]
+    #[Groups(Team::READ_COLLECTION_GROUP)]
     private Collection $teamRegistrations;
 
     #[ORM\Column(nullable: true)]
@@ -171,7 +207,7 @@ class Event
         $this->teamRegistrations = new ArrayCollection();
     }
 
-    #[Groups(["event:read"])]
+    #[Groups([self::READ_GROUP])]
     public function getPublicTeamRegistration(): array
     {
         if ($this->getParticipantsVisibility() == Visibility::Public) {
