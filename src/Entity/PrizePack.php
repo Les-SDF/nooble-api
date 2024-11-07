@@ -1,4 +1,8 @@
 <?php
+/**
+ * @noinspection NestedPositiveIfStatementsInspection
+ * @noinspection PhpUnused
+ */
 
 namespace App\Entity;
 
@@ -9,8 +13,6 @@ use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Repository\PrizePackRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -74,8 +76,6 @@ class PrizePack
     #[ORM\JoinColumn(nullable: false)]
     #[Groups([self::UPDATE_GROUP])]
     private ?EventReward $eventReward = null;
-
-    public function __construct() {}
 
     public function getId(): ?int
     {

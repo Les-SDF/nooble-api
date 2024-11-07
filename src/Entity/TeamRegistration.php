@@ -1,4 +1,8 @@
 <?php
+/**
+ * @noinspection NestedPositiveIfStatementsInspection
+ * @noinspection PhpUnused
+ */
 
 namespace App\Entity;
 
@@ -64,12 +68,12 @@ class TeamRegistration
     #[ORM\JoinColumn(nullable: false)]
     private ?Event $event = null;
 
-    #[ORM\Column(enumType: RegistrationStatus::class, options: ["default" => RegistrationStatus::Waiting])]
+    #[ORM\Column(enumType: RegistrationStatus::class, options: ["default" => RegistrationStatus::Pending])]
     #[Groups([
         Team::READ_GROUP,
         Team::READ_COLLECTION_GROUP
     ])]
-    private ?RegistrationStatus $registrationStatus = RegistrationStatus::Waiting;
+    private ?RegistrationStatus $registrationStatus = RegistrationStatus::Pending;
 
     public function getId(): ?int
     {

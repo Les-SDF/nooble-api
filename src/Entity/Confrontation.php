@@ -1,4 +1,8 @@
 <?php
+/**
+ * @noinspection NestedPositiveIfStatementsInspection
+ * @noinspection PhpUnused
+ */
 
 namespace App\Entity;
 
@@ -54,7 +58,11 @@ class Confrontation
     /**
      * @var Collection<int, Participation>
      */
-    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'confrontation', orphanRemoval: true)]
+    #[ORM\OneToMany(
+        targetEntity: Participation::class,
+        mappedBy: 'confrontation',
+        orphanRemoval: true
+    )]
     #[Groups([
         self::READ_GROUP,
         self::READ_COLLECTION_GROUP,
@@ -74,7 +82,10 @@ class Confrontation
     #[ORM\JoinColumn(nullable: false)]
     private ?Event $event = null;
 
-    #[ORM\ManyToOne(cascade: ["persist"], inversedBy: 'confrontations')]
+    #[ORM\ManyToOne(
+        cascade: ["persist"],
+        inversedBy: 'confrontations'
+    )]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups([
         self::READ_GROUP,
@@ -95,7 +106,6 @@ class Confrontation
     {
         return $this->id;
     }
-
 
     /**
      * @return Collection<int, Participation>

@@ -25,7 +25,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
-    const DEFAULT_PASSWORD = 'password';
+    public const DEFAULT_PASSWORD = 'password';
 
     public function __construct(private readonly UserPasswordHasherInterface $passwordHasher,
                                 private readonly ObjectManager $manager)
@@ -41,16 +41,16 @@ class AppFixtures extends Fixture
             'Worlds 2024',
             new DateTimeImmutable('2024-09-01'),
             new DateTimeImmutable('2024-11-01'),
-            Status::Ongoing,
+            Status::Completed,
             $riotGames,
             true
         );
 
-        $event2 = $this->addEvent(
+        $this->addEvent(
             'Japan Matsuri Dragon Ball Sparking Zero Tournament',
             new DateTimeImmutable('2024-10-26'),
             new DateTimeImmutable('2024-10-27'),
-            Status::Ongoing,
+            Status::Completed,
             $admin,
             true
         );
@@ -62,7 +62,7 @@ class AppFixtures extends Fixture
 
         $this->addEventReward($event, [
             $this->addPrizePack($this->addReward('Summoner\'s Cup', RewardType::Trophy)),
-            $this->addPrizePack($this->addReward('$450,000', RewardType::Cashprize)),
+            $this->addPrizePack($this->addReward('$450,000', RewardType::CashPrize)),
             $this->addPrizePack($this->addReward('Champion\'s Medal', RewardType::Medal), 5),
         ]);
 
@@ -155,17 +155,18 @@ class AppFixtures extends Fixture
 
         // Semifinals
         $this->addConfrontation($event, $game, new DateTimeImmutable('2024-10-26'), 2, [
-            $this->addParticipation($wbg),
-            $this->addParticipation($blg)
+            $this->addParticipation($wbg, 2),
+            $this->addParticipation($blg, 1)
         ]);
         $this->addConfrontation($event, $game, new DateTimeImmutable('2024-10-27'), 2, [
-            $this->addParticipation($t1),
-            $this->addParticipation($gen)
+            $this->addParticipation($t1, 1),
+            $this->addParticipation($gen, 2)
         ]);
 
-        // Finals
+        // Grand Final
         $this->addConfrontation($event, $game, new DateTimeImmutable('2024-11-02'), 3, [
-            $this->addParticipation($blg),
+            $this->addParticipation($blg, 2),
+            $this->addParticipation($t1, 1)
         ]);
 
         $this->manager->flush();

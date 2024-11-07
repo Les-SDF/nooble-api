@@ -1,4 +1,8 @@
 <?php
+/**
+ * @noinspection NestedPositiveIfStatementsInspection
+ * @noinspection PhpUnused
+ */
 
 namespace App\Entity;
 

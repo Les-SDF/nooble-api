@@ -1,4 +1,8 @@
 <?php
+/**
+ * @noinspection NestedPositiveIfStatementsInspection
+ * @noinspection PhpUnused
+ */
 
 namespace App\Entity;
 
@@ -13,6 +17,7 @@ use App\Enum\RegistrationStatus;
 use App\Enum\Status;
 use App\Enum\Visibility;
 use App\Repository\EventRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -92,7 +97,7 @@ class Event
         CustomerRegistration::READ_GROUP,
         "create:read",
     ])]
-    private ?\DateTimeImmutable $startDate = null;
+    private ?DateTimeImmutable $startDate = null;
 
     #[ORM\Column]
     #[Groups([
@@ -100,9 +105,12 @@ class Event
         CustomerRegistration::READ_GROUP,
         "create:read"
     ])]
-    private ?\DateTimeImmutable $endDate = null;
+    private ?DateTimeImmutable $endDate = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(
+        type: Types::TEXT,
+        nullable: true
+    )]
     #[Groups([
         self::READ_GROUP,
         "create:read"
@@ -123,7 +131,10 @@ class Event
     ])]
     private ?bool $charity = false;
 
-    #[ORM\Column(enumType: Visibility::class, options: ["default" => Visibility::Public])]
+    #[ORM\Column(
+        enumType: Visibility::class,
+        options: ["default" => Visibility::Public]
+    )]
     #[Groups("create:read")]
     private ?Visibility $participantsVisibility = null;
 
@@ -145,7 +156,11 @@ class Event
     /**
      * @var Collection<int, EventReward>
      */
-    #[ORM\OneToMany(targetEntity: EventReward::class, mappedBy: 'event', orphanRemoval: true)]
+    #[ORM\OneToMany(
+        targetEntity: EventReward::class,
+        mappedBy: 'event',
+        orphanRemoval: true
+    )]
     #[Groups([self::READ_GROUP])]
     private Collection $eventRewards;
 
@@ -159,28 +174,43 @@ class Event
     /**
      * @var Collection<int, EventSponsor>
      */
-    #[ORM\OneToMany(targetEntity: EventSponsor::class, mappedBy: 'event', orphanRemoval: true)]
+    #[ORM\OneToMany(
+        targetEntity: EventSponsor::class,
+        mappedBy: 'event',
+        orphanRemoval: true
+    )]
     #[Groups([self::READ_GROUP])]
     private Collection $eventSponsors;
 
     /**
      * @var Collection<int, CustomerRegistration>
      */
-    #[ORM\OneToMany(targetEntity: CustomerRegistration::class, mappedBy: 'event', orphanRemoval: true)]
+    #[ORM\OneToMany(
+        targetEntity: CustomerRegistration::class,
+        mappedBy: 'event', orphanRemoval: true
+    )]
     #[Groups([CustomerRegistration::READ_GROUP])]
     private Collection $customerRegistrations;
 
     /**
      * @var Collection<int, Confrontation>
      */
-    #[ORM\OneToMany(targetEntity: Confrontation::class, mappedBy: 'event', orphanRemoval: true)]
+    #[ORM\OneToMany(
+        targetEntity: Confrontation::class,
+        mappedBy: 'event',
+        orphanRemoval: true
+    )]
     #[Groups([Confrontation::READ_COLLECTION_GROUP])]
     private Collection $confrontations;
 
     /**
      * @var Collection<int, Manager>
      */
-    #[ORM\OneToMany(targetEntity: Manager::class, mappedBy: 'events', orphanRemoval: true)]
+    #[ORM\OneToMany(
+        targetEntity: Manager::class,
+        mappedBy: 'events',
+        orphanRemoval: true
+    )]
     private Collection $managers;
 
     #[ORM\ManyToOne(inversedBy: 'createdEvents')]
@@ -190,7 +220,11 @@ class Event
     /**
      * @var Collection<int, TeamRegistration>
      */
-    #[ORM\OneToMany(targetEntity: TeamRegistration::class, mappedBy: 'event', orphanRemoval: true)]
+    #[ORM\OneToMany(
+        targetEntity: TeamRegistration::class,
+        mappedBy: 'event',
+        orphanRemoval: true
+    )]
     #[Groups(Team::READ_COLLECTION_GROUP)]
     private Collection $teamRegistrations;
 
@@ -207,10 +241,14 @@ class Event
         $this->teamRegistrations = new ArrayCollection();
     }
 
+    /**
+     * TODO: Je ne suis pas sûr que ce soit la bonne manière de retourner les bonnes ressources TeamRegistration
+     * @return array
+     */
     #[Groups([self::READ_GROUP])]
     public function getPublicTeamRegistration(): array
     {
-        if ($this->getParticipantsVisibility() == Visibility::Public) {
+        if ($this->getParticipantsVisibility() === Visibility::Public) {
             return $this->teamRegistrations
                 ->filter(function ($teamRegistration) {
                     /**
@@ -222,13 +260,12 @@ class Event
                     /**
                      * @var TeamRegistration $teamRegistration
                      */
-                    return $teamRegistration->getTeam()->getName();
+                    return $teamRegistration->getTeam()?->getName();
                 })
                 ->toArray();
         }
         return [];
     }
-
 
     public function getId(): ?int
     {
@@ -247,24 +284,24 @@ class Event
         return $this;
     }
 
-    public function getStartDate(): ?\DateTimeImmutable
+    public function getStartDate(): ?DateTimeImmutable
     {
         return $this->startDate;
     }
 
-    public function setStartDate(\DateTimeImmutable $startDate): static
+    public function setStartDate(DateTimeImmutable $startDate): static
     {
         $this->startDate = $startDate;
 
         return $this;
     }
 
-    public function getEndDate(): ?\DateTimeImmutable
+    public function getEndDate(): ?DateTimeImmutable
     {
         return $this->endDate;
     }
 
-    public function setEndDate(\DateTimeImmutable $endDate): static
+    public function setEndDate(DateTimeImmutable $endDate): static
     {
         $this->endDate = $endDate;
 

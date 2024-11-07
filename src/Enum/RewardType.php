@@ -4,7 +4,7 @@ namespace App\Enum;
 
 enum RewardType: string
 {
-    case Cashprize = 'cashprize';
+    case CashPrize = 'cash_prize';
 
     case Trophy = 'trophy';
 
