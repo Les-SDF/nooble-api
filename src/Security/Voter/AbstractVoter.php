@@ -7,7 +7,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 abstract class AbstractVoter extends Voter
 {
-    protected abstract function getSubjectClass(): string;
+    abstract protected function getSubjectClass(): string;
     protected function supports(string $attribute, mixed $subject): bool
     {
         $reflection = new ReflectionClass($this);
@@ -21,7 +21,7 @@ abstract class AbstractVoter extends Voter
             }
             return true;
         }
-        return in_array($attribute, $reflection->getConstants())
-            && (is_null($subject) || !is_array($subject) && $subject instanceof $class);
+        return in_array($attribute, $reflection->getConstants(), true)
+            && (is_null($subject) || (!is_array($subject) && $subject instanceof $class));
     }
 }

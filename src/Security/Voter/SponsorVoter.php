@@ -4,6 +4,7 @@ namespace App\Security\Voter;
 
 use App\Entity\Sponsor;
 use App\Entity\User;
+use App\Exception\UnexpectedVoterAttributeException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -19,6 +20,9 @@ final class SponsorVoter extends AbstractVoter
     {
     }
 
+    /**
+     * @throws UnexpectedVoterAttributeException
+     */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /**
@@ -30,6 +34,8 @@ final class SponsorVoter extends AbstractVoter
         }
 
         switch ($attribute) {
+            default:
+                throw new UnexpectedVoterAttributeException($attribute);
         }
         return false;
     }

@@ -6,6 +6,7 @@ use App\Entity\Member;
 use App\Entity\TeamRegistration;
 use App\Entity\User;
 use App\Enum\Visibility;
+use App\Exception\UnexpectedVoterAttributeException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -20,6 +21,9 @@ final class TeamRegistrationVoter extends AbstractVoter
     {
     }
 
+    /**
+     * @throws UnexpectedVoterAttributeException
+     */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /**
@@ -48,21 +52,21 @@ final class TeamRegistrationVoter extends AbstractVoter
                 //dump($user);
                 //dump($team->getMembers()->contains($user));
 
-                if ($subject->getTeam()->getMembers()->contains($user)
-                    && (is_null($subject->getEvent()->getMaxParticipants())
-                        || $subject->getEvent()->getMaxParticipants() > $subject->getEvent()->getTeamRegistrations()->count())) {
+                if ($subject->getTeam()?->getMembers()->contains($user)
+                    && (is_null($subject->getEvent()?->getMaxParticipants())
+                        || $subject->getEvent()?->getMaxParticipants() > $subject->getEvent()?->getTeamRegistrations()->count())) {
 
                     // Liste des membres de l'équipe
-                    foreach ($subject->getTeam()->getMembers() as $teamMember) {
+                    foreach ($subject->getTeam()?->getMembers() as $teamMember) {
 
                         // Liste des équipes pour chaque membre
-                        foreach ($teamMember->getUser()->getMembers() as $userMember) {
+                        foreach ($teamMember->getUser()?->getMembers() as $userMember) {
 
                             // Liste des enregistrements aux événements pour chaque équipe
-                            foreach ($userMember->getTeam()->getTeamRegistrations() as $teamRegistration) {
+                            foreach ($userMember->getTeam()?->getTeamRegistrations() as $teamRegistration) {
 
-                                if ($teamRegistration->getEvent()->getStartDate() <= $subject->getEvent()->getEndDate()
-                                    && $teamRegistration->getEvent()->getEndDate() >= $subject->getEvent()->getStartDate()) {
+                                if ($teamRegistration->getEvent()?->getStartDate() <= $subject->getEvent()?->getEndDate()
+                                    && $teamRegistration->getEvent()?->getEndDate() >= $subject->getEvent()?->getStartDate()) {
                                     return false;
                                 }
                             }
@@ -76,11 +80,11 @@ final class TeamRegistrationVoter extends AbstractVoter
                  * Seuls les administrateurs, les organisateurs de l'événement, leurs gérants ou les membres de
                  * l'équipe inscrite peuvent lire la liste des équipes inscrites si la visibilité est privée
                  */
-                if ($subject->getEvent()->getParticipantsVisibility() === Visibility::Public
-                    || $this->security->isGranted("ROLE_ADMIN", $user)
-                    || $this->security->isGranted("ROLE_ORGANISER", $user) && $subject->getEvent()->getCreator() === $user
-                    || $subject->getEvent()->getManagers()->contains($user)
-                    || $subject->getTeam()->getMembers()->contains($user)) {
+                if ($this->security->isGranted("ROLE_ADMIN", $user)
+                    || $subject->getEvent()?->getParticipantsVisibility() === Visibility::Public
+                    || ($this->security->isGranted("ROLE_ORGANISER", $user) && $subject->getEvent()?->getCreator() === $user)
+                    || $subject->getEvent()?->getManagers()->contains($user)
+                    || $subject->getTeam()?->getMembers()->contains($user)) {
                     return true;
                 }
                 break;
@@ -93,10 +97,13 @@ final class TeamRegistrationVoter extends AbstractVoter
                  * Seuls l'organisateur de l'événement ou leurs gérants peuvent y supprimer les inscriptions des
                  * équipes
                  */
-                if ($this->security->isGranted("ROLE_ORGANISER", $user) && $subject->getEvent()->getCreator() === $user
-                    || $subject->getEvent()->getManagers()->contains($user)) {
+                if (($this->security->isGranted("ROLE_ORGANISER", $user) && $subject->getEvent()?->getCreator() === $user)
+                    || $subject->getEvent()?->getManagers()->contains($user)) {
                     return true;
                 }
+                break;
+            default:
+                throw new UnexpectedVoterAttributeException($attribute);
         }
         return false;
     }

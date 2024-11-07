@@ -4,6 +4,7 @@ namespace App\Security\Voter;
 
 use App\Entity\EventSponsor;
 use App\Entity\User;
+use App\Exception\UnexpectedVoterAttributeException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -19,6 +20,9 @@ final class EventSponsorVoter extends AbstractVoter
     {
     }
 
+    /**
+     * @throws UnexpectedVoterAttributeException
+     */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /**
@@ -35,8 +39,8 @@ final class EventSponsorVoter extends AbstractVoter
                  * Seul l'organisateur de l'événement ou leurs gérants peuvent y ajouter des sponsors
                  */
                 if ($this->security->isGranted("ROLE_USER", $user)
-                    && ($subject->getEvent()->getCreator() === $user
-                    || $subject->getEvent()->getManagers()->contains($user))) {
+                    && ($subject->getEvent()?->getCreator() === $user
+                    || $subject->getEvent()?->getManagers()->contains($user))) {
                     return true;
                 }
                 break;
@@ -47,11 +51,13 @@ final class EventSponsorVoter extends AbstractVoter
                  */
                 if ($this->security->isGranted("ROLE_ADMIN", $user)
                     || ($this->security->isGranted("ROLE_USER", $user)
-                    && ($subject->getEvent()->getCreator() === $user
-                    || $subject->getEvent()->getManagers()->contains($user)))) {
+                    && ($subject->getEvent()?->getCreator() === $user
+                    || $subject->getEvent()?->getManagers()->contains($user)))) {
                     return true;
                 }
                 break;
+            default:
+                throw new UnexpectedVoterAttributeException($attribute);
         }
         return false;
     }

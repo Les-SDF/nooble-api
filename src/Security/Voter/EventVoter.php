@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\Event;
 use App\Entity\User;
 use App\Enum\Status;
+use App\Exception\UnexpectedVoterAttributeException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -44,6 +45,7 @@ final class EventVoter extends AbstractVoter
                  * Seuls les administrateurs, l'organisateur de l'événement ou leurs gérants peuvent lire les
                  * événements archivés
                  */
+                // TODO: Refactorer ce fix pour supporter les Collections
                 if (is_array($subject)) {
                     foreach ($subject as $item) {
                         if (!$this->voteOnAttribute($attribute, $item, $token)) {
@@ -78,6 +80,8 @@ final class EventVoter extends AbstractVoter
                     return true;
                 }
                 break;
+            default:
+                throw new UnexpectedVoterAttributeException($attribute);
         }
         return false;
     }

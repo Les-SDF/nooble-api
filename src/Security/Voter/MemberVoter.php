@@ -4,6 +4,7 @@ namespace App\Security\Voter;
 
 use App\Entity\Member;
 use App\Entity\User;
+use App\Exception\UnexpectedVoterAttributeException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -19,6 +20,9 @@ final class MemberVoter extends AbstractVoter
     {
     }
 
+    /**
+     * @throws UnexpectedVoterAttributeException
+     */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /**
@@ -39,6 +43,8 @@ final class MemberVoter extends AbstractVoter
                     return true;
                 }
                 break;
+            default:
+                throw new UnexpectedVoterAttributeException($attribute);
         }
         return false;
     }
