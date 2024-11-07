@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\Participation;
 use App\Entity\User;
 use App\Exception\UnexpectedVoterAttributeException;
+use App\Security\Roles;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -33,33 +34,27 @@ final class ParticipationVoter extends AbstractVoter
             return false;
         }
 
-        switch ($attribute) {
-            case self::CREATE:
-                /**
-                 * Seuls l'organisateur de l'événement ou leurs gérants peuvent ajouter des rencontres
-                 */
-                if ($this->security->isGranted("ROLE_USER", $user)
-                    && ($subject->getConfrontation()?->getEvent()?->getCreator() === $user
-                        || $subject->getConfrontation()?->getEvent()?->getManagers()->contains($user))) {
-                    return true;
-                }
-                break;
-            case self::DELETE:
-                /**
-                 * Seuls l'organisateur de l'événement, leurs gérants, ou un administrateur peuvent
-                 * supprimer des participations
-                 */
-                if ($this->security->isGranted("ROLE_ADMIN", $user)
-                    || $subject->getConfrontation()?->getEvent()?->getManagers()->contains($user)
-                    || ($this->security->isGranted("ROLE_USER", $user)
-                        && ($subject->getConfrontation()?->getEvent()?->getCreator() === $user))) {
-                    return true;
-                }
-                break;
-            default:
-                throw new UnexpectedVoterAttributeException($attribute);
-        }
-        return false;
+        return match ($attribute) {
+            /**
+             * Seuls l'organisateur de l'événement ou leurs gérants peuvent ajouter des rencontres
+             */
+            self::CREATE =>
+                $this->security->isGranted(Roles::USER, $user)
+                && ($subject->getConfrontation()?->getEvent()?->getCreator() === $user
+                    || $subject->getConfrontation()?->getEvent()?->getManagers()->contains($user)),
+
+            /**
+             * Seuls l'organisateur de l'événement, leurs gérants, ou un administrateur peuvent
+             * supprimer des participations
+             */
+            self::DELETE =>
+                $this->security->isGranted(Roles::ORGANISER, $user)
+                || $subject->getConfrontation()?->getEvent()?->getManagers()->contains($user)
+                || ($this->security->isGranted(Roles::USER, $user)
+                    && ($subject->getConfrontation()?->getEvent()?->getCreator() === $user)),
+
+            default => throw new UnexpectedVoterAttributeException($attribute),
+        };
     }
 
     protected function getSubjectClass(): string

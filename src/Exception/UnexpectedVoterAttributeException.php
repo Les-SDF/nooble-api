@@ -8,6 +8,6 @@ class UnexpectedVoterAttributeException extends Exception
 {
     public function __construct(string $attribute)
     {
-        parent::__construct($attribute);
+        parent::__construct("Unexpected attribute $attribute");
     }
 }

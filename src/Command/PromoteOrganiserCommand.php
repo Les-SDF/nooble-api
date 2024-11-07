@@ -3,6 +3,7 @@
 namespace App\Command;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Security\Roles;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -45,11 +46,11 @@ class PromoteOrganiserCommand extends Command
             $io->error(sprintf("User %s not found", $user_mail));
             return Command::INVALID;
         }
-        if (in_array("ROLE_ORGANISER", $user->getRoles())) {
+        if (in_array(Roles::ORGANISER, $user->getRoles())) {
             $io->error(sprintf("User %s is already organiser", $user->getEmail()));
             return Command::INVALID;
         }
-        $user->addRole("ROLE_ORGANISER");
+        $user->addRole(Roles::ORGANISER);
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         $io->success(sprintf("User %s is now organiser", $user->getEmail()));

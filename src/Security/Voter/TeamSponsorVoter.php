@@ -33,11 +33,9 @@ final class TeamSponsorVoter extends AbstractVoter
             return false;
         }
 
-        switch ($attribute) {
-            default:
-                throw new UnexpectedVoterAttributeException($attribute);
-        }
-        return false;
+        return match ($attribute) {
+            default => throw new UnexpectedVoterAttributeException($attribute),
+        };
     }
 
     protected function getSubjectClass(): string

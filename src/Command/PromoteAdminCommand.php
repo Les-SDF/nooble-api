@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Security\Roles;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -46,11 +47,11 @@ class PromoteAdminCommand extends Command
             $io->error(sprintf("User %s not found", $user_mail));
             return Command::INVALID;
         }
-        if (in_array("ROLE_ADMIN", $user->getRoles())) {
+        if (in_array(Roles::ADMIN, $user->getRoles())) {
             $io->error(sprintf("User %s is already admin", $user->getEmail()));
             return Command::INVALID;
         }
-        $user->addRole("ROLE_ADMIN");
+        $user->addRole(Roles::ADMIN);
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         $io->success(sprintf("User %s is now admin", $user->getEmail()));

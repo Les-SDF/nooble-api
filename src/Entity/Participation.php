@@ -6,8 +6,6 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
 use App\Repository\ParticipationRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
@@ -69,8 +67,6 @@ class Participation
         Confrontation::READ_COLLECTION_GROUP,
     ])]
     private ?Team $team = null;
-
-    public function __construct() {}
 
     public function getId(): ?int
     {

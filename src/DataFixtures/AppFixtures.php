@@ -17,6 +17,7 @@ use App\Enum\RewardType;
 use App\Enum\RegistrationStatus;
 use App\Enum\Status;
 use App\Enum\Visibility;
+use App\Security\Roles;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -33,8 +34,8 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $admin = $this->addUser('admin@nooble.com', 'Admin', ['ROLE_ADMIN', 'ROLE_ORGANISER']);
-        $riotGames = $this->addUser('organiser@riotgames.com', 'Riot Games', ['ROLE_ORGANISER']);
+        $admin = $this->addUser('admin@nooble.com', 'Admin', [Roles::ADMIN, Roles::ORGANISER]);
+        $riotGames = $this->addUser('organiser@riotgames.com', 'Riot Games', [Roles::ORGANISER]);
 
         $event = $this->addEvent(
             'Worlds 2024',

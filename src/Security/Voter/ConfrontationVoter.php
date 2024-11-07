@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\Confrontation;
 use App\Entity\User;
 use App\Exception\UnexpectedVoterAttributeException;
+use App\Security\Roles;
 use RuntimeException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -34,19 +35,17 @@ final class ConfrontationVoter extends AbstractVoter
             return false;
         }
 
-        switch ($attribute) {
-            case self::UPDATE:
-                // Seul le l'organisateur de l'événement ou leurs gérants peuvent modifier des confrontations
-                if ($this->security->isGranted("ROLE_USER", $user)
-                    && ($subject->getEvent()?->getCreator() === $user
-                        || $subject->getEvent()?->getManagers()->contains($user))) {
-                    return true;
-                }
-                break;
-            default:
-                throw new UnexpectedVoterAttributeException($attribute);
-        }
-        return false;
+        return match ($attribute) {
+            /**
+             * Seuls le l'organisateur de l'événement ou leurs gérants peuvent modifier des confrontations
+             */
+            self::UPDATE =>
+                $this->security->isGranted(Roles::USER, $user)
+                && ($subject->getEvent()?->getCreator() === $user
+                    || $subject->getEvent()?->getManagers()->contains($user)),
+
+            default => throw new UnexpectedVoterAttributeException($attribute),
+        };
     }
 
     protected function getSubjectClass(): string

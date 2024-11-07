@@ -6,6 +6,7 @@ use App\Entity\Event;
 use App\Entity\User;
 use App\Enum\Status;
 use App\Exception\UnexpectedVoterAttributeException;
+use App\Security\Roles;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -21,6 +22,9 @@ final class EventVoter extends AbstractVoter
     {
     }
 
+    /**
+     * @throws UnexpectedVoterAttributeException
+     */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /**
@@ -31,59 +35,59 @@ final class EventVoter extends AbstractVoter
             return false;
         }
 
-        switch ($attribute) {
-            case self::CREATE:
-                /**
-                 * Seul les organisateurs peuvent créer des événements
-                 */
-                if ($this->security->isGranted("ROLE_ORGANISER", $user)) {
-                    return true;
+        return match ($attribute) {
+            /**
+             * Seuls les organisateurs peuvent créer des événements
+             */
+            self::CREATE => $this->security->isGranted(Roles::ORGANISER, $user),
+
+            /**
+             * Seuls les administrateurs, l'organisateur de l'événement ou leurs gérants peuvent lire les
+             * événements archivés
+             *
+             * TODO: La logique pour pouvoir lire des collections avec des Event archivés n'est peut-être pas à faire dans un Voter
+             */
+            self::READ => $this->canRead($attribute, $subject, $token, $user),
+
+            /**
+             * Seuls le créateur de l'événement ou leurs gérants peuvent le modifier
+             */
+            self::UPDATE =>
+                $this->security->isGranted(Roles::ORGANISER, $user)
+                && ($subject->getCreator() === $user
+                    || $subject->getManagers()->contains($user)),
+
+            /**
+             * Seuls les administrateurs ou les organisateurs de l'événement peuvent le supprimer
+             */
+            self::DELETE =>
+                $this->security->isGranted(Roles::ORGANISER, $user)
+                || ($this->security->isGranted(Roles::ORGANISER, $user)
+                    && $subject->getCreator() === $user),
+
+            default => throw new UnexpectedVoterAttributeException($attribute),
+        };
+    }
+
+    /**
+     * @throws UnexpectedVoterAttributeException
+     */
+    private function canRead(string $attribute, Event|array $event, TokenInterface $token, ?UserInterface $user): bool
+    {
+        // TODO: Refactorer ce fix pour supporter les Collections
+        if (is_array($event)) {
+            foreach ($event as $item) {
+                if (!$this->voteOnAttribute($attribute, $item, $token)) {
+                    return false;
                 }
-                break;
-            case self::READ:
-                /**
-                 * Seuls les administrateurs, l'organisateur de l'événement ou leurs gérants peuvent lire les
-                 * événements archivés
-                 */
-                // TODO: Refactorer ce fix pour supporter les Collections
-                if (is_array($subject)) {
-                    foreach ($subject as $item) {
-                        if (!$this->voteOnAttribute($attribute, $item, $token)) {
-                            return false;
-                        }
-                        return true;
-                    }
-                }
-                if ($subject->getStatus() !== Status::Archived
-                    || ($user = $token->getUser()) instanceof User
-                    && ($this->security->isGranted("ROLE_ADMIN", $user)
-                        || $this->security->isGranted("ROLE_ORGANISER", $user) && $subject->getCreator() === $user
-                        || $subject->getManagers()->contains($user))) {
-                    return true;
-                }
-                break;
-            case self::UPDATE:
-                /**
-                 * Seul le créateur de l'événement ou leurs gérants peuvent le modifier
-                 */
-                if ($this->security->isGranted("ROLE_ORGANISER", $user)
-                    && ($subject->getCreator() === $user || $subject->getManagers()->contains($user))) {
-                    return true;
-                }
-                break;
-            case self::DELETE:
-                /**
-                 * Seuls les administrateurs ou les organisateurs de l'événement peuvent le supprimer
-                 */
-                if ($this->security->isGranted("ROLE_ADMIN", $user)
-                    || $this->security->isGranted("ROLE_ORGANISER", $user) && $subject->getCreator() === $user) {
-                    return true;
-                }
-                break;
-            default:
-                throw new UnexpectedVoterAttributeException($attribute);
+                return true;
+            }
         }
-        return false;
+        return $event->getStatus() !== Status::Archived
+            || (($user = $token->getUser()) instanceof User
+                && ($this->security->isGranted(Roles::ORGANISER, $user)
+                    || ($this->security->isGranted(Roles::ORGANISER, $user) && $event->getCreator() === $user)
+                    || $event->getManagers()->contains($user)));
     }
 
     protected function getSubjectClass(): string

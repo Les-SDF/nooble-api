@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\PrizePack;
 use App\Entity\User;
 use App\Exception\UnexpectedVoterAttributeException;
+use App\Security\Roles;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -33,26 +34,18 @@ final class PrizePackVoter extends AbstractVoter
             return false;
         }
 
-        switch ($attribute) {
-            case self::UPDATE:
-                /**
-                 * Seuls l'organisateur de l'événement ou leurs gérants peuvent y modifier des lots
-                 */
-            case self::DELETE:
-                /**
-                 * Seuls l'organisateur de l'événement ou leurs gérants peuvent y supprimer des lots
-                 */
-                if ($this->security->isGranted("ROLE_ADMIN", $user)
-                    || $subject->getEventReward()?->getEvent()?->getManagers()->contains($user)
-                    || ($this->security->isGranted("ROLE_USER", $user)
-                        && ($subject->getEventReward()?->getEvent()?->getCreator() === $user))) {
-                    return true;
-                }
-                break;
-            default:
-                throw new UnexpectedVoterAttributeException($attribute);
-        }
-        return false;
+        return match ($attribute) {
+            /**
+             * Seuls l'organisateur de l'événement ou leurs gérants peuvent y modifier ou supprimer des lots
+             */
+            self::UPDATE, self::DELETE =>
+                $this->security->isGranted(Roles::ADMIN, $user)
+                || $subject->getEventReward()?->getEvent()?->getManagers()->contains($user)
+                || ($this->security->isGranted(Roles::USER, $user)
+                    && ($subject->getEventReward()?->getEvent()?->getCreator() === $user)),
+
+            default => throw new UnexpectedVoterAttributeException($attribute),
+        };
     }
 
     protected function getSubjectClass(): string
