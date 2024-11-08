@@ -1,8 +1,7 @@
-<?php
+<?php /** @noinspection PhpUnused */
 
 namespace App\Security\Voter;
 
-use App\Entity\Member;
 use App\Entity\TeamRegistration;
 use App\Entity\User;
 use App\Enum\Visibility;
@@ -23,20 +22,14 @@ final class TeamRegistrationVoter extends AbstractVoter
     }
 
     /**
+     * @param string $attribute
+     * @param TeamRegistration $subject
+     * @param TokenInterface $token
+     * @return bool
      * @throws UnexpectedVoterAttributeException
      */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
-        /**
-         * @var TeamRegistration $subject
-         * @var User $user
-         * @var Member $teamMember
-         * @var Member $userMember
-         */
-        if (!($user = $token->getUser()) instanceof User) {
-            return false;
-        }
-
         return match ($attribute) {
             /**
              * On peut inscrire une équipe à un événement :
@@ -45,30 +38,33 @@ final class TeamRegistrationVoter extends AbstractVoter
              * * Si le nombre de participants de l'événement n'est pas atteint
              */
             self::CREATE =>
-                $this->isTeamMember($user, $subject)
-                && $this->areTeamMembersAvailable($subject)
-                && (is_null($subject->getEvent()?->getMaxParticipants())
-                    || $subject->getEvent()?->getMaxParticipants() > $subject->getEvent()?->getTeamRegistrations()->count()),
+                ($user = $this->returnUserOrFalse($token))
+                && ($this->isTeamMember($user, $subject)
+                    && $this->areTeamMembersAvailable($subject)
+                    && (is_null($subject->getEvent()?->getMaxParticipants())
+                        || $subject->getEvent()?->getMaxParticipants() > $subject->getEvent()?->getTeamRegistrations()->count())),
 
             /**
              * Si la visibilité est privée, seuls les administrateurs, les organisateurs de l'événement, leurs gérants ou les membres de
              * l'équipe inscrite peuvent lire la liste des équipes inscrites.
              */
             self::READ =>
-                $this->security->isGranted(Roles::ORGANISER, $user)
-                || $subject->getEvent()?->getParticipantsVisibility() === Visibility::Public
-                || $subject->getEvent()?->getManagers()->contains($user)
-                || $subject->getTeam()?->getMembers()->contains($user)
-                || ($this->security->isGranted(Roles::ORGANISER, $user)
-                    && $subject->getEvent()?->getCreator() === $user),
+                $subject->getEvent()?->getParticipantsVisibility() === Visibility::Public
+                || (($user = $this->returnUserOrFalse($token))
+                    && ($this->security->isGranted(Roles::ADMIN, $user)
+                        || $subject->getEvent()?->getManagers()->contains($user)
+                        || $subject->getTeam()?->getMembers()->contains($user)
+                        || ($this->security->isGranted(Roles::ORGANISER, $user)
+                            && $subject->getEvent()?->getCreator() === $user))),
 
             /**
              * Seuls l'organisateur de l'événement ou leurs gérants peuvent y modifier ou supprimer des inscriptions des équipes
              */
             self::UPDATE, self::DELETE =>
-                $subject->getEvent()?->getManagers()->contains($user)
-                || ($this->security->isGranted(Roles::ORGANISER, $user)
-                    && $subject->getEvent()?->getCreator() === $user),
+                ($user = $this->returnUserOrFalse($token))
+                && ($subject->getEvent()?->getManagers()->contains($user)
+                    || ($this->security->isGranted(Roles::ORGANISER, $user)
+                        && $subject->getEvent()?->getCreator() === $user)),
 
             default => throw new UnexpectedVoterAttributeException($attribute),
         };

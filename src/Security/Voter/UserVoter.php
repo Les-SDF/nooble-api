@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnused */
 
 namespace App\Security\Voter;
 
@@ -7,7 +7,6 @@ use App\Exception\UnexpectedVoterAttributeException;
 use App\Security\Roles;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 final class UserVoter extends AbstractVoter
 {
@@ -25,21 +24,14 @@ final class UserVoter extends AbstractVoter
      */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
-        /**
-         * @var User $subject
-         * @var UserInterface $user
-         */
-        if (!($user = $token->getUser()) instanceof User) {
-            return false;
-        }
-
         return match ($attribute) {
             /**
              * Seuls les administrateurs ou les utilisateurs eux-mêmes peuvent supprimer leur compte
              */
             self::DELETE =>
-                $subject === $user
-                || $this->security->isGranted(Roles::ORGANISER, $user),
+                ($user = $this->returnUserOrFalse($token))
+                && ($subject === $user
+                    || $this->security->isGranted(Roles::ORGANISER, $user)),
 
             default => throw new UnexpectedVoterAttributeException($attribute),
         };

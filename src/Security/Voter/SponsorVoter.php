@@ -1,13 +1,11 @@
-<?php
+<?php /** @noinspection PhpUnused */
 
 namespace App\Security\Voter;
 
 use App\Entity\Sponsor;
 use App\Entity\User;
 use App\Exception\UnexpectedVoterAttributeException;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 final class SponsorVoter extends AbstractVoter
 {
@@ -16,23 +14,15 @@ final class SponsorVoter extends AbstractVoter
     public const UPDATE = "SPONSOR_UPDATE";
     public const DELETE = "SPONSOR_DELETE";
 
-    public function __construct(private readonly Security $security)
-    {
-    }
-
     /**
+     * @param string $attribute
+     * @param Sponsor $subject
+     * @param TokenInterface $token
+     * @return bool
      * @throws UnexpectedVoterAttributeException
      */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
-        /**
-         * @var Sponsor $subject
-         * @var UserInterface $user
-         */
-        if (!($user = $token->getUser()) instanceof User) {
-            return false;
-        }
-
         return match ($attribute) {
             default => throw new UnexpectedVoterAttributeException($attribute),
         };

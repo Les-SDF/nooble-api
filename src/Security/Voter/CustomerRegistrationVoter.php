@@ -1,13 +1,10 @@
-<?php
+<?php /** @noinspection PhpUnused */
 
 namespace App\Security\Voter;
 
 use App\Entity\CustomerRegistration;
-use App\Entity\User;
 use App\Exception\UnexpectedVoterAttributeException;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 final class CustomerRegistrationVoter extends AbstractVoter
 {
@@ -16,23 +13,15 @@ final class CustomerRegistrationVoter extends AbstractVoter
     public const UPDATE = "CUSTOMER_REGISTRATION_UPDATE";
     public const DELETE = "CUSTOMER_REGISTRATION_DELETE";
 
-    public function __construct(private readonly Security $security)
-    {
-    }
-
     /**
+     * @param string $attribute
+     * @param CustomerRegistration $subject
+     * @param TokenInterface $token
+     * @return bool
      * @throws UnexpectedVoterAttributeException
      */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
-        /**
-         * @var CustomerRegistration $subject
-         * @var UserInterface $user
-         */
-        if (!($user = $token->getUser()) instanceof User) {
-            return false;
-        }
-
         return match ($attribute) {
             default => throw new UnexpectedVoterAttributeException($attribute),
         };
