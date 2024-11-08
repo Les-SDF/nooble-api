@@ -14,7 +14,7 @@ use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Enum\RegistrationStatus;
-use App\Enum\Status;
+use App\Enum\EventStatus;
 use App\Enum\Visibility;
 use App\Repository\EventRepository;
 use DateTimeImmutable;
@@ -150,8 +150,8 @@ class Event
         CustomerRegistration::READ_GROUP,
         "create:read"
     ])]
-    #[ORM\Column(enumType: Status::class)]
-    private ?Status $status = null;
+    #[ORM\Column(enumType: EventStatus::class)]
+    private ?EventStatus $status = null;
 
     /**
      * @var Collection<int, EventReward>
@@ -254,7 +254,7 @@ class Event
                     /**
                      * @var TeamRegistration $teamRegistration
                      */
-                    return $teamRegistration->getRegistrationStatus() === RegistrationStatus::Accepted;
+                    return $teamRegistration->getStatus() === RegistrationStatus::Accepted;
                 })
                 ->map(function ($teamRegistration) {
                     /**
@@ -368,12 +368,12 @@ class Event
         return $this;
     }
 
-    public function getStatus(): ?Status
+    public function getStatus(): ?EventStatus
     {
         return $this->status;
     }
 
-    public function setStatus(Status $status): static
+    public function setStatus(EventStatus $status): static
     {
         $this->status = $status;
 

@@ -15,7 +15,7 @@ use App\Entity\TeamRegistration;
 use App\Entity\User;
 use App\Enum\RewardType;
 use App\Enum\RegistrationStatus;
-use App\Enum\Status;
+use App\Enum\EventStatus;
 use App\Enum\Visibility;
 use App\Security\Roles;
 use DateTimeImmutable;
@@ -41,7 +41,7 @@ class AppFixtures extends Fixture
             'Worlds 2024',
             new DateTimeImmutable('2024-09-01'),
             new DateTimeImmutable('2024-11-01'),
-            Status::Completed,
+            EventStatus::Completed,
             $riotGames,
             true
         );
@@ -50,7 +50,7 @@ class AppFixtures extends Fixture
             'Japan Matsuri Dragon Ball Sparking Zero Tournament',
             new DateTimeImmutable('2024-10-26'),
             new DateTimeImmutable('2024-10-27'),
-            Status::Completed,
+            EventStatus::Completed,
             $admin,
             true
         );
@@ -185,12 +185,12 @@ class AppFixtures extends Fixture
         return $user;
     }
 
-    private function addEvent(string $name,
+    private function addEvent(string            $name,
                               DateTimeImmutable $startDate,
                               DateTimeImmutable $endDate,
-                              Status $status,
-                              User $creator,
-                              bool $official = false): Event
+                              EventStatus       $status,
+                              User              $creator,
+                              bool              $official = false): Event
     {
         $event = new Event();
         $event->setName($name);
@@ -211,7 +211,7 @@ class AppFixtures extends Fixture
         $teamRegistration = new TeamRegistration();
         $teamRegistration->setTeam($team);
         $teamRegistration->setEvent($event);
-        $teamRegistration->setRegistrationStatus(RegistrationStatus::Accepted);
+        $teamRegistration->setStatus(RegistrationStatus::Accepted);
         $this->manager->persist($teamRegistration);
     }
 

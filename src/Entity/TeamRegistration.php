@@ -73,7 +73,7 @@ class TeamRegistration
         Team::READ_GROUP,
         Team::READ_COLLECTION_GROUP
     ])]
-    private ?RegistrationStatus $registrationStatus = RegistrationStatus::Pending;
+    private ?RegistrationStatus $status = RegistrationStatus::Pending;
 
     public function getId(): ?int
     {
@@ -104,14 +104,14 @@ class TeamRegistration
         return $this;
     }
 
-    public function getRegistrationStatus(): ?RegistrationStatus
+    public function getStatus(): ?RegistrationStatus
     {
-        return $this->registrationStatus;
+        return $this->status;
     }
 
-    public function setRegistrationStatus(RegistrationStatus $registrationStatus): static
+    public function setStatus(RegistrationStatus $status): static
     {
-        $this->registrationStatus = $registrationStatus;
+        $this->status = $status;
 
         return $this;
     }

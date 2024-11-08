@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-enum Status: string
+enum EventStatus: string
 {
     /**
      * The event has been created and is scheduled for a future date.

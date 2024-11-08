@@ -63,7 +63,7 @@ class CustomerRegistration
         self::READ_GROUP,
         self::UPDATE_GROUP
     ])]
-    private ?RegistrationStatus $registrationStatus = null;
+    private ?RegistrationStatus $status = null;
 
     public function getId(): ?int
     {
@@ -94,14 +94,14 @@ class CustomerRegistration
         return $this;
     }
 
-    public function getRegistrationStatus(): ?RegistrationStatus
+    public function getStatus(): ?RegistrationStatus
     {
-        return $this->registrationStatus;
+        return $this->status;
     }
 
-    public function setRegistrationStatus(RegistrationStatus $registrationStatus): static
+    public function setStatus(RegistrationStatus $status): static
     {
-        $this->registrationStatus = $registrationStatus;
+        $this->status = $status;
 
         return $this;
     }

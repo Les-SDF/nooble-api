@@ -3,7 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\Event;
-use App\Enum\Status;
+use App\Enum\EventStatus;
 use App\Exception\UnexpectedVoterAttributeException;
 use App\Security\Roles;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -42,7 +42,7 @@ final class EventVoter extends AbstractVoter
              * événements archivés
              */
             self::READ =>
-                $subject->getStatus() !== Status::Archived
+                $subject->getStatus() !== EventStatus::Archived
                 || (($user = $this->returnUserOrFalse($token))
                     && ($this->security->isGranted(Roles::ORGANISER, $user)
                         || ($this->security->isGranted(Roles::ORGANISER, $user) && $subject->getCreator() === $user)
