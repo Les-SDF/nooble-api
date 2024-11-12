@@ -1,74 +1,78 @@
-<?php
+<?php /** @noinspection PhpUnused */
 
 namespace App\DataFixtures;
 
-use App\Entity\Member;
-use App\Entity\Participation;
-use App\Entity\Event;
-use App\Entity\EventReward;
-use App\Entity\Game;
-use App\Entity\Confrontation;
-use App\Entity\PrizePack;
-use App\Entity\Reward;
-use App\Entity\Team;
-use App\Entity\TeamRegistration;
 use App\Entity\User;
 use App\Enum\RewardType;
-use App\Enum\RegistrationStatus;
 use App\Enum\EventStatus;
-use App\Enum\Visibility;
 use App\Security\Roles;
 use DateTimeImmutable;
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class AppFixtures extends Fixture
+class AppFixtures extends AbstractFixtures
 {
-    public const DEFAULT_PASSWORD = 'password';
+    private User $admin;
+    private User $riotGames;
 
-    public function __construct(private readonly UserPasswordHasherInterface $passwordHasher,
-                                private readonly ObjectManager $manager)
+    public function __construct(UserPasswordHasherInterface $passwordHasher,
+                                ObjectManager $manager)
     {
+        parent::__construct($passwordHasher, $manager);
+
+        $this->admin = $this->addUser('admin@nooble.com', 'Admin', [Roles::ADMIN, Roles::ORGANISER]);
+        $this->riotGames = $this->addUser('organiser@riotgames.com', 'Riot Games', [Roles::ORGANISER]);
     }
 
     public function load(ObjectManager $manager): void
     {
-        $admin = $this->addUser('admin@nooble.com', 'Admin', [Roles::ADMIN, Roles::ORGANISER]);
-        $riotGames = $this->addUser('organiser@riotgames.com', 'Riot Games', [Roles::ORGANISER]);
+        $this->loadWorlds2023();
+        $this->loadWorlds2024();
+        $this->loadWorlds2025();
+        $this->loadDragonBallSparking();
+        $this->loadValorantChampions2024();
+        $this->manager->flush();
+    }
 
+    private function loadWorlds2023(): void
+    {
         $event = $this->addEvent(
-            'Worlds 2024',
-            new DateTimeImmutable('2024-09-01'),
-            new DateTimeImmutable('2024-11-01'),
-            EventStatus::Completed,
-            $riotGames,
+            'Worlds 2023',
+            EventStatus::Archived,
+            $this->riotGames,
+            new DateTimeImmutable('2024-10-10'),
+            new DateTimeImmutable('2024-11-19'),
             true
         );
-
-        $this->addEvent(
-            'Japan Matsuri Dragon Ball Sparking Zero Tournament',
-            new DateTimeImmutable('2024-10-26'),
-            new DateTimeImmutable('2024-10-27'),
-            EventStatus::Completed,
-            $admin,
-            true
-        );
-        $this->addTeamAndUsers('Les SDF', [
-            'Nikhil',
-            'Quentin',
-            'Ylias'
-        ]);
 
         $this->addEventReward($event, [
-            $this->addPrizePack($this->addReward('Summoner\'s Cup', RewardType::Trophy)),
+            $this->addPrizePack($this->addReward('2023 Summoner\'s Cup', RewardType::Trophy)),
+            $this->addPrizePack($this->addReward('$445,000', RewardType::CashPrize)),
+            $this->addPrizePack($this->addReward('Champion\'s Medal', RewardType::Medal), 5),
+        ]);
+    }
+
+    private function loadWorlds2024(): void
+    {
+        $event = $this->addEvent(
+            'Worlds 2024',
+            EventStatus::Completed,
+            $this->riotGames,
+            new DateTimeImmutable('2024-09-01'),
+            new DateTimeImmutable('2024-11-01'),
+            true
+        );
+
+        $this->addEventReward($event, [
+            $this->addPrizePack($this->addReward('2024 Summoner\'s Cup', RewardType::Trophy)),
             $this->addPrizePack($this->addReward('$450,000', RewardType::CashPrize)),
             $this->addPrizePack($this->addReward('Champion\'s Medal', RewardType::Medal), 5),
         ]);
 
-        $game = new Game();
-        $game->setName('League of Legends');
-        $game->setDescription('League of Legends is a team-based game with over 140 champions to make epic plays with.');
+        $game = $this->addGame(
+            "League of Legends",
+            "League of Legends is a team-based game with over 140 champions to make epic plays with."
+        );
 
         $wbg = $this->addTeamAndUsers('WeiboGaming TapTap', [
             'Breathe',
@@ -168,146 +172,73 @@ class AppFixtures extends Fixture
             $this->addParticipation($blg, 2),
             $this->addParticipation($t1, 1)
         ]);
-
-        $this->manager->flush();
     }
 
-    private function addUser(string $email, string $username, array $roles = []): User
+    private function loadWorlds2025(): void
     {
-        $user = new User();
-        $user->setEmail($email);
-        $user->setPassword($this->passwordHasher->hashPassword($user, self::DEFAULT_PASSWORD));
-        $user->setUsername($username);
-        $user->setRoles($roles);
-
-        $this->manager->persist($user);
-
-        return $user;
-    }
-
-    private function addEvent(string            $name,
-                              DateTimeImmutable $startDate,
-                              DateTimeImmutable $endDate,
-                              EventStatus       $status,
-                              User              $creator,
-                              bool              $official = false): Event
-    {
-        $event = new Event();
-        $event->setName($name);
-        $event->setStartDate($startDate);
-        $event->setEndDate($endDate);
-        $event->setStatus($status);
-        $event->setCreator($creator);
-        $event->setOfficial($official);
-        $event->setParticipantsVisibility(Visibility::Public);
-
-        $this->manager->persist($event);
-
-        return $event;
-    }
-
-    private function addTeamRegistration(Event $event, Team $team): void
-    {
-        $teamRegistration = new TeamRegistration();
-        $teamRegistration->setTeam($team);
-        $teamRegistration->setEvent($event);
-        $teamRegistration->setStatus(RegistrationStatus::Accepted);
-        $this->manager->persist($teamRegistration);
-    }
-
-    private function addReward(string $name, RewardType $rewardType): Reward
-    {
-        $reward = new Reward();
-        $reward->setName($name);
-        $reward->setRewardType($rewardType);
-
-        $this->manager->persist($reward);
-
-        return $reward;
-    }
-
-    private function addPrizePack(Reward $reward, int $quantity = 1): PrizePack
-    {
-        $prizePack = new PrizePack();
-        $prizePack->setReward($reward);
-        $prizePack->setQuantity($quantity);
-
-        $this->manager->persist($prizePack);
-
-        return $prizePack;
-    }
-
-    private function addEventReward(Event $event, array $prizePacks): void
-    {
-        $eventReward = new EventReward();
-        $eventReward->setEvent($event);
-
-        foreach ($prizePacks as $prizePack) {
-            $eventReward->addPrizePack($prizePack);
-        }
-
-        $this->manager->persist($eventReward);
-    }
-
-    private function addTeamUser(Team $team, string $username): void
-    {
-        $user = new User();
-        $user->setEmail(
-            strtolower($username) . '@' . str_replace(' ', '', strtolower($team->getName())) . '.com'
+        $this->addEvent(
+            name: 'Worlds 2023',
+            status: EventStatus::Scheduled,
+            creator: $this->riotGames,
+            official: true
         );
-        $user->setPassword($this->passwordHasher->hashPassword($user, self::DEFAULT_PASSWORD));
-        $user->setUsername($username);
-
-        $member = new Member();
-        $member->setTeam($team);
-        $member->setUser($user);
-
-        $this->manager->persist($user);
-        $this->manager->persist($member);
     }
 
-    private function addTeam(string $name): Team
+    private function loadDragonBallSparking(): void
     {
-        $team = new Team();
-        $team->setName($name);
-
-        $this->manager->persist($team);
-
-        return $team;
+        $this->addEvent(
+            'Japan Matsuri Dragon Ball Sparking Zero Tournament',
+            EventStatus::Completed,
+            $this->admin,
+            new DateTimeImmutable('2024-10-26'),
+            new DateTimeImmutable('2024-10-27'),
+            true
+        );
+        $this->addTeamAndUsers('Les SDF', [
+            'Nikhil',
+            'Quentin',
+            'Ylias'
+        ]);
     }
 
-    private function addTeamAndUsers(string $teamName, array $usernames): Team
+    private function loadValorantChampions2024(): void
     {
-        $team = $this->addTeam($teamName);
-        foreach ($usernames as $username) {
-            $this->addTeamUser($team, $username);
-        }
-        return $team;
-    }
+        $event = $this->addEvent(
+            'VARLORANT Champions 2024',
+            EventStatus::Completed,
+            $this->admin,
+            new DateTimeImmutable('2024-08-01'),
+            new DateTimeImmutable('2024-08-25'),
+            true
+        );
 
-    private function addParticipation(Team $team = null, int $ranking = null): Participation
-    {
-        $participation = new Participation();
-        $participation->setTeam($team);
-        $participation->setRanking($ranking);
+        $edg = $this->addTeamAndUsers("EDward Gaming", [
+            'CHICHOO',
+            'nobody',
+            'ZmjjKK',
+            'Smoggy',
+            'S1Mon'
+        ]);
 
-        $this->manager->persist($participation);
+        $th = $this->addTeamAndUsers("Team Heretics", [
+            'Boo',
+            'benjyfishy',
+            'MiniBoo',
+            'RieNs',
+            'Wo0t'
+        ]);
 
-        return $participation;
-    }
+        $game = $this->addGame(
+            "VALORANT",
+            "VALORANT is a 5v5 character-based tactical shooter game."
+        );
 
-    private function addConfrontation(Event $event, Game $game, DateTimeImmutable $date = null, int $round = null, array $participations = []): void
-    {
-        $confrontation = new Confrontation();
-        $confrontation->setEvent($event);
-        $confrontation->setGame($game);
-        $confrontation->setDate($date);
-        $confrontation->setRound($round);
+        $this->addTeamRegistration($event, $edg);
+        $this->addTeamRegistration($event, $th);
 
-        foreach ($participations as $participation) {
-            $confrontation->addParticipation($participation);
-        }
-
-        $this->manager->persist($confrontation);
+        $this->addConfrontation($event, $game, new DateTimeImmutable('2024-08-25'), 1, [
+            $this->addParticipation($edg, 1),
+            $this->addParticipation($th, 2)
+        ]);
     }
 }
