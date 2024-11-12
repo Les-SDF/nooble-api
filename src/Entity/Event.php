@@ -34,8 +34,7 @@ use Doctrine\ORM\Mapping as ORM;
     ]
 )]
 #[GetCollection(
-    normalizationContext: ["groups" => [self::READ_GROUP]],
-    security: "is_granted('EVENT_READ', object)"
+    normalizationContext: ["groups" => [self::READ_GROUP]]
 )]
 #[GetCollection(
     uriTemplate: "/users/{id}/events",
@@ -91,7 +90,7 @@ class Event
     ])]
     private ?string $name = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     #[Groups([
         self::READ_GROUP,
         CustomerRegistration::READ_GROUP,
@@ -99,7 +98,7 @@ class Event
     ])]
     private ?DateTimeImmutable $startDate = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     #[Groups([
         self::READ_GROUP,
         CustomerRegistration::READ_GROUP,
@@ -289,7 +288,7 @@ class Event
         return $this->startDate;
     }
 
-    public function setStartDate(DateTimeImmutable $startDate): static
+    public function setStartDate(?DateTimeImmutable $startDate): static
     {
         $this->startDate = $startDate;
 
@@ -301,7 +300,7 @@ class Event
         return $this->endDate;
     }
 
-    public function setEndDate(DateTimeImmutable $endDate): static
+    public function setEndDate(?DateTimeImmutable $endDate): static
     {
         $this->endDate = $endDate;
 
