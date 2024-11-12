@@ -25,14 +25,14 @@ readonly class EventExtension implements QueryCollectionExtensionInterface
      */
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
     {
-        if (Event::class !== $resourceClass) {
+        if (Event::class !== $resourceClass || $this->security->isGranted(Roles::ADMIN)) {
             return;
         }
 
         $rootAlias = $queryBuilder->getRootAliases()[0];
-        $user = $this->security->getUser();
 
         if ($this->security->isGranted(Roles::ORGANISER)) {
+            $user = $this->security->getUser();
             $queryBuilder->andWhere(
                 $queryBuilder->expr()->orX(
                     $queryBuilder->expr()->neq("$rootAlias.status", ':status'),
