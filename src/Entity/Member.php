@@ -46,7 +46,10 @@ class Member
     ])]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'members')]
+    #[ORM\ManyToOne(
+        cascade: ['persist'],
+        inversedBy: 'members'
+    )]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups([
         CustomerRegistration::READ_GROUP,

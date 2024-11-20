@@ -9,6 +9,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use App\Repository\TeamRepository;
+use App\State\TeamProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -26,6 +27,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Post(
     denormalizationContext: ["groups" => [self::CREATE_GROUP]],
     security: "is_granted('TEAM_CREATE', object)",
+    processor: TeamProcessor::class,
 )]
 #[Patch(
     denormalizationContext: ["groups" => [self::UPDATE_GROUP]],
