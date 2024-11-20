@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @noinspection NestedPositiveIfStatementsInspection
  * @noinspection PhpUnused
@@ -29,7 +30,7 @@ use ApiPlatform\Metadata\Link;
 )]
 #[Get]
 #[Post]
-#[Delete]
+#[Delete(security: "is_granted('MEMBER_DELETE',object)")]
 class Member
 {
     #[ORM\Id]

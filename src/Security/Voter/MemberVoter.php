@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpUnused */
+<?php
+
+/** @noinspection PhpUnused */
 
 namespace App\Security\Voter;
 
@@ -15,9 +17,7 @@ final class MemberVoter extends AbstractVoter
     public const UPDATE = "MEMBER_UPDATE";
     public const DELETE = "MEMBER_DELETE";
 
-    public function __construct(private readonly Security $security)
-    {
-    }
+    public function __construct(private readonly Security $security) {}
 
     /**
      * @param string $attribute
@@ -32,9 +32,8 @@ final class MemberVoter extends AbstractVoter
             /**
              * Seuls les administrateurs ou les utilisateurs eux-mêmes peuvent quitter une équipe
              */
-            self::DELETE =>
-                ($user = $this->returnUserOrFalse($token))
-                && ($this->security->isGranted(Roles::ORGANISER, $user)
+            self::DELETE => ($user = $this->returnUserOrFalse($token))
+                && ($this->security->isGranted(Roles::ADMIN, $user)
                     || $subject->getUser() === $user),
 
             default => throw new UnexpectedVoterAttributeException($attribute),
