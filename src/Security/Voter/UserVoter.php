@@ -31,7 +31,7 @@ final class UserVoter extends AbstractVoter
             self::DELETE =>
                 ($user = $this->returnUserOrFalse($token))
                 && ($subject === $user
-                    || $this->security->isGranted(Roles::ORGANISER, $user)),
+                    || $this->security->isGranted(Roles::ADMIN, $user)),
 
             default => throw new UnexpectedVoterAttributeException($attribute),
         };
