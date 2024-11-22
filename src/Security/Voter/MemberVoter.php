@@ -30,6 +30,11 @@ final class MemberVoter extends AbstractVoter
     {
         return match ($attribute) {
             /**
+             * Il faut être connecté pour s'affecter à une équipe
+             */
+            self::CREATE => $this->security->isGranted(Roles::USER),
+
+            /**
              * Seuls les administrateurs ou les utilisateurs eux-mêmes peuvent quitter une équipe
              */
             self::DELETE => ($user = $this->returnUserOrFalse($token))
