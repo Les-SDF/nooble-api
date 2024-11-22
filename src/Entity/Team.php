@@ -99,6 +99,9 @@ class Team
     #[ORM\OneToMany(targetEntity: TeamRegistration::class, mappedBy: 'team', orphanRemoval: true)]
     private Collection $teamRegistrations;
 
+    #[ORM\ManyToOne(inversedBy: 'createdTeams')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $creator = null;
 
     public function __construct()
     {
@@ -272,6 +275,18 @@ class Team
                 $teamRegistration->setTeam(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreator(): ?User
+    {
+        return $this->creator;
+    }
+
+    public function setCreator(?User $creator): static
+    {
+        $this->creator = $creator;
 
         return $this;
     }

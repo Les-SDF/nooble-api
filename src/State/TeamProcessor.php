@@ -31,16 +31,18 @@ readonly class TeamProcessor implements ProcessorInterface
      */
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): void
     {
-        /**
-         * @var User $user
-         */
         if ($operation instanceof Post) {
+            /**
+             * @var User $user
+             */
             $user = $this->security->getUser();
             $member = (new Member())
                 ->setUser($user)
                 ->setTeam($data);
             $user->addMember($member);
-            $data->addMember($member);
+            $data
+                ->addMember($member)
+                ->setCreator($user);
             $this->manager->persist($member);
             $this->manager->flush();
         }

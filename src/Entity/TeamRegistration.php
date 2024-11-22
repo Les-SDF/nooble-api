@@ -16,10 +16,12 @@ use ApiPlatform\Metadata\Post;
 use App\Enum\RegistrationStatus;
 use App\Repository\TeamRegistrationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TeamRegistrationRepository::class)]
 #[ORM\UniqueConstraint(columns: ["team_id", "event_id"])]
+#[UniqueEntity(fields: ["team", "event"])]
 #[ApiResource]
 #[GetCollection(
     uriTemplate: "/teams/{id}/events",

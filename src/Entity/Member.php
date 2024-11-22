@@ -9,6 +9,8 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use App\Enum\MemberStatus;
 use App\Repository\MemberRepository;
 use App\State\MemberProcessor;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -38,7 +40,12 @@ use ApiPlatform\Metadata\Link;
     security: "is_granted('MEMBER_CREATE', object)",
     processor: MemberProcessor::class,
 )]
-#[Delete(security: "is_granted('MEMBER_DELETE', object)")]
+#[Patch(
+    security: "is_granted('MEMBER_UPDATE', object)"
+)]
+#[Delete(
+    security: "is_granted('MEMBER_DELETE', object)"
+)]
 class Member
 {
     public const CREATE_GROUP = "member:create";
@@ -68,6 +75,9 @@ class Member
     ])]
     private ?Team $team = null;
 
+    #[ORM\Column(enumType: MemberStatus::class, options: ["default" => MemberStatus::Pending])]
+    private ?MemberStatus $status = MemberStatus::Pending;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -93,6 +103,18 @@ class Member
     public function setTeam(?Team $team): static
     {
         $this->team = $team;
+
+        return $this;
+    }
+
+    public function getStatus(): ?MemberStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(MemberStatus $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

@@ -34,6 +34,9 @@ final class MemberVoter extends AbstractVoter
              */
             self::CREATE => $this->security->isGranted(Roles::USER),
 
+            self::UPDATE => ($user = $this->returnUserOrFalse($token))
+                && $user = $subject->getTeam()?->getCreator(),
+
             /**
              * Seuls les administrateurs ou les utilisateurs eux-mêmes peuvent quitter une équipe
              */
