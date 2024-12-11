@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpUnused */
+<?php
+
+/** @noinspection PhpUnused */
 
 namespace App\Security\Voter;
 
@@ -17,9 +19,7 @@ final class TeamRegistrationVoter extends AbstractVoter
     public const UPDATE = "TEAM_REGISTRATION_UPDATE";
     public const DELETE = "TEAM_REGISTRATION_DELETE";
 
-    public function __construct(private readonly Security $security)
-    {
-    }
+    public function __construct(private readonly Security $security) {}
 
     /**
      * @param string $attribute
@@ -37,8 +37,7 @@ final class TeamRegistrationVoter extends AbstractVoter
              * * Si aucun des membres de cette équipe n'est déjà inscrit par le biais d'une autre équipe à un événement se chevauchant avec l'événement
              * * Si le nombre de participants de l'événement n'est pas atteint
              */
-            self::CREATE =>
-                ($user = $this->returnUserOrFalse($token))
+            self::CREATE => ($user = $this->returnUserOrFalse($token))
                 && ($this->isTeamMember($user, $subject)
                     && $this->areTeamMembersAvailable($subject)
                     && (is_null($subject->getEvent()?->getMaxParticipants())
@@ -49,7 +48,7 @@ final class TeamRegistrationVoter extends AbstractVoter
              * l'équipe inscrite peuvent lire la liste des équipes inscrites.
              */
             self::READ =>
-                $subject->getEvent()?->getParticipantsVisibility() === Visibility::Public
+            $subject->getEvent()?->getParticipantsVisibility() === Visibility::Public
                 || (($user = $this->returnUserOrFalse($token))
                     && ($this->security->isGranted(Roles::ADMIN, $user)
                         || $subject->getEvent()?->getManagers()->contains($user)
@@ -60,8 +59,7 @@ final class TeamRegistrationVoter extends AbstractVoter
             /**
              * Seuls l'organisateur de l'événement ou leurs gérants peuvent y modifier ou supprimer des inscriptions des équipes
              */
-            self::UPDATE, self::DELETE =>
-                ($user = $this->returnUserOrFalse($token))
+            self::UPDATE, self::DELETE => ($user = $this->returnUserOrFalse($token))
                 && ($subject->getEvent()?->getManagers()->contains($user)
                     || ($this->security->isGranted(Roles::ORGANISER, $user)
                         && $subject->getEvent()?->getCreator() === $user)),
@@ -98,8 +96,10 @@ final class TeamRegistrationVoter extends AbstractVoter
                 // Liste des enregistrements aux événements pour chaque équipe
                 foreach ($userMember->getTeam()?->getTeamRegistrations() as $memberTeamRegistration) {
 
-                    if ($memberTeamRegistration->getEvent()?->getStartDate() <= $teamRegistration->getEvent()?->getEndDate()
-                        && $memberTeamRegistration->getEvent()?->getEndDate() >= $teamRegistration->getEvent()?->getStartDate()) {
+                    if (
+                        $memberTeamRegistration->getEvent()?->getStartDate() <= $teamRegistration->getEvent()?->getEndDate()
+                        && $memberTeamRegistration->getEvent()?->getEndDate() >= $teamRegistration->getEvent()?->getStartDate()
+                    ) {
                         return false;
                     }
                 }

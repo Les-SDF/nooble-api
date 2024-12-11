@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @noinspection NestedPositiveIfStatementsInspection
  * @noinspection PhpUnused
@@ -41,13 +42,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 #[Get]
 #[Post(
-/**
- * https://api-platform.com/docs/core/security/#hooking-custom-permission-checks-using-voters
- */
+    /**
+     * https://api-platform.com/docs/core/security/#hooking-custom-permission-checks-using-voters
+     */
     securityPostDenormalize: "is_granted('TEAM_REGISTRATION_CREATE', object)",
 )]
 #[Patch]
-#[Delete]
+#[Delete(security: "is_granted('TEAM_REGISTRATION_DELETE', object)")]
 class TeamRegistration
 {
     #[ORM\Id]
