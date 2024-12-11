@@ -18,6 +18,7 @@ use App\State\UserProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
@@ -27,6 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[UniqueEntity(fields: ['email'])]
 #[ApiResource(
     normalizationContext: ["groups" => [self::READ_GROUP]]
 )]
@@ -138,6 +140,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups("create:read")]
     private Collection $createdEvents;
 
+    /**
+     * @var Collection<int, Team>
+     */
+    #[ORM\OneToMany(targetEntity: Team::class, mappedBy: 'creator')]
+    private Collection $createdTeams;
+
     public function __construct()
     {
         $this->members = new ArrayCollection();
@@ -145,6 +153,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->managers = new ArrayCollection();
         $this->createdRewards = new ArrayCollection();
         $this->createdEvents = new ArrayCollection();
+        $this->createdTeams = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -422,6 +431,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->roles = array_values($this->roles);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Team>
+     */
+    public function getCreatedTeams(): Collection
+    {
+        return $this->createdTeams;
+    }
+
+    public function addCreatedTeam(Team $createdTeam): static
+    {
+        if (!$this->createdTeams->contains($createdTeam)) {
+            $this->createdTeams->add($createdTeam);
+            $createdTeam->setCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCreatedTeam(Team $createdTeam): static
+    {
+        if ($this->createdTeams->removeElement($createdTeam)) {
+            // set the owning side to null (unless already changed)
+            if ($createdTeam->getCreator() === $this) {
+                $createdTeam->setCreator(null);
+            }
+        }
 
         return $this;
     }

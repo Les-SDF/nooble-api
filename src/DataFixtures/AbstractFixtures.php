@@ -14,6 +14,7 @@ use App\Entity\Team;
 use App\Entity\TeamRegistration;
 use App\Entity\User;
 use App\Enum\EventStatus;
+use App\Enum\MemberStatus;
 use App\Enum\RegistrationStatus;
 use App\Enum\RewardType;
 use App\Enum\Visibility;
@@ -108,7 +109,7 @@ abstract class AbstractFixtures extends Fixture
         $this->manager->persist($eventReward);
     }
 
-    protected function addTeamUser(Team $team, string $username): void
+    protected function addTeamUser(Team $team, string $username, bool $creator = false): void
     {
         $user = new User();
         $lowercaseUsername = strtolower($username);
@@ -119,9 +120,14 @@ abstract class AbstractFixtures extends Fixture
         $user->setPassword($this->passwordHasher->hashPassword($user, self::DEFAULT_PASSWORD));
         $user->setUsername($username);
 
+        if ($creator) {
+            $team->setCreator($user);
+        }
+
         $member = new Member();
         $member->setTeam($team);
         $member->setUser($user);
+        $member->setStatus(MemberStatus::Accepted);
 
         $this->manager->persist($user);
         $this->manager->persist($member);
@@ -129,8 +135,8 @@ abstract class AbstractFixtures extends Fixture
 
     protected function addTeam(string $name): Team
     {
-        $team = new Team();
-        $team->setName($name);
+        $team = (new Team())
+            ->setName($name);
 
         $this->manager->persist($team);
 
@@ -140,8 +146,8 @@ abstract class AbstractFixtures extends Fixture
     protected function addTeamAndUsers(string $teamName, array $usernames): Team
     {
         $team = $this->addTeam($teamName);
-        foreach ($usernames as $username) {
-            $this->addTeamUser($team, $username);
+        foreach ($usernames as $i => $username) {
+            $this->addTeamUser($team, $username, $i === 0);
         }
         return $team;
     }
@@ -182,5 +188,4 @@ abstract class AbstractFixtures extends Fixture
 
         $this->manager->persist($confrontation);
     }
-
 }

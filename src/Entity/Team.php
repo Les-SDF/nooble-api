@@ -9,6 +9,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use App\Repository\TeamRepository;
+use App\State\TeamProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -26,6 +27,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Post(
     denormalizationContext: ["groups" => [self::CREATE_GROUP]],
     security: "is_granted('TEAM_CREATE', object)",
+    processor: TeamProcessor::class,
 )]
 #[Patch(
     denormalizationContext: ["groups" => [self::UPDATE_GROUP]],
@@ -97,6 +99,9 @@ class Team
     #[ORM\OneToMany(targetEntity: TeamRegistration::class, mappedBy: 'team', orphanRemoval: true)]
     private Collection $teamRegistrations;
 
+    #[ORM\ManyToOne(inversedBy: 'createdTeams')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $creator = null;
 
     public function __construct()
     {
@@ -270,6 +275,18 @@ class Team
                 $teamRegistration->setTeam(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreator(): ?User
+    {
+        return $this->creator;
+    }
+
+    public function setCreator(?User $creator): static
+    {
+        $this->creator = $creator;
 
         return $this;
     }
