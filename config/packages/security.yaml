@@ -33,6 +33,13 @@ security:
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
             jwt: ~
 
+            entry_point: jwt
+            refresh_jwt:
+                check_path: api_refresh_token
+
+            logout:
+                path: api_token_invalidate
+                delete_cookies: ['BEARER']
 #            entry_point: jwt
 #            refresh_jwt:
 #                check_path: api_refresh_token
