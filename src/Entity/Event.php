@@ -214,6 +214,12 @@ class Event
 
     #[ORM\ManyToOne(inversedBy: 'createdEvents')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups([
+        self::READ_GROUP,
+        Confrontation::READ_COLLECTION_GROUP,
+        CustomerRegistration::READ_GROUP,
+        "create:read",
+    ])]
     private ?User $creator = null;
 
     /**

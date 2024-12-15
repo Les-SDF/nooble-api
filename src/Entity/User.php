@@ -56,6 +56,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["event:read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
@@ -66,6 +67,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         Confrontation::READ_GROUP,
         Confrontation::READ_COLLECTION_GROUP,
         CustomerRegistration::READ_GROUP,
+        "event:read"
     ])]
     private ?string $email = null;
 
@@ -101,7 +103,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     #[ApiProperty(readable: true, writable: true)]
-    #[Groups([self::READ_GROUP, self::UPDATE_GROUP])]
+    #[Groups([self::READ_GROUP, self::UPDATE_GROUP, "event:read"])]
     private ?string $username = null;
 
     /**
