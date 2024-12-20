@@ -24,6 +24,9 @@ readonly class AuthenticationSuccessListener
 
         //Insertion de données de l'utilisateur ici - À compléter
         $data['id'] = $user->getId();
+        $data['username'] = $user->getUsername();
+        $data['email'] = $user->getEmail();
+        $data['roles'] = $user->getRoles();
 
         //Récupération des données contenues de le JWT - À compléter
         //On décode le jwt qui est déjà encodé, à ce stade, afin de récupérer les informations qui nous intéressent.
