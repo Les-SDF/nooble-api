@@ -55,6 +55,7 @@ class PrizePack
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([Event::READ_GROUP])]
     private ?int $id = null;
 
     #[ORM\Column(options: ["default" => 1])]

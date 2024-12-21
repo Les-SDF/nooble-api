@@ -48,6 +48,7 @@ class EventSponsor
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([Event::READ_GROUP])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'eventSponsors')]

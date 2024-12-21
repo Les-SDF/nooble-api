@@ -34,6 +34,7 @@ class Reward
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([Event::READ_GROUP])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]

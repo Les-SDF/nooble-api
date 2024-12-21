@@ -28,8 +28,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource(
     normalizationContext: ["groups" => [
         self::READ_GROUP,
-        Confrontation::READ_COLLECTION_GROUP,
-        CustomerRegistration::READ_GROUP,
+        // Confrontation::READ_COLLECTION_GROUP,
+        // CustomerRegistration::READ_GROUP,
         ]
     ]
 )]

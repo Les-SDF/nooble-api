@@ -56,7 +56,7 @@ class TeamRegistration
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups([User::READ_GROUP])]
+    #[Groups([User::READ_GROUP, Event::READ_GROUP])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'teamRegistrations')]
