@@ -79,6 +79,7 @@ class Event
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["event:read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
