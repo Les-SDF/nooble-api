@@ -56,6 +56,7 @@ class TeamRegistration
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([User::READ_GROUP])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'teamRegistrations')]
@@ -69,6 +70,7 @@ class TeamRegistration
 
     #[ORM\ManyToOne(inversedBy: 'teamRegistrations')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups([User::READ_GROUP])]
     private ?Event $event = null;
 
     #[ORM\Column(enumType: RegistrationStatus::class, options: ["default" => RegistrationStatus::Pending])]

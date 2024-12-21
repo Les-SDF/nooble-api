@@ -97,6 +97,7 @@ class Team
      * @var Collection<int, TeamRegistration>
      */
     #[ORM\OneToMany(targetEntity: TeamRegistration::class, mappedBy: 'team', orphanRemoval: true)]
+    #[Groups([User::READ_GROUP])]
     private Collection $teamRegistrations;
 
     #[ORM\ManyToOne(inversedBy: 'createdTeams')]
