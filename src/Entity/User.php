@@ -103,7 +103,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     #[ApiProperty(readable: true, writable: true)]
-    #[Groups([self::READ_GROUP, self::UPDATE_GROUP, "event:read"])]
+    #[Groups([self::READ_GROUP, "event:read"])]
     private ?string $username = null;
 
     /**
