@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Repository\UserRepository;
@@ -116,6 +117,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     ])]
     private Collection $members;
 
+    #[Groups([self::READ_GROUP])]
+    public function getParticipatedEvents(): array
+    {
+        $eventIds = [];
+    
+        foreach ($this->members as $member) {
+            $team = $member->getTeam();
+            if ($team) {
+                foreach ($team->getTeamRegistrations() as $registration) {
+                    $event = $registration->getEvent();
+                    if ($event) {
+                        $eventIds[] = $event->getId();
+                    }
+                }
+            }
+        }
+    
+        return array_unique($eventIds);
+    }
 
     /**
      * @var Collection<int, CustomerRegistration>
